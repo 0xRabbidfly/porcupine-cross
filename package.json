@@ -1,0 +1,33 @@
+{
+  "name": "porcupine-cross",
+  "version": "1.0.0",
+  "description": "Start Python Localhost\r python -m http.server 8000",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "jest": {
+    "testEnvironment": "jsdom",
+    "collectCoverageFrom": [
+      "script.js",
+      "js/**/*.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/jest.setup.js"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
