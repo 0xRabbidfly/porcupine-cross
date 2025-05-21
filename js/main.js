@@ -8,6 +8,7 @@ import { CountdownTimer } from './components/countdownTimer.js';
 import InteractiveMap from './components/interactiveMap.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
+import { createMudSplat, createViewportWideMudSplat } from './utils/animationUtils.js';
 
 // Log initialization start
 console.log('Main module loaded');
@@ -17,6 +18,7 @@ class App {
   constructor() {
     this.components = {};
     this.initialized = false;
+    this.isMenuOpen = false;
     console.log('App constructed');
   }
   
@@ -32,11 +34,13 @@ class App {
         console.log('DOMContentLoaded fired');
         this.initComponents();
         this.initSectionObserver();
+        this.initAnimationEffects();
       });
     } else {
       console.log('Document already loaded, initializing components directly');
       this.initComponents();
       this.initSectionObserver();
+      this.initAnimationEffects();
     }
     
     // Set up smooth scrolling for anchor links
@@ -123,6 +127,92 @@ class App {
       console.error('Error setting up section observer:', error);
     }
   }
+
+  /**
+   * Initialize animation effects like mud splats
+   */
+  initAnimationEffects() {
+    try {
+      console.log('Setting up animation effects');
+      
+      // Set up mobile menu toggle
+      this.initMobileMenu();
+      
+      // Add mud splatter to CTA buttons
+      const ctaButtons = getElements('.cta-button');
+      console.log('Setting up mud splats for', ctaButtons.length, 'CTA buttons');
+      
+      addEventListeners(ctaButtons, 'click', (event) => {
+        createMudSplat(event.currentTarget);
+        if (this.components.audioManager) {
+          this.components.audioManager.playClickSound();
+        }
+      });
+      
+      // Add mud splatter to desktop nav links
+      const desktopNavLinks = getElements('nav#main-nav a');
+      console.log('Setting up mud splats for', desktopNavLinks.length, 'nav links');
+      
+      addEventListeners(desktopNavLinks, 'click', (event) => {
+        const href = event.currentTarget.getAttribute('href');
+        
+        // Only trigger mud splatter for internal anchor links
+        if (href && href.startsWith('#')) {
+          if (window.innerWidth <= 768 && this.isMenuOpen) {
+            // For mobile menu, create a viewport-wide splat
+            createViewportWideMudSplat(true);
+          } else if (window.innerWidth > 768) {
+            // For desktop, create individual splat
+            createMudSplat(event.currentTarget);
+          }
+          
+          if (this.components.audioManager) {
+            this.components.audioManager.playClickSound();
+          }
+          
+          // Tactile feedback if available
+          if (window.navigator && window.navigator.vibrate) {
+            window.navigator.vibrate([10, 30, 10]);
+          }
+        }
+      });
+      
+      console.log('Animation effects setup complete');
+    } catch (error) {
+      console.error('Error setting up animation effects:', error);
+    }
+  }
+  
+  /**
+   * Initialize mobile menu toggle
+   */
+  initMobileMenu() {
+    try {
+      const menuToggle = getElement('menu-toggle');
+      const mainNav = getElement('main-nav');
+      
+      if (menuToggle && mainNav) {
+        console.log('Setting up mobile menu toggle');
+        
+        menuToggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.isMenuOpen = !this.isMenuOpen;
+          
+          if (this.isMenuOpen) {
+            mainNav.classList.add('open');
+            menuToggle.classList.add('open');
+          } else {
+            mainNav.classList.remove('open');
+            menuToggle.classList.remove('open');
+          }
+          
+          menuToggle.setAttribute('aria-expanded', this.isMenuOpen ? 'true' : 'false');
+        });
+      }
+    } catch (error) {
+      console.error('Error setting up mobile menu:', error);
+    }
+  }
   
   /**
    * Initialize AudioManager component
@@ -193,14 +283,31 @@ class App {
         const targetElement = document.querySelector(this.getAttribute('href'));
         if (targetElement) {
           // Calculate offset due to sticky header
-          const headerOffset = 100; // Match this with body padding-top
+          const headerOffset = window.innerWidth <= 768 ? 60 : 100; // Adjust for mobile vs desktop
           const elementPosition = targetElement.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
+          // If mobile menu is open, close it with a delay
+          const mainNav = document.getElementById('main-nav');
+          const menuToggle = document.getElementById('menu-toggle');
+          
+          if (window.innerWidth <= 768 && mainNav && mainNav.classList.contains('open')) {
+            setTimeout(() => {
+              if (menuToggle) {
+                menuToggle.classList.remove('open');
+                menuToggle.setAttribute('aria-expanded', 'false');
+              }
+              mainNav.classList.remove('open');
+            }, 500);
+          }
+
+          // Scroll after a slight delay if using splatter effect
+          setTimeout(() => {
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }, window.innerWidth <= 768 ? 510 : 0);
         }
       });
     } catch (error) {
