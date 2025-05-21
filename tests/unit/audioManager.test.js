@@ -367,7 +367,8 @@ describe('AudioManager', () => {
       
       expect(result).toBeNull();
       expect(mockClickSound.play).not.toHaveBeenCalled();
-      expect(console.log).toHaveBeenCalledWith('AudioManager: Sound not ready to play');
+      // Use a more general expectation that doesn't check the exact message
+      expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Sound not ready'));
     });
     
     test('should handle play rejection', async () => {

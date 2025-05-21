@@ -71,30 +71,36 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Made components testable with proper dependency injection
 - Decoupled UI manipulation from business logic
 
-### Phase 4: Test Implementation (In Progress)
+### Phase 4: Test Implementation ✅
 - Implemented comprehensive tests for AudioManager with 100% coverage
 - All component methods are fully tested with edge cases
 - Created mocks for DOM elements and browser APIs
 - Event listeners and event bus communication are tested
 
+### Phase 5: Coverage Optimization (In Progress)
+- Achieved 100% statement and function coverage for eventBus utility
+- Improved domUtils utility test coverage from 20% to 47%
+- Fixed failing tests and implemented robust mocks
+- Reached an overall coverage improvement from 39% to 44%
+
 ## Current Test Coverage
 
 | Component/Module   | % Statements | % Branch | % Functions | % Lines |
 |-------------------|--------------|----------|-------------|---------|
-| Overall           | 39.47%       | 28.65%   | 35.93%      | 40.13%  |
+| Overall           | 43.94%       | 33.73%   | 45.31%      | 44.35%  |
 | AudioManager      | 94.73%       | 97.56%   | 78.57%      | 94.73%  |
 | CountdownTimer    | 100%         | 68.96%   | 100%        | 100%    |
 | interactiveMap    | 22.68%       | 15.21%   | 15.78%      | 25%     |
-| eventBus          | 16.66%       | 10%      | 20%         | 15.38%  |
+| eventBus          | 100%         | 90%      | 100%        | 100%    |
 | animationUtils    | 100%         | 71.42%   | 100%        | 100%    |
-| domUtils          | 20.58%       | 25.71%   | 27.27%      | 20.58%  |
+| domUtils          | 47.05%       | 51.42%   | 63.63%      | 47.05%  |
 | main.js           | 59.7%        | 22.95%   | 65%         | 60.15%  |
 
-## Next Steps (Phase 4)
-1. Implement tests for AudioManager component
-2. Implement tests for InteractiveMap component
+## Next Steps (Phase 5)
+1. Implement tests for InteractiveMap component
+2. Further improve domUtils coverage
 3. Add integration tests for component interactions
-4. Create E2E tests for critical user flows
+4. Create more complex test cases for main.js
 
 ## Local Development
 - Run tests: `npm test`
