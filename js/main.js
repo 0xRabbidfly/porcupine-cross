@@ -6,6 +6,7 @@
 import AudioManager from './components/audioManager.js';
 import { CountdownTimer } from './components/countdownTimer.js';
 import InteractiveMap from './components/interactiveMap.js';
+import MobileMenu from './components/mobileMenu.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
 import { createMudSplat, createViewportWideMudSplat } from './utils/animationUtils.js';
@@ -158,7 +159,7 @@ class App {
         
         // Only trigger mud splatter for internal anchor links
         if (href && href.startsWith('#')) {
-          if (window.innerWidth <= 768 && this.isMenuOpen) {
+          if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
             // For mobile menu, create a viewport-wide splat
             createViewportWideMudSplat(true);
           } else if (window.innerWidth > 768) {
@@ -188,140 +189,24 @@ class App {
    */
   initMobileMenu() {
     try {
-      const menuToggle = getElement('menu-toggle');
-      const mainNav = getElement('main-nav');
+      // Create MobileMenu component instance
+      this.components.mobileMenu = new MobileMenu({
+        menuSelector: '#main-nav',
+        toggleSelector: '#menu-toggle',
+        openClass: 'open',
+        transitionDuration: 300
+      });
       
-      if (menuToggle && mainNav) {
-        console.log('Setting up mobile menu toggle');
-        
-        // State management with animation protection
+      // Subscribe to mobile menu events for app-level coordination
+      eventBus.on('mobileMenu:opened', () => {
+        this.isMenuOpen = true;
+      });
+      
+      eventBus.on('mobileMenu:closed', () => {
         this.isMenuOpen = false;
-        let isAnimating = false;
-        
-        // Open menu with animation support
-        this.openMenu = () => {
-          if (isAnimating || this.isMenuOpen) return;
-          
-          isAnimating = true;
-          this.isMenuOpen = true;
-          
-          // Add classes first for visibility
-          mainNav.classList.add('open');
-          menuToggle.classList.add('open');
-          menuToggle.setAttribute('aria-expanded', 'true');
-          
-          // Force menu visibility with inline styles
-          mainNav.style.display = 'block';
-          mainNav.style.visibility = 'visible';
-          mainNav.style.opacity = '1';
-          mainNav.style.height = 'auto';
-          
-          // Clear animation state after transition completes
-          setTimeout(() => {
-            isAnimating = false;
-          }, 300);
-        };
-        
-        // Close menu with animation support
-        this.closeMenu = () => {
-          if (isAnimating || !this.isMenuOpen) return;
-          
-          isAnimating = true;
-          this.isMenuOpen = false;
-          
-          mainNav.classList.remove('open');
-          menuToggle.classList.remove('open');
-          menuToggle.setAttribute('aria-expanded', 'false');
-          
-          // Remove forced inline styles
-          mainNav.style.display = '';
-          mainNav.style.visibility = '';
-          mainNav.style.opacity = '';
-          mainNav.style.height = '';
-          
-          // Clear animation state after transition completes
-          setTimeout(() => {
-            isAnimating = false;
-          }, 300);
-        };
-        
-        // Toggle menu with proper event handling
-        const handleMenuToggleClick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          if (this.isMenuOpen) {
-            this.closeMenu();
-          } else {
-            this.openMenu();
-          }
-        };
-        
-        menuToggle.addEventListener('click', handleMenuToggleClick);
-        
-        // Prevent clicks inside menu from closing it
-        mainNav.addEventListener('click', (e) => {
-          if (e.target.tagName !== 'A') {
-            e.stopPropagation();
-          }
-        });
-        
-        // Close on outside clicks
-        document.addEventListener('click', (e) => {
-          if (this.isMenuOpen && 
-              !isAnimating && 
-              !mainNav.contains(e.target) && 
-              !menuToggle.contains(e.target)) {
-            this.closeMenu();
-          }
-        });
-        
-        // Set up menu links with advanced animations for mobile
-        const menuLinks = mainNav.querySelectorAll('a[href^="#"]');
-        menuLinks.forEach(link => {
-          link.addEventListener('click', (e) => {
-            // Only add special handling on mobile
-            if (window.innerWidth <= 768) {
-              e.preventDefault();
-              e.stopPropagation();
-              
-              const href = link.getAttribute('href');
-              
-              // Create viewport-wide mud splat on mobile
-              try {
-                // Check which animation method is available
-                if (typeof window.createViewportWideMudSplat === 'function') {
-                  window.createViewportWideMudSplat(true);
-                } 
-                else if (typeof window.createParticlesDirectly === 'function') {
-                  window.createParticlesDirectly(true);
-                }
-                else {
-                  // Try local variable as last resort
-                  createViewportWideMudSplat(true);
-                }
-              } catch (error) {
-                console.error('Animation error:', error);
-              }
-              
-              // Play click sound
-              if (this.components.audioManager) {
-                this.components.audioManager.playClickSound();
-              }
-              
-              // Close menu with a delay to let animation play
-              setTimeout(() => {
-                this.closeMenu();
-              }, 300);
-              
-              // Navigate after delay to show animation
-              setTimeout(() => {
-                window.location.hash = href;
-              }, 800);
-            }
-          });
-        });
-      }
+      });
+      
+      console.log('Mobile menu component initialized');
     } catch (error) {
       console.error('Error setting up mobile menu:', error);
     }
@@ -391,9 +276,9 @@ class App {
       const anchorLinks = getElements('a[href^="#"]');
       console.log('Setting up smooth scrolling for', anchorLinks.length, 'anchor links');
       
-      addEventListeners(anchorLinks, 'click', function(e) {
+      addEventListeners(anchorLinks, 'click', (e) => {
         e.preventDefault();
-        const targetElement = document.querySelector(this.getAttribute('href'));
+        const targetElement = document.querySelector(e.currentTarget.getAttribute('href'));
         if (targetElement) {
           // Calculate offset due to sticky header
           const headerOffset = window.innerWidth <= 768 ? 60 : 100; // Adjust for mobile vs desktop
@@ -401,26 +286,25 @@ class App {
           const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
           // If mobile menu is open, close it with a delay
-          const mainNav = document.getElementById('main-nav');
-          const menuToggle = document.getElementById('menu-toggle');
-          
-          if (window.innerWidth <= 768 && mainNav && mainNav.classList.contains('open')) {
+          if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
             setTimeout(() => {
-              if (menuToggle) {
-                menuToggle.classList.remove('open');
-                menuToggle.setAttribute('aria-expanded', 'false');
-              }
-              mainNav.classList.remove('open');
-            }, 500);
-          }
-
-          // Scroll after a slight delay if using splatter effect
-          setTimeout(() => {
+              this.components.mobileMenu.closeMenu();
+            }, 100);
+            
+            // Scroll after a slight delay to allow animation to complete
+            setTimeout(() => {
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }, 600);
+          } else {
+            // Desktop or menu already closed - scroll immediately
             window.scrollTo({
               top: offsetPosition,
               behavior: 'smooth'
             });
-          }, window.innerWidth <= 768 ? 510 : 0);
+          }
         }
       });
     } catch (error) {

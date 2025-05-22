@@ -5,6 +5,8 @@
  * for the mobile menu. Uses transitionend events instead of timeouts.
  */
 
+import eventBus from '../core/eventBus.js';
+
 class MobileMenu {
   /**
    * Create a mobile menu instance
@@ -46,11 +48,15 @@ class MobileMenu {
     // Toggle menu on click
     this.toggle.addEventListener('click', this.handleToggleClick.bind(this));
     
+    // Store bound handlers for removal in destroy
+    this._boundDocumentClickHandler = this.handleDocumentClick.bind(this);
+    this._boundTransitionEndHandler = this.handleTransitionEnd.bind(this);
+    
     // Close menu on outside click
-    document.addEventListener('click', this.handleDocumentClick.bind(this));
+    document.addEventListener('click', this._boundDocumentClickHandler);
     
     // Listen for transition end
-    this.menu.addEventListener('transitionend', this.handleTransitionEnd.bind(this));
+    this.menu.addEventListener('transitionend', this._boundTransitionEndHandler);
     
     // Set initial ARIA attributes
     this.toggle.setAttribute('aria-expanded', 'false');
@@ -77,10 +83,16 @@ class MobileMenu {
    * @param {Event} event - The click event
    */
   handleToggleClick(event) {
+    // This is a critical fix for the open/close issue
+    // We need to stop event propagation to prevent the document click
+    // handler from immediately closing the menu after opening
     event.preventDefault();
     event.stopPropagation();
     
-    this.toggleMenu();
+    // Delay menu toggle slightly to ensure event propagation is properly handled
+    setTimeout(() => {
+      this.toggleMenu();
+    }, 10);
   }
   
   /**
@@ -88,10 +100,14 @@ class MobileMenu {
    * @param {Event} event - The click event
    */
   handleDocumentClick(event) {
+    // Only process if not clicking on the toggle button (which has its own handler)
+    if (this.toggle.contains(event.target)) {
+      return;
+    }
+    
     if (this.state.isOpen && 
         !this.state.isAnimating &&
-        !this.menu.contains(event.target) &&
-        !this.toggle.contains(event.target)) {
+        !this.menu.contains(event.target)) {
       this.closeMenu();
     }
   }
@@ -134,8 +150,24 @@ class MobileMenu {
    * Handle transition end event
    * @param {Event} event - The transitionend event
    */
-  handleTransitionEnd() {
+  handleTransitionEnd(event) {
+    // Only process if it's the menu element transitioning
+    if (event && event.target !== this.menu) {
+      return;
+    }
+    
+    console.log('MobileMenu: Transition ended, current state:', 
+      this.state.isOpen ? 'open' : 'closed', 
+      'isAnimating:', this.state.isAnimating);
+    
     this.state.isAnimating = false;
+    
+    // Emit completion event based on state
+    if (this.state.isOpen) {
+      eventBus.emit('mobileMenu:transitionComplete', { isOpen: true });
+    } else {
+      eventBus.emit('mobileMenu:transitionComplete', { isOpen: false });
+    }
   }
   
   /**
@@ -162,12 +194,19 @@ class MobileMenu {
     this.toggle.classList.add(this.options.openClass);
     this.toggle.setAttribute('aria-expanded', 'true');
     
-    // Fallback for browsers without transition support
-    if (!('ontransitionend' in window)) {
-      setTimeout(() => {
+    // Emit event for menu opened
+    eventBus.emit('mobileMenu:opened', { isAnimating: true });
+    
+    // Always set a backup timeout to clear animation state
+    // This ensures the menu can be interacted with again even if transitionend fails
+    this._clearAnimationTimeout();
+    this._animationTimeout = setTimeout(() => {
+      console.log('MobileMenu: Animation timeout fired (open)');
+      if (this.state.isAnimating) {
         this.state.isAnimating = false;
-      }, this.options.transitionDuration);
-    }
+        eventBus.emit('mobileMenu:transitionComplete', { isOpen: true });
+      }
+    }, this.options.transitionDuration + 50);
   }
   
   /**
@@ -183,11 +222,29 @@ class MobileMenu {
     this.toggle.classList.remove(this.options.openClass);
     this.toggle.setAttribute('aria-expanded', 'false');
     
-    // Fallback for browsers without transition support
-    if (!('ontransitionend' in window)) {
-      setTimeout(() => {
+    // Emit event for menu closed
+    eventBus.emit('mobileMenu:closed', { isAnimating: true });
+    
+    // Always set a backup timeout to clear animation state
+    // This ensures the menu can be interacted with again even if transitionend fails
+    this._clearAnimationTimeout();
+    this._animationTimeout = setTimeout(() => {
+      console.log('MobileMenu: Animation timeout fired (close)');
+      if (this.state.isAnimating) {
         this.state.isAnimating = false;
-      }, this.options.transitionDuration);
+        eventBus.emit('mobileMenu:transitionComplete', { isOpen: false });
+      }
+    }, this.options.transitionDuration + 50);
+  }
+  
+  /**
+   * Clear any existing animation timeout
+   * @private
+   */
+  _clearAnimationTimeout() {
+    if (this._animationTimeout) {
+      clearTimeout(this._animationTimeout);
+      this._animationTimeout = null;
     }
   }
   
@@ -197,6 +254,59 @@ class MobileMenu {
    */
   getState() {
     return { ...this.state };
+  }
+  
+  /**
+   * Reset the menu state (for testing)
+   */
+  resetState() {
+    this.state.isOpen = false;
+    this.state.isAnimating = false;
+    
+    if (this.menu) {
+      this.menu.classList.remove(this.options.openClass);
+    }
+    
+    if (this.toggle) {
+      this.toggle.classList.remove(this.options.openClass);
+      this.toggle.setAttribute('aria-expanded', 'false');
+    }
+  }
+  
+  /**
+   * Force state update (for testing)
+   */
+  _forceState(newState) {
+    if (typeof newState.isOpen !== 'undefined') {
+      this.state.isOpen = newState.isOpen;
+    }
+    
+    if (typeof newState.isAnimating !== 'undefined') {
+      this.state.isAnimating = newState.isAnimating;
+    }
+  }
+  
+  /**
+   * Clean up event listeners and timeouts
+   */
+  destroy() {
+    // Clean up event listeners
+    if (this.toggle) {
+      this.toggle.removeEventListener('click', this.handleToggleClick);
+    }
+    
+    if (this._boundDocumentClickHandler) {
+      document.removeEventListener('click', this._boundDocumentClickHandler);
+    }
+    
+    if (this.menu && this._boundTransitionEndHandler) {
+      this.menu.removeEventListener('transitionend', this._boundTransitionEndHandler);
+    }
+    
+    // Clear any pending timeouts
+    this._clearAnimationTimeout();
+    
+    console.log('Mobile menu destroyed');
   }
 }
 
