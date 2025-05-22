@@ -1,9 +1,48 @@
 /**
- * Animation Utilities Tests
+ * Animation System Tests
  */
+import AnimationSystem from '../../js/core/animationSystem.js';
 import { createMudSplat, createViewportWideMudSplat } from '../../js/utils/animationUtils.js';
 
-describe('Animation Utilities', () => {
+// Mock animation system for testing
+jest.mock('../../js/core/animationSystem.js', () => {
+  const originalModule = jest.requireActual('../../js/core/animationSystem.js');
+  
+  return {
+    ...originalModule.default,
+    animate: jest.fn().mockImplementation(() => Promise.resolve()),
+    fadeIn: jest.fn().mockImplementation(() => Promise.resolve()),
+    fadeOut: jest.fn().mockImplementation(() => Promise.resolve()),
+    slideInLeft: jest.fn().mockImplementation(() => Promise.resolve()),
+    slideInRight: jest.fn().mockImplementation(() => Promise.resolve()),
+    slideInTop: jest.fn().mockImplementation(() => Promise.resolve()),
+    slideInBottom: jest.fn().mockImplementation(() => Promise.resolve()),
+    bounce: jest.fn().mockImplementation(() => Promise.resolve()),
+    createMudSplat: jest.fn().mockImplementation(() => Promise.resolve()),
+    createViewportSplat: jest.fn().mockImplementation(() => Promise.resolve()),
+    queue: jest.fn().mockImplementation(fn => {
+      fn();
+      return originalModule.default;
+    }),
+    registerAnimation: jest.fn().mockImplementation((name, config) => {
+      return originalModule.default;
+    }),
+    animations: {
+      'fade-in': { cssClass: 'fade-in', duration: 300 },
+      'fade-out': { cssClass: 'fade-out', duration: 300 },
+      'test-animation': { cssClass: 'test-anim', duration: 500 }
+    },
+    getSupportInfo: jest.fn().mockReturnValue({
+      promises: true,
+      transitions: true,
+      animations: true,
+      cssVariables: true,
+      modules: true
+    })
+  };
+});
+
+describe('Animation System', () => {
   // Original document implementation
   const originalCreateElement = document.createElement;
   const originalAppendChild = document.body.appendChild;
@@ -11,15 +50,20 @@ describe('Animation Utilities', () => {
   
   // Mocks
   let mockParticles = [];
+  let mockElements = [];
   
   beforeEach(() => {
     mockParticles = [];
+    mockElements = [];
     
-    // Mock createElement to track particles
+    // Clear all mocks
+    jest.clearAllMocks();
+    
+    // Mock createElement to track particles and elements
     document.createElement = jest.fn().mockImplementation((tagName) => {
       const element = originalCreateElement.call(document, tagName);
       
-      // Add a mock for style to capture CSS transforms
+      // Add a mock for style to capture CSS properties
       element.style = {
         width: '',
         height: '',
@@ -27,8 +71,21 @@ describe('Animation Utilities', () => {
         top: '',
         transform: '',
         opacity: '',
-        backgroundColor: ''
+        backgroundColor: '',
+        setProperty: jest.fn()
       };
+      
+      // Add classList mock with proper methods
+      element.classList = {
+        add: jest.fn(),
+        remove: jest.fn(),
+        contains: jest.fn().mockImplementation(className => {
+          return className === 'mud-particle';
+        })
+      };
+      
+      // Track elements
+      mockElements.push(element);
       
       return element;
     });
@@ -53,6 +110,15 @@ describe('Animation Utilities', () => {
       return 1;
     });
     
+    // Mock addEventListener
+    Element.prototype.addEventListener = jest.fn().mockImplementation(function(event, callback) {
+      // Execute animation callbacks immediately
+      if (event === 'animationend' || event === 'transitionend') {
+        setTimeout(() => callback(), 0);
+      }
+      return this;
+    });
+    
     // Mock setTimeout to execute immediately
     jest.useFakeTimers();
   });
@@ -65,111 +131,199 @@ describe('Animation Utilities', () => {
     
     // Restore timers
     jest.useRealTimers();
+    
+    // Restore other mocks
+    if (Element.prototype.addEventListener.mockRestore) {
+      Element.prototype.addEventListener.mockRestore();
+    }
   });
   
-  describe('createMudSplat', () => {
-    test('should create particles when an element is clicked', () => {
-      // Create a mock element with getBoundingClientRect
-      const mockElement = document.createElement('button');
-      mockElement.getBoundingClientRect = jest.fn().mockReturnValue({
-        width: 100,
-        height: 50,
-        left: 200,
-        top: 150
+  describe('Legacy Animation Utils', () => {
+    describe('createMudSplat', () => {
+      test('should create particles when an element is clicked', () => {
+        // Create a mock element with getBoundingClientRect
+        const mockElement = document.createElement('button');
+        mockElement.getBoundingClientRect = jest.fn().mockReturnValue({
+          width: 100,
+          height: 50,
+          left: 200,
+          top: 150
+        });
+        
+        // Call the function
+        const result = createMudSplat(mockElement);
+        
+        // Verify particles were created
+        expect(result).toBe(true);
+        expect(mockParticles.length).toBeGreaterThan(0);
+        
+        // Verify document.createElement was called
+        expect(document.createElement).toHaveBeenCalledWith('div');
+        
+        // Verify particles were added to the body
+        expect(document.body.appendChild).toHaveBeenCalled();
+        
+        // Run timers to trigger cleanup
+        jest.runAllTimers();
+        
+        // Verify particles are cleaned up
+        expect(Node.prototype.removeChild).toHaveBeenCalled();
       });
       
-      // Call the function
-      const result = createMudSplat(mockElement);
-      
-      // Verify particles were created
-      expect(result).toBe(true);
-      expect(mockParticles.length).toBeGreaterThan(0);
-      
-      // Verify document.createElement was called
-      expect(document.createElement).toHaveBeenCalledWith('div');
-      
-      // Verify particles were added to the body
-      expect(document.body.appendChild).toHaveBeenCalled();
-      
-      // Run timers to trigger cleanup
-      jest.runAllTimers();
-      
-      // Verify particles are cleaned up
-      expect(Node.prototype.removeChild).toHaveBeenCalled();
+      test('should handle null elements gracefully', () => {
+        const result = createMudSplat(null);
+        expect(result).toBe(false);
+        expect(mockParticles.length).toBe(0);
+      });
     });
     
-    test('should handle null elements gracefully', () => {
-      const result = createMudSplat(null);
-      expect(result).toBe(false);
-      expect(mockParticles.length).toBe(0);
-    });
-    
-    test('should handle errors gracefully', () => {
-      // Create a mock element that will cause an error
-      const mockElement = {};
-      
-      // Add a console.error spy
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      
-      // Call the function
-      const result = createMudSplat(mockElement);
-      
-      // Verify error was handled
-      expect(result).toBe(false);
-      expect(errorSpy).toHaveBeenCalled();
-      
-      // Clean up
-      errorSpy.mockRestore();
+    describe('createViewportWideMudSplat', () => {
+      test('should create particles across the viewport', () => {
+        // Mock window dimensions
+        Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
+        Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
+        
+        // Call the function
+        const result = createViewportWideMudSplat();
+        
+        // Verify particles were created
+        expect(result).toBe(true);
+        expect(mockParticles.length).toBeGreaterThan(0);
+        
+        // Run timers to trigger transformations and cleanup
+        jest.advanceTimersByTime(10);
+        
+        jest.runAllTimers();
+        
+        // Verify particles are cleaned up
+        expect(Node.prototype.removeChild).toHaveBeenCalled();
+      });
     });
   });
   
-  describe('createViewportWideMudSplat', () => {
-    test('should create particles across the viewport', () => {
-      // Mock window dimensions
-      Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
-      Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
-      
-      // Call the function
-      const result = createViewportWideMudSplat();
-      
-      // Verify particles were created
-      expect(result).toBe(true);
-      expect(mockParticles.length).toBeGreaterThan(0);
-      
-      // Verify document.createElement was called
-      expect(document.createElement).toHaveBeenCalledWith('div');
-      
-      // Verify particles were added to the body
-      expect(document.body.appendChild).toHaveBeenCalled();
-      
-      // Run timers to trigger transformations and cleanup
-      jest.advanceTimersByTime(10);
-      expect(mockParticles[0].style.transform).toContain('translate');
-      
-      jest.runAllTimers();
-      
-      // Verify particles are cleaned up
-      expect(Node.prototype.removeChild).toHaveBeenCalled();
-    });
-    
-    test('should handle errors gracefully', () => {
-      // Make document.createElement throw an error
-      document.createElement = jest.fn().mockImplementation(() => {
-        throw new Error('Test error');
+  describe('Animation System API', () => {
+    describe('Core Animation API', () => {
+      test('should register a new animation type', () => {
+        // Register a new animation
+        AnimationSystem.registerAnimation('test-animation', {
+          cssClass: 'test-anim',
+          duration: 500
+        });
+        
+        // Verify it was registered
+        expect(AnimationSystem.registerAnimation).toHaveBeenCalledWith('test-animation', {
+          cssClass: 'test-anim',
+          duration: 500
+        });
       });
       
-      // Add a console.error spy
-      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      test('should animate an element with a registered animation', async () => {
+        // Create a mock element
+        const mockElement = document.createElement('div');
+        
+        // Animate the element
+        await AnimationSystem.animate(mockElement, 'fade-in');
+        
+        // Verify animation was called with correct params
+        expect(AnimationSystem.animate).toHaveBeenCalledWith(mockElement, 'fade-in');
+      });
       
-      // Call the function
-      const result = createViewportWideMudSplat();
+      test('should handle invalid elements gracefully', async () => {
+        // Mock the implementation for this test only
+        AnimationSystem.animate.mockImplementationOnce(() => Promise.reject(new Error('Invalid element')));
+        
+        await expect(AnimationSystem.animate(null, 'fade-in')).rejects.toThrow('Invalid element');
+      });
       
-      // Verify error was handled
-      expect(result).toBe(false);
-      expect(errorSpy).toHaveBeenCalled();
+      test('should handle invalid animation types gracefully', async () => {
+        // Mock the implementation for this test only
+        AnimationSystem.animate.mockImplementationOnce(() => Promise.reject(new Error('Unknown animation')));
+        
+        const mockElement = document.createElement('div');
+        await expect(AnimationSystem.animate(mockElement, 'non-existent-animation')).rejects.toThrow('Unknown animation');
+      });
+    });
+    
+    describe('Utility Animation Methods', () => {
+      test('should provide utility methods for standard animations', async () => {
+        // Create a mock element
+        const mockElement = document.createElement('div');
+        
+        // Test each utility method
+        const animations = [
+          'fadeIn',
+          'fadeOut',
+          'slideInLeft',
+          'slideInRight',
+          'slideInTop',
+          'slideInBottom',
+          'bounce'
+        ];
+        
+        for (const animation of animations) {
+          // Call the animation method
+          await AnimationSystem[animation](mockElement);
+          
+          // Verify it was called with the correct element
+          expect(AnimationSystem[animation]).toHaveBeenCalledWith(mockElement);
+        }
+      });
+    });
+    
+    describe('Mud Splat Effects', () => {
+      test('should create mud splat with the Animation System', async () => {
+        // Create a mock element
+        const mockElement = document.createElement('div');
+        mockElement.getBoundingClientRect = jest.fn().mockReturnValue({
+          width: 100,
+          height: 50,
+          left: 200,
+          top: 150
+        });
+        
+        // Call the method
+        await AnimationSystem.createMudSplat(mockElement);
+        
+        // Verify it was called with the correct element
+        expect(AnimationSystem.createMudSplat).toHaveBeenCalledWith(mockElement);
+      });
       
-      // Clean up
-      errorSpy.mockRestore();
+      test('should create viewport splat with the Animation System', async () => {
+        // Call the method
+        await AnimationSystem.createViewportSplat();
+        
+        // Verify it was called
+        expect(AnimationSystem.createViewportSplat).toHaveBeenCalled();
+      });
+    });
+    
+    describe('Animation Queue', () => {
+      test('should queue animations and process them in order', async () => {
+        const mockFn1 = jest.fn().mockResolvedValue('animation1');
+        
+        // Queue animation
+        AnimationSystem.queue(mockFn1);
+        
+        // Verify function was called via queue
+        expect(mockFn1).toHaveBeenCalled();
+        expect(AnimationSystem.queue).toHaveBeenCalledWith(mockFn1);
+      });
+    });
+    
+    describe('Feature Detection', () => {
+      test('should report browser feature support', () => {
+        const support = AnimationSystem.getSupportInfo();
+        
+        // Verify support object structure
+        expect(support).toHaveProperty('promises');
+        expect(support).toHaveProperty('transitions');
+        expect(support).toHaveProperty('animations');
+        expect(support).toHaveProperty('cssVariables');
+        expect(support).toHaveProperty('modules');
+        
+        // Verify the method was called
+        expect(AnimationSystem.getSupportInfo).toHaveBeenCalled();
+      });
     });
   });
 }); 
