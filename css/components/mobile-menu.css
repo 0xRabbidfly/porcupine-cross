@@ -42,6 +42,8 @@
     overflow: hidden;
     border-radius: 0 0 12px 12px; /* Rounded bottom corners */
     border-bottom: 2px solid var(--theme-accent-gold); /* Gold accent border */
+    /* Subtle mud-splatter background pattern */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23e73e3a' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
 
   /* Menu visible state */
@@ -60,11 +62,14 @@
     box-sizing: border-box;
     text-align: left;
     font-size: var(--menu-item-font-size);
+    font-family: 'Montserrat', 'Arial', sans-serif; /* More modern, clean font */
+    text-transform: uppercase; /* Match the banner style */
+    letter-spacing: 1px; /* Improve text spacing - increased */
     border-bottom: 1px solid var(--menu-border-color);
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     text-decoration: none;
-    color: #444;
-    font-weight: 500;
+    color: #333;
+    font-weight: 600; /* Slightly bolder */
     position: relative;
     overflow: hidden;
   }
@@ -92,6 +97,7 @@
     background-color: var(--menu-item-active-bg);
     color: var(--theme-red);
     padding-left: 26px; /* Slide in effect */
+    letter-spacing: 1.2px; /* Subtle letter spacing increase on hover */
   }
 
   nav#main-nav a:hover::before,
@@ -103,6 +109,50 @@
   nav#main-nav a:active {
     background-color: var(--menu-item-active-bg);
     transform: scale(0.98);
+  }
+
+  /* Menu icons */
+  .menu-icon {
+    margin-right: 20px; /* Increased spacing between icon and text */
+    width: 20px;
+    text-align: center;
+    color: var(--theme-red);
+    opacity: 0.85;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    font-size: 0.9em; /* Slightly smaller icons */
+    position: relative;
+  }
+
+  /* Subtle mud splatter effect behind icons */
+  .menu-icon::after {
+    content: '';
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background-color: rgba(231, 62, 58, 0.08);
+    border-radius: 50%;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.2s ease;
+  }
+
+  nav#main-nav a:hover .menu-icon::after {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  nav#main-nav a:hover .menu-icon,
+  nav#main-nav a:focus .menu-icon {
+    opacity: 1;
+    transform: scale(1.2);
+    margin-right: 22px; /* Further increase spacing on hover */
+  }
+
+  nav#main-nav a:active .menu-icon {
+    transform: scale(0.9);
   }
 
   /* Hamburger button styles */
@@ -243,28 +293,6 @@
       opacity: 1;
       transform: translateX(0);
     }
-  }
-
-  /* Menu icons */
-  .menu-icon {
-    margin-right: 12px;
-    width: 20px;
-    text-align: center;
-    color: var(--theme-red);
-    opacity: 0.85;
-    transition:
-      transform 0.2s ease,
-      opacity 0.2s ease;
-  }
-
-  nav#main-nav a:hover .menu-icon,
-  nav#main-nav a:focus .menu-icon {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-
-  nav#main-nav a:active .menu-icon {
-    transform: scale(0.9);
   }
 }
 
