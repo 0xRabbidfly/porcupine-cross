@@ -159,7 +159,7 @@ const environments = {
   production: {
     description: 'Namecheap production hosting',
     host: 'server228.web-hosting.com', // Namecheap server address
-    username: 'proljlql', // cPanel username
+    username: 'rabbidfly@prologuecross.ca', // Subdomain FTP account
     path: '/public_html',
     protocol: 'ftpes', // Using FTPES (explicit SSL)
     secure: true

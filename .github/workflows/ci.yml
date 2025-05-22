@@ -66,7 +66,7 @@ jobs:
     - name: Deploy to production
       env:
         FTP_SERVER: server228.web-hosting.com
-        FTP_USERNAME: proljlql
+        FTP_USERNAME: rabbidfly@prologuecross.ca
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
         npm install ftp-deploy
