@@ -126,7 +126,9 @@ function testFtpConnection(config) {
       include: ['test/**'],
       exclude: [],
       deleteRemote: false,
-      forcePasv: true
+      forcePasv: true,
+      secure: config.secure || false,
+      secureOptions: { rejectUnauthorized: false }
     };
     
     console.log('Connecting to FTP server...');
@@ -158,10 +160,11 @@ const environments = {
   },
   production: {
     description: 'Namecheap production hosting',
-    host: 'ftp.prologuecross.ca', // Replace with your Namecheap FTP host
-    username: 'proljlql', // Primary cPanel account
-    path: '/home/proljlql/public_html',
-    protocol: 'ftp'
+    host: 'server228.web-hosting.com', // Namecheap server address
+    username: 'proljlql', // cPanel username
+    path: '/public_html',
+    protocol: 'ftpes', // Using FTPES (explicit SSL)
+    secure: true
   }
 };
 
@@ -257,11 +260,14 @@ try {
           include: ['**/*'],
           exclude: [],
           deleteRemote: false,
-          forcePasv: true
+          forcePasv: true,
+          secure: config.secure || false,
+          secureOptions: { rejectUnauthorized: false }
         };
         
         console.log('Starting FTP deployment...');
         console.log(`Configuration: Host=${config.host}, User=${config.username}, RemotePath=${config.path || '(default)'}`);
+        console.log(`Protocol: ${config.protocol || 'FTP'} ${config.secure ? '(Secure)' : ''}`);
         ftpDeploy.deploy(ftpConfig)
           .then(res => console.log('Deployment complete!'))
           .catch(err => {
