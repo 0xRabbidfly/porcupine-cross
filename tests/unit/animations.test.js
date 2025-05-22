@@ -2,7 +2,6 @@
  * Animation System Tests
  */
 import AnimationSystem from '../../js/core/animationSystem.js';
-import { createMudSplat, createViewportWideMudSplat } from '../../js/utils/animationUtils.js';
 
 // Mock animation system for testing
 jest.mock('../../js/core/animationSystem.js', () => {
@@ -138,68 +137,7 @@ describe('Animation System', () => {
     }
   });
   
-  describe('Legacy Animation Utils', () => {
-    describe('createMudSplat', () => {
-      test('should create particles when an element is clicked', () => {
-        // Create a mock element with getBoundingClientRect
-        const mockElement = document.createElement('button');
-        mockElement.getBoundingClientRect = jest.fn().mockReturnValue({
-          width: 100,
-          height: 50,
-          left: 200,
-          top: 150
-        });
-        
-        // Call the function
-        const result = createMudSplat(mockElement);
-        
-        // Verify particles were created
-        expect(result).toBe(true);
-        expect(mockParticles.length).toBeGreaterThan(0);
-        
-        // Verify document.createElement was called
-        expect(document.createElement).toHaveBeenCalledWith('div');
-        
-        // Verify particles were added to the body
-        expect(document.body.appendChild).toHaveBeenCalled();
-        
-        // Run timers to trigger cleanup
-        jest.runAllTimers();
-        
-        // Verify particles are cleaned up
-        expect(Node.prototype.removeChild).toHaveBeenCalled();
-      });
-      
-      test('should handle null elements gracefully', () => {
-        const result = createMudSplat(null);
-        expect(result).toBe(false);
-        expect(mockParticles.length).toBe(0);
-      });
-    });
-    
-    describe('createViewportWideMudSplat', () => {
-      test('should create particles across the viewport', () => {
-        // Mock window dimensions
-        Object.defineProperty(window, 'innerWidth', { value: 1024, writable: true });
-        Object.defineProperty(window, 'innerHeight', { value: 768, writable: true });
-        
-        // Call the function
-        const result = createViewportWideMudSplat();
-        
-        // Verify particles were created
-        expect(result).toBe(true);
-        expect(mockParticles.length).toBeGreaterThan(0);
-        
-        // Run timers to trigger transformations and cleanup
-        jest.advanceTimersByTime(10);
-        
-        jest.runAllTimers();
-        
-        // Verify particles are cleaned up
-        expect(Node.prototype.removeChild).toHaveBeenCalled();
-      });
-    });
-  });
+  
   
   describe('Animation System API', () => {
     describe('Core Animation API', () => {

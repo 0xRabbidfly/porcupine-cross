@@ -3,85 +3,41 @@
  */
 // No longer need to import JSDOM directly since Jest uses jsdom environment
 
+// Import MobileMenu component
+import MobileMenu from '../../js/components/mobileMenu.js';
+import eventBus from '../../js/core/eventBus.js';
+
+// Mock eventBus
+jest.mock('../../js/core/eventBus.js', () => ({
+  emit: jest.fn(),
+  on: jest.fn(),
+  off: jest.fn()
+}));
+
 // Setup DOM for tests
 let document;
 let window;
+let mobileMenu;
 let mockMenuToggle;
 let mockMainNav;
 let mockDocument;
 
-// Mock the App with references to global variables
-jest.mock('../../js/main.js', () => {
-  return class App {
-    constructor() {
-      this.isMenuOpen = false;
-      this.components = {};
-      this.initialized = false;
-    }
+// Mock the animation system
+global.AnimationSystem = {
+  createViewportSplat: jest.fn().mockReturnValue(Promise.resolve())
+};
 
-    init() {
-      this.initMobileMenu();
-      return this;
+// Mock the app with audio manager
+global.app = {
+  components: {
+    audioManager: {
+      playClickSound: jest.fn()
     }
+  }
+};
 
-    initMobileMenu() {
-      if (mockDocument) {
-        const menuToggle = mockDocument.getElementById('menu-toggle');
-        const mainNav = mockDocument.getElementById('main-nav');
-        
-        if (!menuToggle || !mainNav) return;
-        
-        // Preserve references for testing
-        mockMenuToggle = menuToggle;
-        mockMainNav = mainNav;
-        
-        // Setup methods similar to the real app
-        this.openMenu = () => {
-          this.isMenuOpen = true;
-          mainNav.classList.add('open');
-          menuToggle.classList.add('open');
-          menuToggle.setAttribute('aria-expanded', 'true');
-        };
-        
-        this.closeMenu = () => {
-          this.isMenuOpen = false;
-          mainNav.classList.remove('open');
-          menuToggle.classList.remove('open');
-          menuToggle.setAttribute('aria-expanded', 'false');
-        };
-        
-        // Setup click event for toggle
-        menuToggle.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          if (this.isMenuOpen) {
-            this.closeMenu();
-          } else {
-            this.openMenu();
-          }
-        });
-        
-        // Setup document click handler
-        if (mockDocument) {
-          mockDocument.addEventListener('click', (e) => {
-            if (this.isMenuOpen && 
-                !mainNav.contains(e.target) && 
-                e.target !== menuToggle) {
-              this.closeMenu();
-            }
-          });
-        }
-      }
-    }
-  };
-});
-
-// Mock for animation utils
-jest.mock('../../js/utils/animationUtils.js', () => ({
-  createMudSplat: jest.fn(() => true),
-  createViewportWideMudSplat: jest.fn(() => true)
-}));
+// Mock setTimeout to execute immediately in tests
+jest.useFakeTimers();
 
 // Mock for utils
 jest.mock('../../js/utils/domUtils.js', () => ({
@@ -90,19 +46,11 @@ jest.mock('../../js/utils/domUtils.js', () => ({
   addEventListeners: jest.fn()
 }));
 
-// Mock for components
-jest.mock('../../js/components/audioManager.js', () => jest.fn());
-jest.mock('../../js/components/countdownTimer.js', () => ({ CountdownTimer: jest.fn() }));
-jest.mock('../../js/components/interactiveMap.js', () => ({ createFromSelectors: jest.fn() }));
-jest.mock('../../js/core/eventBus.js', () => ({ emit: jest.fn(), on: jest.fn(), off: jest.fn() }));
-
-// Import App after mocks
-const App = require('../../js/main.js').default;
-
 describe('Mobile Menu Functionality', () => {
-  let app;
-  
   beforeEach(() => {
+    // Reset mocks
+    jest.clearAllMocks();
+    
     // Setup global references
     document = global.document;
     window = global.window;
@@ -134,11 +82,15 @@ describe('Mobile Menu Functionality', () => {
     window.requestAnimationFrame = jest.fn(cb => cb());
     window.navigator = { vibrate: jest.fn() };
     
-    // Create new App instance
-    app = new App();
+    // Initialize elements for testing
+    mockMenuToggle = document.getElementById('menu-toggle');
+    mockMainNav = document.getElementById('main-nav');
     
-    // Initialize the app
-    app.init();
+    // Create mobile menu instance
+    mobileMenu = new MobileMenu();
+    
+    // Reset the state to ensure clean test state
+    mobileMenu.resetState();
   });
   
   afterEach(() => {
@@ -147,43 +99,137 @@ describe('Mobile Menu Functionality', () => {
     mockDocument = null;
     mockMenuToggle = null;
     mockMainNav = null;
+    mobileMenu = null;
   });
   
-  test('hamburger menu toggle should open and close the menu', () => {
+  test('menu should open and close', () => {
     // Verify initial state
-    expect(app.isMenuOpen).toBe(false);
+    expect(mobileMenu.state.isOpen).toBe(false);
     expect(mockMainNav.classList.contains('open')).toBe(false);
     
-    // Click the menu toggle to open
-    mockMenuToggle.click();
+    // Mock non-animated state for testing
+    mobileMenu._forceState({ isAnimating: false });
+    
+    // Open the menu directly
+    mobileMenu.openMenu();
     
     // Menu should now be open
-    expect(app.isMenuOpen).toBe(true);
+    expect(mobileMenu.state.isOpen).toBe(true);
     expect(mockMainNav.classList.contains('open')).toBe(true);
     expect(mockMenuToggle.classList.contains('open')).toBe(true);
     expect(mockMenuToggle.getAttribute('aria-expanded')).toBe('true');
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:opened', { isAnimating: true });
     
-    // Click the menu toggle again to close
-    mockMenuToggle.click();
+    // Reset animation state for testing
+    mobileMenu._forceState({ isAnimating: false });
+    
+    // Close the menu directly
+    mobileMenu.closeMenu();
     
     // Menu should now be closed
-    expect(app.isMenuOpen).toBe(false);
+    expect(mobileMenu.state.isOpen).toBe(false);
     expect(mockMainNav.classList.contains('open')).toBe(false);
     expect(mockMenuToggle.classList.contains('open')).toBe(false);
     expect(mockMenuToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
   });
   
-  test('clicking outside the menu should close it', () => {
-    // Open the menu
-    mockMenuToggle.click();
-    expect(app.isMenuOpen).toBe(true);
+  test('menu should toggle state', () => {
+    // Reset to ensure clean state
+    mobileMenu.resetState();
+    mobileMenu._forceState({ isAnimating: false });
     
-    // Create a click event on the document body, outside the menu
-    const bodyClickEvent = new Event('click', { bubbles: true });
-    document.body.dispatchEvent(bodyClickEvent);
+    // Initial state is closed
+    expect(mobileMenu.state.isOpen).toBe(false);
     
-    // Menu should close
-    expect(app.isMenuOpen).toBe(false);
+    // Toggle to open
+    mobileMenu.toggleMenu();
+    expect(mobileMenu.state.isOpen).toBe(true);
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:opened', { isAnimating: true });
+    
+    // Reset animation state
+    mobileMenu._forceState({ isAnimating: false });
+    
+    // Toggle to closed
+    mobileMenu.toggleMenu();
+    expect(mobileMenu.state.isOpen).toBe(false);
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
+  });
+  
+  test('clicking toggle should change menu state', () => {
+    // Reset to ensure clean state
+    mobileMenu.resetState();
+    mobileMenu._forceState({ isAnimating: false });
+    
+    // Simulate the toggle click handler
+    const mockEvent = {
+      preventDefault: jest.fn(),
+      stopPropagation: jest.fn()
+    };
+    
+    mobileMenu.handleToggleClick(mockEvent);
+    
+    // Run the setTimeout immediately
+    jest.runAllTimers();
+    
+    // Menu should now be open
+    expect(mobileMenu.state.isOpen).toBe(true);
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:opened', { isAnimating: true });
+    
+    // Reset animation state
+    mobileMenu._forceState({ isAnimating: false });
+    
+    // Click toggle again
+    mobileMenu.handleToggleClick(mockEvent);
+    
+    // Run the setTimeout immediately
+    jest.runAllTimers();
+    
+    // Menu should now be closed
+    expect(mobileMenu.state.isOpen).toBe(false);
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
+  });
+  
+  test('transition end should clear animating state', () => {
+    // Set animating state and open state
+    mobileMenu._forceState({ isAnimating: true, isOpen: true });
+    
+    // Trigger transition end
+    mobileMenu.handleTransitionEnd();
+    
+    // Animation state should be cleared
+    expect(mobileMenu.state.isAnimating).toBe(false);
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:transitionComplete', { isOpen: true });
+    
+    // Test with closed state
+    mobileMenu._forceState({ isAnimating: true, isOpen: false });
+    
+    // Trigger transition end
+    mobileMenu.handleTransitionEnd();
+    
+    // Animation state should be cleared
+    expect(mobileMenu.state.isAnimating).toBe(false);
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:transitionComplete', { isOpen: false });
+  });
+  
+  test('document click should close open menu', () => {
+    // Set menu to open state
+    mobileMenu._forceState({ isAnimating: false, isOpen: true });
+    mockMainNav.classList.add('open');
+    
+    // Simulate click outside menu
+    const outsideClickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true
+    });
+    
+    document.body.dispatchEvent(outsideClickEvent);
+    
+    // Menu should be closed
+    expect(mobileMenu.state.isOpen).toBe(false);
     expect(mockMainNav.classList.contains('open')).toBe(false);
+    expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
   });
 }); 

@@ -110,6 +110,12 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Created unified animation API with proper event handling
 - Exposed animation API through window for non-module compatibility
 - Updated tests to match new implementation
+- Added deprecation notices for legacy animation functions
+- Removed redundant window exposure for AnimationSystem
+- Removed more inline style manipulations in favor of CSS classes
+- Completely removed deprecated animation utilities in favor of the unified AnimationSystem API
+- Deleted redundant legacy animation code for a cleaner codebase
+- Simplified animation bridge to only expose the new unified API
 
 ## Details: Phase 5.5 UI Refactoring & CSS Best Practices
 

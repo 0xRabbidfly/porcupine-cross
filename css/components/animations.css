@@ -7,9 +7,9 @@
 
 :root {
   /* Animation durations */
-  --animation-duration-fast: 0.2s;
-  --animation-duration-default: 0.3s;
-  --animation-duration-slow: 0.5s;
+  --animation-duration-fast: 0.3s;
+  --animation-duration-default: 0.5s;
+  --animation-duration-slow: 0.8s;
   
   /* Animation easings */
   --animation-easing-default: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -40,7 +40,7 @@
 
 /* Mud splat animation */
 .mud-splat {
-  animation: mud-fade var(--animation-duration-default) var(--animation-easing-default);
+  animation: mud-fade 0.9s var(--animation-easing-default);
 }
 
 @keyframes mud-fade {
@@ -56,7 +56,7 @@
 
 /* Viewport-wide mud splat */
 .mud-splat-viewport {
-  animation: mud-fade-viewport var(--animation-duration-default) var(--animation-easing-default);
+  animation: mud-fade-viewport 0.8s var(--animation-easing-default);
 }
 
 @keyframes mud-fade-viewport {

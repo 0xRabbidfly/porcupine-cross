@@ -107,13 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // Hide all info contents
                     infoContents.forEach(content => {
-                        content.style.display = 'none';
+                        content.classList.remove('active');
                     });
                     
                     // Show the selected content
                     const activeContent = document.getElementById(section);
                     if (activeContent) {
-                        activeContent.style.display = 'block';
+                        activeContent.classList.add('active');
                     }
                     
                     // Position the info panel next to the clicked dot
@@ -234,11 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 setTimeout(() => {
                     secondsEl.parentElement.classList.remove('pulse');
-                }, 500);
+                }, 700);
                 
                 setTimeout(() => {
                     secondsEl.parentElement.classList.remove('tick');
-                }, 1000);
+                }, 1500);
                 
                 lastSeconds = seconds;
             }
@@ -269,9 +269,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hero animation trigger
     const heroSection = document.querySelector('.hero');
     if (heroSection) {
-        setTimeout(() => {
-            heroSection.classList.add('loaded');
-        }, 300); // Short delay before animation starts
+        // Use AnimationSystem instead of setTimeout
+        if (window.AnimationSystem) {
+            window.AnimationSystem.animate(heroSection, 'fade-in', {
+                duration: 500,
+                variables: { '--hero-opacity': '1' }
+            });
+        } else {
+            // Fallback if AnimationSystem is not available
+            setTimeout(() => {
+                heroSection.classList.add('loaded');
+            }, 500);
+        }
     }
 
     // Intersection Observer for scroll animations
@@ -333,7 +342,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 playSound(clickSound);
                 
                 // Create the splatter effect
-                createViewportWideMudSplat(true);
+                if (window.AnimationSystem) {
+                    window.AnimationSystem.createViewportSplat({ mobile: true });
+                }
                 
                 // Tactile feedback if available
                 if (window.navigator && window.navigator.vibrate) {
@@ -350,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         menuToggle.setAttribute('aria-expanded', 'false');
                     }
                     mainNav.classList.remove('open');
-                }, 500);
+                }, 800);
                 
                 // Navigate after a slight delay
                 setTimeout(() => {
@@ -361,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
                         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                     }
-                }, 510);
+                }, 850);
             } else {
                 // For regular navigation or non-mobile, just handle normally
                 if (href && href.startsWith('#')) {
@@ -388,57 +399,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Mud Splatter Particle Effect (for individual buttons/links) ---
-    function createMudSplat(clickedElement) { 
-        const rect = clickedElement.getBoundingClientRect();
-        const particleCount = Math.floor(Math.random() * 8) + 12; 
-
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('mud-particle');
-            document.body.appendChild(particle); 
-
-            const size = Math.random() * 7 + 4; 
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            
-            const spawnAreaWidthFactor = 0.7; 
-            const spawnWidth = rect.width * spawnAreaWidthFactor;
-            const spawnOffsetX = (rect.width - spawnWidth) / 2; 
-
-            const initialX = rect.left + spawnOffsetX + (Math.random() * spawnWidth) - (size / 2);
-            const initialY = rect.top + Math.random() * rect.height - (size / 2);
-            particle.style.left = `${initialX}px`;
-            particle.style.top = `${initialY}px`;
-
-            const angle = Math.random() * Math.PI * 2; 
-            const distance = Math.random() * 35 + 25;  
-            const finalX = Math.cos(angle) * distance;
-            const finalY = Math.sin(angle) * distance;
-            const rotation = (Math.random() - 0.5) * 270; 
-
-            particle.style.transform = 'translate(0px, 0px) scale(1)';
-            particle.style.opacity = '1';
-
-            requestAnimationFrame(() => {
-                particle.style.transform = `translate(${finalX}px, ${finalY}px) scale(0.2) rotate(${rotation}deg)`;
-                particle.style.opacity = '0';
-            });
-
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-            }, 900); // Match new particle lifespan (0.8s + buffer)
-        }
-    }
-    // --- End Mud Splatter Particle Effect ---
+    
 
     // Event listeners for individual splatters (CTA buttons and Desktop Nav links)
     const ctaButtons = document.querySelectorAll('.cta-button');
     ctaButtons.forEach(button => {
         button.addEventListener('click', (event) => {
-            createMudSplat(event.currentTarget); 
+            if (window.AnimationSystem) {
+                window.AnimationSystem.createMudSplat(event.currentTarget);
+            }
             playSound(clickSound);
         });
     });
@@ -447,72 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const desktopNavLinks = document.querySelectorAll('nav#main-nav a');
     desktopNavLinks.forEach(link => {
         link.addEventListener('click', (event) => {
-            if (window.innerWidth > 768) { // Only apply if not in mobile view (where hamburger is active)
-                createMudSplat(event.currentTarget);
+            if (window.innerWidth > 768 && window.AnimationSystem) { // Only apply if not in mobile view
+                window.AnimationSystem.createMudSplat(event.currentTarget);
                 playSound(clickSound);
             }
         });
     });
-
-    // Viewport-wide mud splatter effect for mobile menu links
-    function createViewportWideMudSplat(isMobile = false) {
-        try {
-            // Earth-toned colors that match the site's aesthetic
-            const colors = ['#3b1f04', '#201100', '#542b06', '#633813', '#7a4017']; 
-            
-            // Moderate count and size that match the site's animation style
-            const baseCount = 60; 
-            const extra = 30;
-            const particleCount = Math.floor(Math.random() * extra) + baseCount;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('mud-particle');
-                
-                // Use different colors for variety
-                const colorIndex = Math.floor(Math.random() * colors.length);
-                particle.style.backgroundColor = colors[colorIndex];
-                
-                document.body.appendChild(particle);
-                
-                // Smaller particles that match the site's style
-                const size = Math.random() * 18 + 8; // 8-26px, smaller than before
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                const initialX = Math.random() * window.innerWidth;
-                const initialY = Math.random() * window.innerHeight;
-                particle.style.left = `${initialX}px`;
-                particle.style.top = `${initialY}px`;
-                
-                // Moderate spread that matches the site's animations
-                const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 60 + 20; // Reduced spread (20-80px)
-                const finalX = Math.cos(angle) * distance;
-                const finalY = Math.sin(angle) * distance;
-                const rotation = (Math.random() - 0.5) * 360; // Moderate rotation
-                
-                // Start already visible
-                particle.style.opacity = '1'; 
-                particle.style.transform = `translate(0px, 0px) scale(1) rotate(0deg)`;
-                
-                // Use timeout instead of requestAnimationFrame for reliability
-                setTimeout(() => {
-                    particle.style.transform = `translate(${finalX}px, ${finalY}px) scale(0.7) rotate(${rotation}deg)`;
-                    particle.style.opacity = '0.9';
-                }, 10);
-                
-                // Shorter duration to match site animations
-                setTimeout(() => {
-                    if (particle.parentNode) {
-                        particle.parentNode.removeChild(particle);
-                    }
-                }, 800);
-            }
-            
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
 }); 

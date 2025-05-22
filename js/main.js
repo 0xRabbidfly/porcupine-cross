@@ -9,7 +9,7 @@ import InteractiveMap from './components/interactiveMap.js';
 import MobileMenu from './components/mobileMenu.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
-import { createMudSplat, createViewportWideMudSplat } from './utils/animationUtils.js';
+import AnimationSystem from './core/animationSystem.js';
 
 // Log initialization start
 console.log('Main module loaded');
@@ -144,7 +144,7 @@ class App {
       console.log('Setting up mud splats for', ctaButtons.length, 'CTA buttons');
       
       addEventListeners(ctaButtons, 'click', (event) => {
-        createMudSplat(event.currentTarget);
+        AnimationSystem.createMudSplat(event.currentTarget);
         if (this.components.audioManager) {
           this.components.audioManager.playClickSound();
         }
@@ -161,10 +161,10 @@ class App {
         if (href && href.startsWith('#')) {
           if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
             // For mobile menu, create a viewport-wide splat
-            createViewportWideMudSplat(true);
+            AnimationSystem.createViewportSplat({ mobile: true });
           } else if (window.innerWidth > 768) {
             // For desktop, create individual splat
-            createMudSplat(event.currentTarget);
+            AnimationSystem.createMudSplat(event.currentTarget);
           }
           
           if (this.components.audioManager) {
@@ -194,7 +194,7 @@ class App {
         menuSelector: '#main-nav',
         toggleSelector: '#menu-toggle',
         openClass: 'open',
-        transitionDuration: 300
+        transitionDuration: 500
       });
       
       // Subscribe to mobile menu events for app-level coordination
@@ -289,7 +289,7 @@ class App {
           if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
             setTimeout(() => {
               this.components.mobileMenu.closeMenu();
-            }, 100);
+            }, 200);
             
             // Scroll after a slight delay to allow animation to complete
             setTimeout(() => {
@@ -297,7 +297,7 @@ class App {
                 top: offsetPosition,
                 behavior: 'smooth'
               });
-            }, 600);
+            }, 1000);
           } else {
             // Desktop or menu already closed - scroll immediately
             window.scrollTo({

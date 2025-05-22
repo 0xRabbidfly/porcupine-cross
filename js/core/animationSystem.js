@@ -23,13 +23,13 @@ const AnimationSystem = (function() {
   
   // Animation types registry
   const animationTypes = {
-    'fade-in': { cssClass: 'fade-in', duration: 300 },
-    'fade-out': { cssClass: 'fade-out', duration: 300 },
-    'slide-in-left': { cssClass: 'slide-in-left', duration: 300 },
-    'slide-in-right': { cssClass: 'slide-in-right', duration: 300 },
-    'slide-in-top': { cssClass: 'slide-in-top', duration: 300 },
-    'slide-in-bottom': { cssClass: 'slide-in-bottom', duration: 300 },
-    'bounce': { cssClass: 'bounce', duration: 300 },
+    'fade-in': { cssClass: 'fade-in', duration: 500 },
+    'fade-out': { cssClass: 'fade-out', duration: 500 },
+    'slide-in-left': { cssClass: 'slide-in-left', duration: 500 },
+    'slide-in-right': { cssClass: 'slide-in-right', duration: 500 },
+    'slide-in-top': { cssClass: 'slide-in-top', duration: 500 },
+    'slide-in-bottom': { cssClass: 'slide-in-bottom', duration: 500 },
+    'bounce': { cssClass: 'bounce', duration: 500 },
     'mud-splat': { cssClass: 'mud-splat', duration: 900 },
     'mud-splat-viewport': { cssClass: 'mud-splat-viewport', duration: 800 }
   };
@@ -476,9 +476,4 @@ const AnimationSystem = (function() {
 })();
 
 // Export for ES modules
-export default AnimationSystem;
-
-// Expose to window for non-module environments
-if (typeof window !== 'undefined') {
-  window.AnimationSystem = AnimationSystem;
-} 
+export default AnimationSystem; 

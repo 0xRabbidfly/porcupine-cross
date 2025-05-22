@@ -137,12 +137,12 @@ class MobileMenu {
       // Close menu with a delay
       setTimeout(() => {
         this.closeMenu();
-      }, 100);
+      }, 200);
       
       // Navigate after delay
       setTimeout(() => {
         window.location.hash = href;
-      }, 600);
+      }, 1000);
     }
   }
   

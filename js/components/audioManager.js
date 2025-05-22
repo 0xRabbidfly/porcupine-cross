@@ -149,7 +149,7 @@ class AudioManager {
     }
     
     if (soundElement.readyState < 2) {
-      console.log('AudioManager: Sound not ready to play');
+      console.log('AudioManager: Sound not ready');
       return null;
     }
     
