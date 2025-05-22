@@ -44,10 +44,10 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Implement proper state management for UI components
 
 ### Phase 6: CI/CD Integration 🚧
-- Setting up GitHub Actions for automated testing
-- Configuring pre-commit hooks for test verification
+- ✅ Set up GitHub Actions for automated testing
+- ✅ Configure pre-commit hooks for test verification
+- ✅ Create code quality checks
 - Implementing automated deployments
-- Creating code quality checks
 
 ### Phase 7: Performance Testing
 - Add performance tests for critical paths
@@ -187,13 +187,21 @@ This phase will establish a solid foundation for maintaining code quality and st
 | main.js           | 59.7%        | 22.95%   | 65%         | 60.15%  |
 
 ## Next Steps (Phase 6)
-1. Set up GitHub Actions for CI
-2. Configure Husky for pre-commit hooks
-3. Implement ESLint and Prettier for code quality
-4. Create deployment automation scripts
-5. Set up code coverage reporting in CI
+1. ✅ Set up GitHub Actions for CI
+2. ✅ Configure Husky for pre-commit hooks
+3. ✅ Implement ESLint and Prettier for code quality
+4. ✅ Create deployment automation scripts
+5. ✅ Set up code coverage reporting in CI
+6. Test the CI/CD pipeline with a sample PR
+7. Implement automated staging deployments
 
 ## Local Development
 - Run tests: `npm test`
 - Run tests with coverage: `npm run test:coverage`
-- Start dev server: `npx http-server -p 8000`
+- Start dev server: `npm start`
+- Lint code: `npm run lint`
+- Format code: `npm run format`
+- Check code quality: `npm run quality`
+- Deploy to development: `npm run deploy`
+- Deploy to staging: `npm run deploy:staging`
+- Deploy to production: `npm run deploy:production`
