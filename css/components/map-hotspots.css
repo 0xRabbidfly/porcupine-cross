@@ -5,6 +5,33 @@
  * instead of inline styles for positioning
  */
 
+/* Container for the interactive map */
+.interactive-map-container {
+  position: relative;
+  width: 100%;
+  margin: 2rem auto;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Map image */
+.course-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Hotspots container */
+.map-hotspots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 /* Hotspot positioning from data attributes */
 .hotspot[data-position] {
   position: absolute;
@@ -33,6 +60,7 @@
 
 /* Hotspot base styles */
 .hotspot {
+  position: absolute;
   background: transparent;
   border: none;
   padding: 0;
@@ -46,6 +74,7 @@
   z-index: 5;
   transform: translate(-50%, -50%);
   transition: transform 0.2s ease;
+  pointer-events: all;
 }
 
 .hotspot:hover,
@@ -84,6 +113,80 @@
   }
 }
 
+/* Info Panel Styles */
+.map-info-panel {
+  position: absolute;
+  display: none;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  max-width: 300px;
+  width: calc(100% - 40px);
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.map-info-panel.visible {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+/* Edge positioning for the info panel */
+.map-info-panel.edge-left {
+  left: 20px !important;
+  transform: translateY(0) translateX(0);
+}
+
+.map-info-panel.edge-right {
+  right: 20px !important;
+  left: auto !important;
+  transform: translateY(0) translateX(0);
+}
+
+.map-info-panel.edge-top {
+  top: 20px !important;
+}
+
+.map-info-panel.edge-bottom {
+  bottom: 20px !important;
+  top: auto !important;
+}
+
+/* Info content */
+.info-content {
+  display: none;
+}
+
+.info-content.active {
+  display: block;
+}
+
+/* Close button */
+.info-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.info-close:hover {
+  color: #000;
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .hotspot {
@@ -94,5 +197,12 @@
   .hotspot-dot {
     width: 12px;
     height: 12px;
+  }
+  
+  .map-info-panel {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 40px);
+    max-width: 100%;
   }
 } 

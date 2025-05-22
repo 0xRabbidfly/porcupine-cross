@@ -103,7 +103,7 @@ class InteractiveMap {
     // Show the selected content
     const activeContent = document.getElementById(section);
     if (activeContent) {
-      activeContent.style.display = 'block';
+      activeContent.classList.add('active');
     }
     
     // Position the info panel
@@ -117,7 +117,7 @@ class InteractiveMap {
    */
   hideAllInfoContents() {
     this.infoContents.forEach(content => {
-      content.style.display = 'none';
+      content.classList.remove('active');
     });
   }
   
@@ -161,9 +161,7 @@ class InteractiveMap {
     const isMobile = window.innerWidth <= this.mobileThreshold;
     
     if (isMobile) {
-      // For mobile, center the panel at the bottom of the map
-      this.infoPanel.style.left = '50%';
-      this.infoPanel.style.top = `${containerRect.height - 10}px`;
+      // For mobile, position handled by CSS
       this.infoPanel.classList.add('edge-bottom');
     } else {
       // Desktop positioning - adjust if panel is going off screen
@@ -209,6 +207,7 @@ class InteractiveMap {
   closeInfoPanel() {
     if (this.infoPanel) {
       this.infoPanel.classList.remove('visible');
+      this.hideAllInfoContents();
       eventBus.emit('interactiveMap:panelClosed');
     }
   }
