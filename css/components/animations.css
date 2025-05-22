@@ -1,0 +1,180 @@
+/**
+ * Animation System
+ * 
+ * Centralized CSS animations for consistent effects across the site
+ * Uses CSS variables for customization and transforms for performance
+ */
+
+:root {
+  /* Animation durations */
+  --animation-duration-fast: 0.2s;
+  --animation-duration-default: 0.3s;
+  --animation-duration-slow: 0.5s;
+  
+  /* Animation easings */
+  --animation-easing-default: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animation-easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animation-easing-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  /* Animation distances */
+  --animation-distance-small: 10px;
+  --animation-distance-medium: 20px;
+  --animation-distance-large: 30px;
+}
+
+/* Base animation class */
+.animate {
+  animation-fill-mode: both;
+  animation-timing-function: var(--animation-easing-default);
+}
+
+/* Mud particle animation */
+.mud-particle {
+  position: fixed;
+  background-color: #3b1f04;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* Mud splat animation */
+.mud-splat {
+  animation: mud-fade var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes mud-fade {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--mud-x, 30px), var(--mud-y, 30px)) scale(0.2) rotate(var(--mud-rotation, 180deg));
+    opacity: 0;
+  }
+}
+
+/* Viewport-wide mud splat */
+.mud-splat-viewport {
+  animation: mud-fade-viewport var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes mud-fade-viewport {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--mud-x, 60px), var(--mud-y, 60px)) scale(0.7) rotate(var(--mud-rotation, 360deg));
+    opacity: 0.9;
+  }
+}
+
+/* Fade in animation */
+.fade-in {
+  animation: fade-in var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Fade out animation */
+.fade-out {
+  animation: fade-out var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Slide in from top */
+.slide-in-top {
+  animation: slide-in-top var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(calc(-1 * var(--animation-distance-medium)));
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Slide in from bottom */
+.slide-in-bottom {
+  animation: slide-in-bottom var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes slide-in-bottom {
+  0% {
+    transform: translateY(var(--animation-distance-medium));
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Slide in from left */
+.slide-in-left {
+  animation: slide-in-left var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(calc(-1 * var(--animation-distance-medium)));
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide in from right */
+.slide-in-right {
+  animation: slide-in-right var(--animation-duration-default) var(--animation-easing-default);
+}
+
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(var(--animation-distance-medium));
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Bounce animation */
+.bounce {
+  animation: bounce var(--animation-duration-default) var(--animation-easing-bounce);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+} 

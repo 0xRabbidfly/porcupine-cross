@@ -1,0 +1,10 @@
+/**
+ * Component CSS Index
+ * 
+ * This file imports all component CSS files
+ */
+
+@import 'mobile-menu.css';
+@import 'animations.css';
+@import 'map-hotspots.css';
+/* Add more component imports as they are created */ 

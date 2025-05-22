@@ -1,0 +1,166 @@
+/**
+ * Mobile Menu Component
+ * 
+ * Proper CSS implementation of mobile menu with transitions
+ * Uses transform and opacity for animations instead of display/visibility
+ */
+
+:root {
+  /* Mobile menu variables */
+  --menu-transition-duration: 0.3s;
+  --menu-transition-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --menu-background: white;
+  --menu-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --menu-border-color: #eee;
+  --menu-padding: 10px 0;
+  --menu-item-padding: 12px 20px;
+  --menu-item-font-size: 16px;
+  --header-height-mobile: 60px;
+}
+
+@media (max-width: 768px) {
+  /* Base menu styles (hidden state) */
+  nav#main-nav {
+    position: absolute;
+    top: var(--header-height-mobile);
+    left: 0;
+    width: 100%;
+    background-color: var(--menu-background);
+    z-index: 9999;
+    box-shadow: var(--menu-shadow);
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform var(--menu-transition-duration) var(--menu-transition-easing),
+                opacity var(--menu-transition-duration) var(--menu-transition-easing);
+    pointer-events: none; /* Prevent interaction while hidden */
+    padding: var(--menu-padding);
+    overflow: hidden;
+  }
+  
+  /* Menu visible state */
+  nav#main-nav.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto; /* Re-enable interaction */
+  }
+  
+  /* Menu items */
+  nav#main-nav a {
+    display: block;
+    padding: var(--menu-item-padding);
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    font-size: var(--menu-item-font-size);
+    border-bottom: 1px solid var(--menu-border-color);
+    transition: background-color 0.2s ease;
+  }
+  
+  nav#main-nav a:last-child {
+    border-bottom: none;
+  }
+  
+  /* Menu item hover state */
+  nav#main-nav a:hover,
+  nav#main-nav a:focus {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Hamburger button styles */
+  #menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    z-index: 9999;
+  }
+  
+  /* Hamburger icon */
+  .hamburger {
+    position: relative;
+    width: 24px;
+    height: 2px;
+    background-color: #333;
+    transition: background-color 0.3s ease;
+  }
+  
+  .hamburger::before,
+  .hamburger::after {
+    content: "";
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background-color: #333;
+    transition: transform 0.3s ease;
+  }
+  
+  .hamburger::before {
+    top: -7px;
+  }
+  
+  .hamburger::after {
+    bottom: -7px;
+  }
+  
+  /* Open state for hamburger button */
+  #menu-toggle.open .hamburger {
+    background-color: transparent;
+  }
+  
+  #menu-toggle.open .hamburger::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+  
+  #menu-toggle.open .hamburger::after {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  
+  /* Animation for menu items - staggered entrance */
+  nav#main-nav.open a {
+    animation: slideIn 0.3s ease forwards;
+    opacity: 0;
+  }
+  
+  nav#main-nav.open a:nth-child(1) { animation-delay: 0.05s; }
+  nav#main-nav.open a:nth-child(2) { animation-delay: 0.1s; }
+  nav#main-nav.open a:nth-child(3) { animation-delay: 0.15s; }
+  nav#main-nav.open a:nth-child(4) { animation-delay: 0.2s; }
+  nav#main-nav.open a:nth-child(5) { animation-delay: 0.25s; }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Desktop styles - keep as a reference */
+@media (min-width: 769px) {
+  #menu-toggle {
+    display: none;
+  }
+  
+  nav#main-nav {
+    display: flex;
+    position: static;
+    opacity: 1;
+    transform: none;
+    background: none;
+    box-shadow: none;
+    pointer-events: auto;
+    padding: 0;
+  }
+  
+  nav#main-nav a {
+    border-bottom: none;
+    width: auto;
+  }
+} 

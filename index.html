@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prologue</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Add component CSS -->
+    <link rel="stylesheet" href="css/components/index.css">
     <!-- Add FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,7 +15,7 @@
         <div class="logo-container">
             <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo">
         </div>
-        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu">
+        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false">
             <span class="hamburger"></span>
         </a>
         <nav id="main-nav">
@@ -27,11 +29,11 @@
             </a>
         </nav>
         <div class="audio-promo-container compact">
-            <audio id="race-day-audio" controls preload="none" style="width:120px; height:28px; vertical-align: middle;">
+            <audio id="race-day-audio" controls preload="none">
                 <source src="sounds/crosstoberfest.mp3" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
-            <span class="audio-text" style="font-size:0.9rem; vertical-align: middle;">Race Day Outline</span>
+            <span class="audio-text">Race Day Outline</span>
         </div>
     </header>
 
@@ -124,16 +126,16 @@
                 
                 <!-- Overlay hotspots -->
                 <div class="map-hotspots">
-                    <button class="hotspot" data-section="start-finish" style="top: 52%; left: 65%;">
+                    <button class="hotspot" data-section="start-finish" data-position="top: 52%; left: 65%;">
                         <span class="hotspot-dot"></span>
                     </button>
-                    <button class="hotspot" data-section="sand-pit" style="top: 40%; left: 88%;">
+                    <button class="hotspot" data-section="sand-pit" data-position="top: 40%; left: 88%;">
                         <span class="hotspot-dot"></span>
                     </button>
-                    <button class="hotspot" data-section="run-up" style="top: 37%; left: 25%;">
+                    <button class="hotspot" data-section="run-up" data-position="top: 37%; left: 25%;">
                         <span class="hotspot-dot"></span>
                     </button>
-                    <button class="hotspot" data-section="technical" style="top: 40%; left: 50%;">
+                    <button class="hotspot" data-section="technical" data-position="top: 40%; left: 50%;">
                         <span class="hotspot-dot"></span>
                     </button>
                 </div>
@@ -176,43 +178,6 @@
     
     <!-- Load our animation bridge to expose functions -->
     <script type="module" src="js/animationBridge.js"></script>
-    
-    <!-- Force menu visibility with inline styles -->
-    <style>
-      /* Force mobile menu to be visible when open */
-      @media (max-width: 768px) {
-        nav#main-nav.open {
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
-          position: absolute !important;
-          top: 60px !important;
-          left: 0 !important;
-          width: 100% !important;
-          background-color: white !important;
-          z-index: 9999 !important;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
-          padding-top: 10px !important;
-          padding-bottom: 10px !important;
-          height: auto !important;
-        }
-        
-        /* Ensure nav links are visible */
-        nav#main-nav.open a {
-          display: block !important;
-          padding: 12px 20px !important;
-          width: 100% !important;
-          box-sizing: border-box !important;
-          text-align: left !important;
-          font-size: 16px !important;
-          border-bottom: 1px solid #eee !important;
-        }
-        
-        nav#main-nav.open a:last-child {
-          border-bottom: none !important;
-        }
-      }
-    </style>
     
     <!-- Load our modular JavaScript -->
     <script type="module" src="js/main.js"></script>

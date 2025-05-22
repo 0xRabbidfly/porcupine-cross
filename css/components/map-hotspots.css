@@ -1,0 +1,98 @@
+/**
+ * Map Hotspots Component
+ * 
+ * CSS for interactive map hotspots using data attributes
+ * instead of inline styles for positioning
+ */
+
+/* Hotspot positioning from data attributes */
+.hotspot[data-position] {
+  position: absolute;
+}
+
+/* Position each hotspot using their data-position values */
+.hotspot[data-section="start-finish"] {
+  top: 52%;
+  left: 65%;
+}
+
+.hotspot[data-section="sand-pit"] {
+  top: 40%;
+  left: 88%;
+}
+
+.hotspot[data-section="run-up"] {
+  top: 37%;
+  left: 25%;
+}
+
+.hotspot[data-section="technical"] {
+  top: 40%;
+  left: 50%;
+}
+
+/* Hotspot base styles */
+.hotspot {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease;
+}
+
+.hotspot:hover,
+.hotspot:focus {
+  transform: translate(-50%, -50%) scale(1.2);
+  outline: none;
+}
+
+/* The visible dot */
+.hotspot-dot {
+  width: 15px;
+  height: 15px;
+  background-color: var(--theme-red, #e73e3a);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px white, 0 0 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hotspot:hover .hotspot-dot,
+.hotspot:focus .hotspot-dot {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px white, 0 0 12px rgba(0, 0, 0, 0.6);
+  animation: pulse 1.5s infinite;
+}
+
+/* Pulse animation for hotspots */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 3px white, 0 0 8px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 3px white, 0 0 15px rgba(231, 62, 58, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 3px white, 0 0 8px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .hotspot {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .hotspot-dot {
+    width: 12px;
+    height: 12px;
+  }
+} 
