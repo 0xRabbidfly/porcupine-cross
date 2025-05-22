@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -37,4 +37,56 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./coverage/
-        fail_ci_if_error: false 
+        fail_ci_if_error: false
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build project
+      run: |
+        mkdir -p dist
+        cp -r index.html *.js css js images dist/
+    
+    - name: Deploy to production
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      run: |
+        npm install ftp-deploy
+        node -e "
+          const FtpDeploy = require('ftp-deploy');
+          const ftpDeploy = new FtpDeploy();
+          
+          const config = {
+            user: process.env.FTP_USERNAME,
+            password: process.env.FTP_PASSWORD,
+            host: process.env.FTP_SERVER,
+            port: 21,
+            localRoot: __dirname + '/dist/',
+            remoteRoot: '/public_html/',
+            include: ['*', '**/*'],
+            deleteRemote: false
+          };
+          
+          ftpDeploy.deploy(config)
+            .then(res => console.log('Deployment complete!'))
+            .catch(err => {
+              console.error('Deployment failed:', err);
+              process.exit(1);
+            });
+        " 
