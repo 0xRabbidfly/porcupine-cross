@@ -53,6 +53,25 @@ function copyFiles() {
     copyDir('./images', './dist/images');
   }
   
+  // Copy sounds except crosstoberfest.mp3
+  if (fs.existsSync('./sounds')) {
+    fs.readdirSync('./sounds').forEach(file => {
+      if (file !== 'crosstoberfest.mp3') {
+        const srcPath = path.join('./sounds', file);
+        const destPath = path.join('./dist/sounds', file);
+        const stats = fs.statSync(srcPath);
+        if (stats.isDirectory()) {
+          copyDir(srcPath, destPath);
+        } else {
+          if (!fs.existsSync('./dist/sounds')) {
+            fs.mkdirSync('./dist/sounds', { recursive: true });
+          }
+          fs.copyFileSync(srcPath, destPath);
+        }
+      }
+    });
+  }
+  
   console.log('Files copied successfully to dist/');
 }
 
