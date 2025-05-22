@@ -39,6 +39,16 @@
   overflow: visible;
 }
 
+/* Hotspots container positioning classes to replace inline styles */
+.map-hotspots-aligned {
+  position: absolute;
+  top: 0;
+  left: var(--hotspots-left, 0);
+  width: var(--hotspots-width, 100%);
+  height: var(--hotspots-height, 100%);
+  pointer-events: none;
+}
+
 /* Hotspot positioning */
 .hotspot {
   position: absolute;
@@ -56,6 +66,27 @@
   transform: translate(-50%, -50%);
   transition: transform 0.2s ease;
   pointer-events: all;
+}
+
+/* Hotspot positioning classes by sections */
+.hotspot[data-section='start-finish'] {
+  left: 65%;
+  top: 52%;
+}
+
+.hotspot[data-section='sand-pit'] {
+  left: 88%;
+  top: 40%;
+}
+
+.hotspot[data-section='run-up'] {
+  left: 25%;
+  top: 37%;
+}
+
+.hotspot[data-section='technical'] {
+  left: 50%;
+  top: 40%;
 }
 
 .hotspot:hover,
@@ -118,6 +149,8 @@
   width: calc(100% - 40px);
   z-index: 10;
   opacity: 0;
+  left: var(--info-panel-left, 50%);
+  top: var(--info-panel-top, 50%);
   transform: translateY(10px);
   transition:
     opacity 0.3s ease,

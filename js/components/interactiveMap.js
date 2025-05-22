@@ -66,48 +66,13 @@ class InteractiveMap {
     // Calculate the image's position relative to its container (accounts for centering)
     const leftOffset = imgRect.left - containerRect.left;
 
-    // Set the hotspot container to exactly match the image size and position
-    this.hotspotsContainer.style.position = 'absolute';
-    this.hotspotsContainer.style.left = `${leftOffset}px`;
-    this.hotspotsContainer.style.top = '0';
-    this.hotspotsContainer.style.width = `${imgRect.width}px`;
-    this.hotspotsContainer.style.height = `${imgRect.height}px`;
+    // Add class for base positioning
+    this.hotspotsContainer.classList.add('map-hotspots-aligned');
 
-    // Now position each hotspot directly using its percentage-based position data
-    Array.from(this.hotspots).forEach(hotspot => {
-      const section = hotspot.getAttribute('data-section');
-      let percentX = 0;
-      let percentY = 0;
-
-      // Get the percentage positions based on data-section
-      // These values should match what's in the CSS
-      switch (section) {
-        case 'start-finish':
-          percentX = 65;
-          percentY = 52;
-          break;
-        case 'sand-pit':
-          percentX = 88;
-          percentY = 40;
-          break;
-        case 'run-up':
-          percentX = 25;
-          percentY = 37;
-          break;
-        case 'technical':
-          percentX = 50;
-          percentY = 40;
-          break;
-        default:
-          // Try to read from data attributes if available
-          percentX = parseFloat(hotspot.getAttribute('data-x') || 50);
-          percentY = parseFloat(hotspot.getAttribute('data-y') || 50);
-      }
-
-      // Position using percentages rather than absolute pixels
-      hotspot.style.left = `${percentX}%`;
-      hotspot.style.top = `${percentY}%`;
-    });
+    // Set custom CSS properties for positioning
+    this.hotspotsContainer.style.setProperty('--hotspots-left', `${leftOffset}px`);
+    this.hotspotsContainer.style.setProperty('--hotspots-width', `${imgRect.width}px`);
+    this.hotspotsContainer.style.setProperty('--hotspots-height', `${imgRect.height}px`);
 
     // Force a reflow/repaint to ensure the positions are updated
     this.hotspotsContainer.offsetHeight;
@@ -177,8 +142,9 @@ class InteractiveMap {
     const percentX = (left / containerRect.width) * 100;
     const percentY = (top / containerRect.height) * 100;
 
-    this.infoPanel.style.left = `${percentX}%`;
-    this.infoPanel.style.top = `${percentY}%`;
+    // Set custom CSS properties for positioning
+    this.infoPanel.style.setProperty('--info-panel-left', `${percentX}%`);
+    this.infoPanel.style.setProperty('--info-panel-top', `${percentY}%`);
 
     // Reset any edge positioning classes
     this.infoPanel.classList.remove('edge-left', 'edge-right', 'edge-top', 'edge-bottom');

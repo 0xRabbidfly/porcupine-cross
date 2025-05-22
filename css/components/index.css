@@ -1,11 +1,13 @@
 /**
  * Component CSS Index
  * 
- * This file imports all component CSS files
+ * Imports all component CSS files for better organization
  */
 
-@import 'mobile-menu.css';
-@import 'animations.css';
+/* Import component CSS files */
 @import 'map-hotspots.css';
+@import 'mobile-menu.css';
 @import 'transitions.css';
-/* Add more component imports as they are created */ 
+@import 'countdown-timer.css';
+@import 'sound-toggle.css';
+/* Add more component imports as they are created */

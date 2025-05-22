@@ -3,6 +3,10 @@
  * Handles the race countdown functionality
  */
 
+/* global setInterval, clearInterval */
+
+import AnimationSystem from '../core/animationSystem.js';
+
 /**
  * Calculate time remaining between target date and current date
  * @param {number} targetDate - Target date timestamp
@@ -11,13 +15,13 @@
  */
 export function calculateTimeRemaining(targetDate, currentDate) {
   const distance = targetDate - currentDate;
-  
+
   return {
     days: Math.floor(distance / (1000 * 60 * 60 * 24)),
     hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
     minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
     seconds: Math.floor((distance % (1000 * 60)) / 1000),
-    distance: distance
+    distance: distance,
   };
 }
 
@@ -37,7 +41,7 @@ export class CountdownTimer {
     this.intervalId = null;
     this.lastSeconds = -1;
     this.animationClasses = options.animationClasses || { pulse: 'pulse', tick: 'tick' };
-    
+
     // Allow overriding calculateTimeRemaining for testing
     this.calculateTimeRemaining = options.calculateTimeRemaining || calculateTimeRemaining;
   }
@@ -68,48 +72,49 @@ export class CountdownTimer {
   update() {
     const now = this.options.getNow ? this.options.getNow() : new Date().getTime();
     const timeRemaining = this.calculateTimeRemaining(this.targetDate, now);
-    
+
     // Extract values from time remaining
     const { days, hours, minutes, seconds } = timeRemaining;
-    
+
     // Update DOM elements if they exist
     if (this.elements.days) {
       this.elements.days.textContent = days.toString().padStart(2, '0');
     }
-    
+
     if (this.elements.hours) {
       this.elements.hours.textContent = hours.toString().padStart(2, '0');
     }
-    
+
     if (this.elements.minutes) {
       this.elements.minutes.textContent = minutes.toString().padStart(2, '0');
     }
-    
+
     if (this.elements.seconds) {
       this.elements.seconds.textContent = seconds.toString().padStart(2, '0');
     }
-    
+
     // Add animation class on seconds change
     if (seconds !== this.lastSeconds && this.elements.secondsParent) {
-      // Add and remove pulse animation
+      // Add animation classes
       this.elements.secondsParent.classList.add(this.animationClasses.pulse);
       this.elements.secondsParent.classList.add(this.animationClasses.tick);
-      
+
+      // Remove animation classes after animation completes
       setTimeout(() => {
         if (this.elements.secondsParent) {
           this.elements.secondsParent.classList.remove(this.animationClasses.pulse);
         }
       }, 500);
-      
+
       setTimeout(() => {
         if (this.elements.secondsParent) {
           this.elements.secondsParent.classList.remove(this.animationClasses.tick);
         }
       }, 1000);
-      
+
       this.lastSeconds = seconds;
     }
-    
+
     // If countdown is finished
     if (timeRemaining.distance < 0) {
       this.stop();
@@ -117,7 +122,7 @@ export class CountdownTimer {
         this.options.onComplete();
       }
     }
-    
+
     return timeRemaining;
   }
-} 
+}
