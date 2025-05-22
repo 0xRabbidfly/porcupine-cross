@@ -212,6 +212,7 @@ class App {
         toggleSelector: '#menu-toggle',
         openClass: 'open',
         transitionDuration: 500,
+        animationStyle: 'default', // Initialize with default animation style
       });
 
       // Subscribe to mobile menu events for app-level coordination
@@ -223,9 +224,162 @@ class App {
         this.isMenuOpen = false;
       });
 
+      // Create animation style switcher (visible only in development)
+      this.createMenuStyleSwitcher();
+
       console.log('Mobile menu component initialized');
     } catch (error) {
       console.error('Error setting up mobile menu:', error);
+    }
+  }
+
+  /**
+   * Create a menu animation style switcher
+   * This is a development tool only visible when adding ?dev=true to the URL
+   */
+  createMenuStyleSwitcher() {
+    try {
+      // Only show in development mode
+      if (!window.location.search.includes('dev=true')) {
+        return;
+      }
+
+      // Create the style switcher container
+      const styleSwitcher = document.createElement('div');
+      styleSwitcher.className = 'menu-style-switcher';
+      styleSwitcher.innerHTML = `
+        <div class="style-switcher-label">Menu Animation:</div>
+        <div class="style-switcher-options">
+          <button data-style="default" class="active">Default</button>
+          <button data-style="flip">Flip</button>
+          <button data-style="slide">Slide</button>
+        </div>
+      `;
+
+      // Add styles for the switcher
+      const styleElement = document.createElement('style');
+      styleElement.textContent = `
+        .menu-style-switcher {
+          position: fixed;
+          bottom: 10px;
+          right: 10px;
+          background: rgba(255, 255, 255, 0.9);
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          padding: 8px;
+          font-size: 12px;
+          z-index: 9999;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          display: flex;
+          flex-direction: column;
+        }
+        .style-switcher-label {
+          margin-bottom: 5px;
+          font-weight: bold;
+          font-size: 11px;
+        }
+        .style-switcher-options {
+          display: flex;
+          gap: 5px;
+        }
+        .style-switcher-options button {
+          border: 1px solid #ccc;
+          background: #f5f5f5;
+          border-radius: 3px;
+          padding: 4px 8px;
+          font-size: 11px;
+          cursor: pointer;
+        }
+        .style-switcher-options button.active {
+          background: #e73e3a;
+          color: white;
+          border-color: #e73e3a;
+        }
+        .style-switcher-options button:hover:not(.active) {
+          background: #eee;
+        }
+      `;
+
+      // Add event listeners to buttons
+      styleSwitcher.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', () => {
+          // Update active button
+          styleSwitcher.querySelectorAll('button').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          button.classList.add('active');
+
+          // Set animation style
+          const style = button.getAttribute('data-style');
+          this.components.mobileMenu.setAnimationStyle(style);
+
+          // Show a notification to test the menu
+          this.showTestNotification('Animation style changed! Open menu to test.');
+        });
+      });
+
+      // Append the elements to the body
+      document.head.appendChild(styleElement);
+      document.body.appendChild(styleSwitcher);
+
+      console.log('Menu style switcher created (development only)');
+    } catch (error) {
+      console.error('Error creating menu style switcher:', error);
+    }
+  }
+
+  /**
+   * Show a temporary notification
+   * @param {string} message - Message to display
+   */
+  showTestNotification(message) {
+    try {
+      // Remove existing notification if any
+      const existingNotification = document.querySelector('.test-notification');
+      if (existingNotification) {
+        existingNotification.remove();
+      }
+
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = 'test-notification';
+      notification.textContent = message;
+
+      // Add styles
+      const styleElement = document.createElement('style');
+      if (!document.querySelector('style[data-for="notification"]')) {
+        styleElement.setAttribute('data-for', 'notification');
+        styleElement.textContent = `
+          .test-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 10000;
+            font-size: 14px;
+            animation: notification-fade 3s forwards;
+          }
+          @keyframes notification-fade {
+            0% { opacity: 0; transform: translate(-50%, -20px); }
+            10% { opacity: 1; transform: translate(-50%, 0); }
+            90% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+          }
+        `;
+        document.head.appendChild(styleElement);
+      }
+
+      // Add to DOM and remove after animation
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    } catch (error) {
+      console.error('Error showing notification:', error);
     }
   }
 
