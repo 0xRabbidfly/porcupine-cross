@@ -37,9 +37,7 @@ function copyFiles() {
   
   // Copy CSS files
   if (fs.existsSync('./css')) {
-    fs.readdirSync('./css').forEach(file => {
-      fs.copyFileSync(`./css/${file}`, `./dist/css/${file}`);
-    });
+    copyDir('./css', './dist/css');
   }
   
   // Copy JS files and subdirectories
