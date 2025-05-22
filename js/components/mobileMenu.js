@@ -63,6 +63,9 @@ class MobileMenu {
     // Set initial ARIA attributes
     this.toggle.setAttribute('aria-expanded', 'false');
 
+    // Add body class for CSS targeting
+    document.body.classList.add('mobile-menu-enabled');
+
     // Setup menu links
     this.setupMenuLinks();
 
@@ -305,6 +308,9 @@ class MobileMenu {
     if (this.menu && this._boundTransitionEndHandler) {
       this.menu.removeEventListener('transitionend', this._boundTransitionEndHandler);
     }
+
+    // Remove body class
+    document.body.classList.remove('mobile-menu-enabled');
 
     // Clear any pending timeouts
     this._clearAnimationTimeout();

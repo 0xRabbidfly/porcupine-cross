@@ -592,6 +592,10 @@ footer {
     padding: 45px 4%;
   }
 
+  /* NOTE: Mobile menu basic styling - CONFLICTS with css/components/mobile-menu.css
+     The mobile-menu.css file now uses .mobile-menu-enabled prefixes and !important to override these styles
+     Keeping this code here for reference but it should be removed or consolidated in the future
+  */
   nav#main-nav {
     display: flex !important;
     flex-direction: column;

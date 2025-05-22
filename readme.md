@@ -2,15 +2,28 @@
 
 A testable, modular implementation of the Prologue Cyclocross Race website.
 
+## Running the project locally
+
+To run the project locally, use the following command:
+
+```bash
+# Start the local development server
+npm run dev
+```
+
+This will start a local server and open the website in your default browser. Any changes you make to the code will automatically refresh the page.
+
 ## Original Project Plan
 
 ### Phase 1: Setup Testing Infrastructure
+
 - Install Jest and configure for ES6 support
 - Create test directory structure
 - Set up basic tests and assertions
 - Establish testing environment for DOM testing
 
 ### Phase 2: Code Modularization
+
 - Break up monolithic script.js into smaller components
 - Extract core functionality into separate modules
 - Create utilities for DOM manipulation and event handling
@@ -18,24 +31,28 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Update HTML to use modular JavaScript
 
 ### Phase 3: Refactor Components
+
 - Refactor each component to be testable
 - Implement dependency injection
 - Decouple UI manipulation from business logic
 - Make core functionality pure functions where possible
 
 ### Phase 4: Test Implementation
+
 - Implement unit tests for all components
 - Add integration tests for component interactions
 - Create component tests for UI functionality
 - Develop E2E tests for critical user flows
 
 ### Phase 5: Coverage Optimization
+
 - Analyze test coverage with Jest
 - Identify and address coverage gaps
 - Refactor code to improve testability
 - Aim for 100% code coverage
 
 ### Phase 5.5: UI Refactoring & CSS Best Practices
+
 - Implement proper CSS architecture for UI components
 - Refactor mobile menu using CSS best practices
 - Enhance animation framework with unified API
@@ -44,12 +61,14 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Implement proper state management for UI components
 
 ### Phase 6: CI/CD Integration 🚧
+
 - ✅ Set up GitHub Actions for automated testing
 - ✅ Configure pre-commit hooks for test verification
 - ✅ Create code quality checks
 - ✅ Implement automated deployment to production
 
 ### Phase 7: Performance Testing
+
 - Add performance tests for critical paths
 - Implement load testing for important components
 - Create benchmarks for baseline performance
@@ -58,11 +77,13 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 ## Project Progress
 
 ### Phase 1: Setup Testing Infrastructure ✅
+
 - Jest testing framework set up
 - Directory structure created
 - CountdownTimer component extracted and tested with 100% coverage
 
 ### Phase 2: Code Modularization ✅
+
 - Monolithic script broken into component modules:
   - CountdownTimer
   - AudioManager
@@ -73,6 +94,7 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Main app controller created to orchestrate components
 
 ### Phase 3: Component Refactoring ✅
+
 - Implemented section visibility with IntersectionObserver
 - Added mud splat animations with tests
 - Completed sound toggle button functionality
@@ -80,12 +102,14 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Decoupled UI manipulation from business logic
 
 ### Phase 4: Test Implementation ✅
+
 - Implemented comprehensive tests for AudioManager with 100% coverage
 - All component methods are fully tested with edge cases
 - Created mocks for DOM elements and browser APIs
 - Event listeners and event bus communication are tested
 
 ### Phase 5: Coverage Optimization ✅
+
 - Achieved 100% statement and function coverage for eventBus utility
 - Improved domUtils utility test coverage from 20% to 47%
 - Fixed failing tests and implemented robust mocks
@@ -95,6 +119,7 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Fixed failing AudioManager test for better test stability
 
 ### Phase 5.5: UI Refactoring & CSS Best Practices ✅
+
 - Created detailed CSS architecture documentation
 - Developed comprehensive mobile menu refactoring plan
 - Designed unified animation framework API
@@ -122,23 +147,27 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 After completing the UI refactoring in Phase 5.5, we established a robust CI/CD pipeline to ensure code quality and automate deployments:
 
 ### GitHub Actions Implementation:
+
 - Created workflows for automated testing on push and pull requests
 - Set up build verification for all branches
 - Implemented test coverage reporting
 - Configured production deployment workflow
 
 ### Pre-commit Hooks:
+
 - Set up Husky for Git hooks management
 - Configured lint-staged for running tests on staged files
 - Added ESLint for code quality checks
 - Implemented automated code formatting with Prettier
 
 ### Deployment Automation:
+
 - Created FTP deployment script for Namecheap hosting
 - Implemented secure credential management
 - Set up continuous deployment to production from master branch
 
 ### Code Quality Checks:
+
 - Integrated ESLint for static code analysis
 - Added Prettier for code formatting
 - Implemented bundle size monitoring
@@ -147,6 +176,7 @@ After completing the UI refactoring in Phase 5.5, we established a robust CI/CD 
 This phase established a solid foundation for maintaining code quality and streamlining the development workflow.
 
 ## Next Steps (Phase 6)
+
 1. ✅ Set up GitHub Actions for CI
 2. ✅ Configure Husky for pre-commit hooks
 3. ✅ Implement ESLint and Prettier for code quality
@@ -156,6 +186,7 @@ This phase established a solid foundation for maintaining code quality and strea
 7. ✅ Implement automated production deployment
 
 ## Local Development
+
 - Run tests: `npm test`
 - Run tests with coverage: `npm run test:coverage`
 - Start dev server: `npm start`

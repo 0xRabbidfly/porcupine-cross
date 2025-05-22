@@ -7,7 +7,7 @@ This guide explains how to set up the GitHub repository and configure deployment
 1. **Create a new GitHub repository**
 
    ```
-   # Navigate to https://github.com/new 
+   # Navigate to https://github.com/new
    # Fill in:
    - Repository name: porcupine-cross
    - Description: Porcupine-Cross Cyclocross Website
@@ -18,15 +18,16 @@ This guide explains how to set up the GitHub repository and configure deployment
 
    ```bash
    # In your local project directory
-   git remote add origin https://github.com/yourusername/porcupine-cross.git
+   git remote add origin https://github.com/0xRabbidfly/porcupine-cross.git
    git push -u origin master
    ```
 
 3. **Configure GitHub Secrets**
 
    Navigate to your GitHub repository → Settings → Secrets and variables → Actions → New repository secret
-   
+
    Add the following secrets:
+
    - `FTP_SERVER`: Your Namecheap FTP server (e.g., ftp.yourdomain.com)
    - `FTP_USERNAME`: Your Namecheap FTP username
    - `FTP_PASSWORD`: Your Namecheap FTP password
@@ -68,10 +69,10 @@ This guide explains how to set up the GitHub repository and configure deployment
    ```bash
    # For Windows PowerShell
    $env:FTP_PASSWORD = 'your-password'
-   
+
    # For Mac/Linux
    export FTP_PASSWORD='your-password'
-   
+
    # Run deployment
    npm run deploy:production
    ```
@@ -88,11 +89,13 @@ This guide explains how to set up the GitHub repository and configure deployment
 The CI/CD pipeline is configured for a simplified workflow:
 
 1. **Developer Workflow**:
+
    - Make changes locally
    - Tests run via pre-commit hooks
    - Commit and push to GitHub
 
 2. **GitHub Actions**:
+
    - Run tests on multiple Node.js versions
    - On successful tests, build the project
    - Deploy to production via FTP
@@ -112,4 +115,4 @@ The CI/CD pipeline is configured for a simplified workflow:
 
 - Never commit FTP credentials directly to the repository
 - Always use GitHub Secrets for sensitive information
-- Consider setting up SSH deployment for enhanced security if supported by your hosting provider 
+- Consider setting up SSH deployment for enhanced security if supported by your hosting provider
