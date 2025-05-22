@@ -202,8 +202,8 @@ try {
   else {
     console.log(`Deploying to ${config.host}:${config.path} via ${config.protocol}...`);
     
-    if (config.protocol === 'ftp') {
-      console.log('Using FTP deployment...');
+    if (config.protocol === 'ftp' || config.protocol === 'ftpes') {
+      console.log(`Using ${config.protocol.toUpperCase()} deployment...`);
       
       // Check if this is a test run
       const isTest = args.includes('--test');
@@ -274,9 +274,6 @@ try {
           });
       }
     }
-    
-    console.log('\nSimulation complete!');
-    console.log('For actual deployment, update this script with your credentials and use the provided code.');
   }
 } catch (error) {
   console.error('Deployment failed:', error.message);
