@@ -65,7 +65,7 @@ jobs:
     
     - name: Deploy to production
       env:
-        FTP_SERVER: ftp.prologuecross.ca
+        FTP_SERVER: server228.web-hosting.com
         FTP_USERNAME: proljlql
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
@@ -103,13 +103,15 @@ jobs:
             exclude: [],
             deleteRemote: false,
             forcePasv: true,
-            sftp: false
+            secure: true,
+            secureOptions: { rejectUnauthorized: false }
           };
           
           console.log('Starting FTP deployment with configuration:');
           console.log('Host: ' + config.host);
           console.log('Username: ' + config.user);
           console.log('Remote Path: ' + (config.remoteRoot || '(default FTP directory)'));
+          console.log('Using FTPES (explicit SSL)');
           
           ftpDeploy.deploy(config)
             .then(res => console.log('Deployment complete!'))
