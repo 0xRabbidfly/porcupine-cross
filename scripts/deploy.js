@@ -112,7 +112,8 @@ function testFtpConnection(config) {
       remoteRoot: config.path,
       include: ['test/**'],
       exclude: [],
-      deleteRemote: false
+      deleteRemote: false,
+      forcePasv: true
     };
     
     console.log('Connecting to FTP server...');
@@ -229,7 +230,8 @@ try {
           remoteRoot: config.path,
           include: ['**/*'],
           exclude: [],
-          deleteRemote: false
+          deleteRemote: false,
+          forcePasv: true
         };
         
         console.log('Starting FTP deployment...');

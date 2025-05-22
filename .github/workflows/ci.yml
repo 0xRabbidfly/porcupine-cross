@@ -80,10 +80,17 @@ jobs:
             host: process.env.FTP_SERVER,
             port: 21,
             localRoot: __dirname + '/dist/',
-            remoteRoot: '/public_html/',
+            remoteRoot: '/home/proljlql/public_html/',
             include: ['*', '**/*'],
-            deleteRemote: false
+            exclude: [],
+            deleteRemote: false,
+            forcePasv: true
           };
+          
+          console.log('Starting FTP deployment with configuration:');
+          console.log('Host: ' + config.host);
+          console.log('Username: ' + config.user);
+          console.log('Remote Path: ' + config.remoteRoot);
           
           ftpDeploy.deploy(config)
             .then(res => console.log('Deployment complete!'))
