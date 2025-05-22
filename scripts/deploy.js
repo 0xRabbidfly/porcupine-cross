@@ -7,6 +7,72 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Helper function for cross-platform file copying
+function copyFiles() {
+  console.log('Copying files to dist...');
+  
+  // Create directories
+  if (!fs.existsSync('./dist')) {
+    fs.mkdirSync('./dist', { recursive: true });
+  }
+  
+  if (!fs.existsSync('./dist/css')) {
+    fs.mkdirSync('./dist/css', { recursive: true });
+  }
+  
+  if (!fs.existsSync('./dist/js')) {
+    fs.mkdirSync('./dist/js', { recursive: true });
+  }
+  
+  if (!fs.existsSync('./dist/images')) {
+    fs.mkdirSync('./dist/images', { recursive: true });
+  }
+  
+  // Copy HTML and JS files in the root
+  fs.readdirSync('./').forEach(file => {
+    if (file.endsWith('.html') || file.endsWith('.js')) {
+      fs.copyFileSync(file, `./dist/${file}`);
+    }
+  });
+  
+  // Copy CSS files
+  if (fs.existsSync('./css')) {
+    fs.readdirSync('./css').forEach(file => {
+      fs.copyFileSync(`./css/${file}`, `./dist/css/${file}`);
+    });
+  }
+  
+  // Copy JS files and subdirectories
+  if (fs.existsSync('./js')) {
+    copyDir('./js', './dist/js');
+  }
+  
+  // Copy images
+  if (fs.existsSync('./images')) {
+    copyDir('./images', './dist/images');
+  }
+  
+  console.log('Files copied successfully to dist/');
+}
+
+// Helper function to recursively copy directories
+function copyDir(src, dest) {
+  fs.readdirSync(src).forEach(item => {
+    const srcPath = path.join(src, item);
+    const destPath = path.join(dest, item);
+    
+    const stats = fs.statSync(srcPath);
+    if (stats.isDirectory()) {
+      if (!fs.existsSync(destPath)) {
+        fs.mkdirSync(destPath, { recursive: true });
+      }
+      copyDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
+}
+
 // Configuration for different environments
 const environments = {
   development: {
@@ -17,7 +83,7 @@ const environments = {
   production: {
     description: 'Namecheap production hosting',
     host: 'ftp.yourdomain.com', // Replace with your Namecheap FTP host
-    username: 'yourusername', // Replace with your Namecheap FTP username
+    username: 'yourdomain_username', // Replace with your Namecheap FTP username
     path: '/public_html',
     protocol: 'ftp'
   }
@@ -48,15 +114,7 @@ try {
 
   // Build the project
   console.log('Building project...');
-  
-  // Create dist directory if it doesn't exist (for development)
-  if (!fs.existsSync('./dist')) {
-    fs.mkdirSync('./dist', { recursive: true });
-  }
-  
-  // Copy HTML, CSS, JS files
-  console.log('Copying files to dist...');
-  execSync('cp -r index.html *.js css js images dist/', { stdio: 'inherit' });
+  copyFiles();
 
   // For local development environment
   if (config.isLocal) {
@@ -70,39 +128,39 @@ try {
     if (config.protocol === 'ftp') {
       console.log('Using FTP deployment...');
       
-      // For actual deployment, uncomment and update with your credentials:
-      /*
-      const FtpDeploy = require('ftp-deploy');
-      const ftpDeploy = new FtpDeploy();
-      
-      const ftpConfig = {
-        user: config.username,
-        password: process.env.FTP_PASSWORD, // Store password in environment variable
-        host: config.host,
-        port: 21,
-        localRoot: path.resolve('./dist'),
-        remoteRoot: config.path,
-        include: ['*', '**/*'],
-        deleteRemote: false // Set to true to delete files on the remote that don't exist locally
-      };
-      
-      ftpDeploy.deploy(ftpConfig)
-        .then(res => console.log('Deployment complete!'))
-        .catch(err => {
-          console.error('Deployment failed:', err);
-          process.exit(1);
-        });
-      */
-      
+      // Instructions for actual deployment
       console.log('\nTo complete FTP deployment:');
       console.log('1. Install ftp-deploy: npm install ftp-deploy');
       console.log('2. Set FTP_PASSWORD environment variable with your password');
-      console.log('3. Uncomment the FTP deployment code in this script');
-      console.log('4. Update the FTP configuration with your credentials');
+      console.log('3. Use this code for actual deployment:');
+      console.log(`
+// Deployment code for production:
+const FtpDeploy = require('ftp-deploy');
+const ftpDeploy = new FtpDeploy();
+
+const ftpConfig = {
+  user: '${config.username}',
+  password: process.env.FTP_PASSWORD,
+  host: '${config.host}',
+  port: 21,
+  localRoot: path.resolve('./dist'),
+  remoteRoot: '${config.path}',
+  include: ['**/*'],
+  exclude: [],
+  deleteRemote: false
+};
+
+ftpDeploy.deploy(ftpConfig)
+  .then(res => console.log('Deployment complete!'))
+  .catch(err => {
+    console.error('Deployment failed:', err);
+    process.exit(1);
+  });
+`);
     }
     
     console.log('\nSimulation complete!');
-    console.log('To enable actual deployment, update the script with your credentials and uncomment the deployment code.');
+    console.log('For actual deployment, update this script with your credentials and use the provided code.');
   }
 } catch (error) {
   console.error('Deployment failed:', error.message);
