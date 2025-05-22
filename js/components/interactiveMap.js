@@ -58,40 +58,40 @@ class InteractiveMap {
    */
   alignHotspotsWithImage() {
     if (!this.mapImage || !this.hotspotsContainer || !this.hotspots.length) return;
-    
+
     // Get the actual rendered dimensions of the image
     const imgRect = this.mapImage.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-    
+
     // Calculate offsets between container and actual image
     const leftOffset = imgRect.left - containerRect.left;
     const topOffset = imgRect.top - containerRect.top;
-    
+
     // Set the hotspot container to match exactly the image position and dimensions
     this.hotspotsContainer.style.position = 'absolute';
     this.hotspotsContainer.style.left = `${leftOffset}px`;
     this.hotspotsContainer.style.top = `${topOffset}px`;
     this.hotspotsContainer.style.width = `${imgRect.width}px`;
     this.hotspotsContainer.style.height = `${imgRect.height}px`;
-    
+
     // Force a reflow/repaint to ensure the container dimensions are updated
     this.hotspotsContainer.offsetHeight;
-    
+
     // Additional verification - ensure each hotspot stays within image bounds
     Array.from(this.hotspots).forEach(hotspot => {
       // Ensure the hotspot's position is within the image bounds
-      const left = parseFloat(getComputedStyle(hotspot).left);
-      const top = parseFloat(getComputedStyle(hotspot).top);
-      
+      const left = parseFloat(window.getComputedStyle(hotspot).left);
+      const top = parseFloat(window.getComputedStyle(hotspot).top);
+
       if (isNaN(left) || isNaN(top)) return;
-      
+
       // Constrain to image boundaries if outside
       if (left < 0) hotspot.style.left = '0px';
       if (left > imgRect.width) hotspot.style.left = `${imgRect.width}px`;
       if (top < 0) hotspot.style.top = '0px';
       if (top > imgRect.height) hotspot.style.top = `${imgRect.height}px`;
     });
-    
+
     eventBus.emit('interactiveMap:aligned');
   }
 

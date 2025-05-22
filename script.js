@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to align hotspot container with actual image dimensions
     function alignHotspotsWithImage() {
       if (!courseMap || !mapHotspots) return;
-      
+
       // Get the actual rendered dimensions of the image
       const imgRect = courseMap.getBoundingClientRect();
       const containerRect = courseMap.parentElement.getBoundingClientRect();
@@ -97,16 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Force a reflow/repaint to ensure the container dimensions are updated
       mapHotspots.offsetHeight;
-      
+
       // Ensure each hotspot stays within image bounds
       const hotspotElements = document.querySelectorAll('.hotspot');
       Array.from(hotspotElements).forEach(hotspot => {
         // Ensure the hotspot's position is within the image bounds
-        const left = parseFloat(getComputedStyle(hotspot).left);
-        const top = parseFloat(getComputedStyle(hotspot).top);
-        
+        const left = parseFloat(window.getComputedStyle(hotspot).left);
+        const top = parseFloat(window.getComputedStyle(hotspot).top);
+
         if (isNaN(left) || isNaN(top)) return;
-        
+
         // Constrain to image boundaries if outside
         if (left < 0) hotspot.style.left = '0px';
         if (left > imgRect.width) hotspot.style.left = `${imgRect.width}px`;
