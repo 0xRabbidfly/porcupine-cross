@@ -17,18 +17,20 @@ class AudioManager {
    */
   constructor(options = {}) {
     this.elements = options.elements || {};
-    this.enabled = options.enabled !== undefined ? options.enabled : true;
+    this.enabled = options.enabled !== undefined ? options.enabled : false;
     this.audioPrimed = false;
     this.playbackProbability = options.playbackProbability || 0.4;
-    
-    console.log('AudioManager: constructor', { 
+    this.lastPlayedTime = 0;
+    this.playThrottleMs = options.playThrottleMs || 100; // Minimum ms between sound plays
+
+    console.log('AudioManager: constructor', {
       elements: this.elements,
-      enabled: this.enabled 
+      enabled: this.enabled,
     });
-    
+
     this.init();
   }
-  
+
   /**
    * Initialize the audio manager
    */
@@ -37,10 +39,10 @@ class AudioManager {
     this.setupEventListeners();
     this.setupPriming();
     this.updateIcon();
-    
+
     eventBus.emit('audioManager:initialized', { enabled: this.enabled });
   }
-  
+
   /**
    * Set up event listeners
    */
@@ -56,7 +58,7 @@ class AudioManager {
       console.log('AudioManager: Sound toggle elements not found, skipping');
     }
   }
-  
+
   /**
    * Set up audio priming for mobile compatibility
    */
@@ -67,29 +69,32 @@ class AudioManager {
       console.log('AudioManager: No click sound element, skipping priming');
       return;
     }
-    
+
     // Prime audio on first user interaction for mobile compatibility
     const primeAudio = () => {
       if (!this.audioPrimed && this.elements.clickSound) {
         console.log('AudioManager: Priming audio');
-        this.elements.clickSound.play().then(() => {
-          this.elements.clickSound.pause();
-          this.elements.clickSound.currentTime = 0;
-          this.audioPrimed = true;
-          
-          eventBus.emit('audioManager:primed');
-          console.log('AudioManager: Audio primed successfully');
-        }).catch((err) => {
-          // Silent failure for browsers that block audio
-          console.warn('AudioManager: Failed to prime audio', err);
-        });
+        this.elements.clickSound
+          .play()
+          .then(() => {
+            this.elements.clickSound.pause();
+            this.elements.clickSound.currentTime = 0;
+            this.audioPrimed = true;
+
+            eventBus.emit('audioManager:primed');
+            console.log('AudioManager: Audio primed successfully');
+          })
+          .catch(err => {
+            // Silent failure for browsers that block audio
+            console.warn('AudioManager: Failed to prime audio', err);
+          });
       }
     };
-    
+
     window.addEventListener('touchstart', primeAudio, { once: true });
     window.addEventListener('click', primeAudio, { once: true });
   }
-  
+
   /**
    * Toggle sound enabled/disabled
    * @returns {boolean} New sound enabled state
@@ -98,16 +103,16 @@ class AudioManager {
     console.log('AudioManager: Toggling sound, current:', this.enabled);
     this.enabled = !this.enabled;
     this.updateIcon();
-    
+
     // Play the click sound if we're turning sound on
     if (this.enabled && this.elements.clickSound) {
       this.playSound(this.elements.clickSound);
     }
-    
+
     eventBus.emit('audioManager:toggled', { enabled: this.enabled });
     return this.enabled;
   }
-  
+
   /**
    * Update the sound icon based on current state
    */
@@ -125,7 +130,7 @@ class AudioManager {
       console.log('AudioManager: No sound toggle elements to update');
     }
   }
-  
+
   /**
    * Play a sound with safety checks
    * @param {HTMLAudioElement} soundElement - The audio element to play
@@ -137,22 +142,39 @@ class AudioManager {
       console.log('AudioManager: No sound element provided');
       return null;
     }
-    
+
     if (!this.enabled) {
       console.log('AudioManager: Sound disabled, not playing');
       return null;
     }
-    
-    if (Math.random() >= this.playbackProbability) {
-      console.log('AudioManager: Random check failed, not playing sound');
+
+    // Throttle to prevent multiple triggers within short time period
+    const now = Date.now();
+    const timeSinceLastPlay = now - this.lastPlayedTime;
+    if (timeSinceLastPlay < this.playThrottleMs) {
+      console.log(
+        `AudioManager: Throttled (${timeSinceLastPlay}ms < ${this.playThrottleMs}ms), not playing sound`
+      );
       return null;
     }
-    
+
+    // Check against probability - if random number is GREATER than playbackProbability, don't play
+    const randomValue = Math.random();
+    if (randomValue > this.playbackProbability) {
+      console.log(
+        `AudioManager: Random check failed (${randomValue} > ${this.playbackProbability}), not playing sound`
+      );
+      return null;
+    }
+
     if (soundElement.readyState < 2) {
       console.log('AudioManager: Sound not ready');
       return null;
     }
-    
+
+    // Update last played time
+    this.lastPlayedTime = now;
+
     console.log('AudioManager: Playing sound');
     try {
       soundElement.currentTime = 0;
@@ -167,7 +189,7 @@ class AudioManager {
       return null;
     }
   }
-  
+
   /**
    * Play the click sound
    * @returns {Promise|null} A promise that resolves when the sound is played, or null
@@ -178,7 +200,7 @@ class AudioManager {
     }
     return null;
   }
-  
+
   /**
    * Set sound enabled state
    * @param {boolean} enabled - Whether sound should be enabled
@@ -191,6 +213,22 @@ class AudioManager {
       eventBus.emit('audioManager:toggled', { enabled: this.enabled });
     }
   }
+
+  /**
+   * Get current playback probability
+   * @returns {number} The playback probability (0-1)
+   */
+  getPlaybackProbability() {
+    return this.playbackProbability;
+  }
+
+  /**
+   * Check if sound is enabled
+   * @returns {boolean} True if sound is enabled
+   */
+  isSoundEnabled() {
+    return this.enabled;
+  }
 }
 
-export default AudioManager; 
+export default AudioManager;

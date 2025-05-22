@@ -242,9 +242,16 @@ class App {
     console.log('AudioManager elements:', elements);
     this.components.audioManager = new AudioManager({
       elements,
-      enabled: true,
-      playbackProbability: 0.4,
+      enabled: true, // Start with sound enabled but control still hidden
+      playbackProbability: 0.3, // 30% chance of playing sound when enabled
     });
+
+    // Log initialization status
+    console.log(
+      'AudioManager initialized with probability:',
+      this.components.audioManager.getPlaybackProbability()
+    );
+    console.log('AudioManager sound enabled:', this.components.audioManager.isSoundEnabled());
   }
 
   /**
@@ -261,7 +268,12 @@ class App {
 
     console.log('CountdownTimer elements:', elements);
     if (elements.days && elements.hours && elements.minutes && elements.seconds) {
-      this.components.countdownTimer = new CountdownTimer('September 21, 2025 08:00:00', elements);
+      this.components.countdownTimer = new CountdownTimer('September 21, 2025 08:00:00', elements, {
+        animationClasses: {
+          pulse: 'pulse',
+          tick: 'tick',
+        },
+      });
 
       this.components.countdownTimer.start();
       console.log('CountdownTimer started');

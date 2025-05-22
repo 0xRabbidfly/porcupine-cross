@@ -23,10 +23,10 @@
             <a href="#schedule">Schedule</a>
             <a href="#course">Course</a>
             <a href="tech-guide.pdf" target="_blank">Tech Guide</a>
-            <!-- Add sound toggle button -->
-            <a href="#" id="sound-toggle" class="sound-control" aria-label="Toggle Sound">
-                <i id="sound-icon" class="fa fa-volume-up"></i>
-            </a>
+            <!-- Sound toggle button removed, but keep hidden elements for sound functionality -->
+            <span id="sound-toggle" class="sound-control hidden" style="display: none;" aria-hidden="true">
+                <i id="sound-icon" class="fa fa-volume-mute"></i>
+            </span>
         </nav>
         <div class="audio-promo-container compact">
             <audio id="race-day-audio" controls preload="none">
@@ -167,12 +167,12 @@
     <footer>
         <p>&copy; 2024 Prologue. All rights reserved.</p>
     </footer>
-
-    <!-- Keep only the click sound -->
-    <audio id="click-sound" preload="auto">
+    
+    <!-- Keep only the click sound - no preload/autoplay -->
+    <audio id="click-sound" preload="none">
         <source src="sounds/click.mp3" type="audio/mpeg">
     </audio>
-
+    
     <!-- Load the non-module fallback first -->
     <script src="js/directAnimations.js"></script>
     

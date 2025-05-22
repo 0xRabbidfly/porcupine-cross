@@ -706,19 +706,7 @@ section:not(.visible) {
   opacity: 0;
 }
 
-/* Mud Splatter Particle Styles */
-.mud-particle {
-  position: fixed;
-  background-color: #3b1f04; /* Darker brown for more contrast */
-  border-radius: 50%;
-  pointer-events: none; /* So they don't interfere with other clicks */
-  opacity: 1;
-  transition:
-    transform 0.8s cubic-bezier(0.2, 0.8, 0.7, 1),
-    opacity 0.8s ease-out;
-  z-index: 10000; /* Ensure particles are on TOP of everything */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Add shadow for visibility */
-}
+/* Mud Splatter Particle Styles - moved to animations.css */
 
 /* Interactive Map Styles */
 .interactive-map-container {

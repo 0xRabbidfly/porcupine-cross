@@ -95,6 +95,13 @@ export class CountdownTimer {
 
     // Add animation class on seconds change
     if (seconds !== this.lastSeconds && this.elements.secondsParent) {
+      // First ensure previous animations are cleared
+      this.elements.secondsParent.classList.remove(this.animationClasses.pulse);
+      this.elements.secondsParent.classList.remove(this.animationClasses.tick);
+
+      // Force reflow to ensure animations restart properly
+      void this.elements.secondsParent.offsetHeight;
+
       // Add animation classes
       this.elements.secondsParent.classList.add(this.animationClasses.pulse);
       this.elements.secondsParent.classList.add(this.animationClasses.tick);
