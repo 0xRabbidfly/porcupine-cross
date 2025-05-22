@@ -146,7 +146,7 @@ const environments = {
     description: 'Namecheap production hosting',
     host: 'ftp.prologuecross.ca', // Replace with your Namecheap FTP host
     username: 'rabbidfly@prologuecross.ca', // Replace with your Namecheap FTP username
-    path: '/public_html',
+    path: '/home/proljlql/public_html',
     protocol: 'ftp'
   }
 };
