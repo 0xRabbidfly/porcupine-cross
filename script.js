@@ -1,6 +1,8 @@
 /* global clearInterval, setInterval, IntersectionObserver */
 
-// Future JavaScript code can go here
+// All component initializations have been moved to the modular App class
+// This file remains for backwards compatibility and will be phased out in future versions
+// See js/main.js for the current implementation
 
 // Smooth scrolling for anchor links (optional)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
