@@ -27,10 +27,10 @@ class InteractiveMap {
     this.infoContents = options.infoContents || [];
     this.infoClose = options.infoClose;
     this.mobileThreshold = options.mobileThreshold || 768;
-    
+
     this.init();
   }
-  
+
   /**
    * Initialize the interactive map
    */
@@ -39,20 +39,20 @@ class InteractiveMap {
       console.error('Interactive map: Missing required elements');
       return;
     }
-    
+
     this.setupHotspots();
     this.setupInfoPanel();
     this.alignHotspotsWithImage();
-    
+
     // Set up resize handler
     window.addEventListener('resize', () => this.alignHotspotsWithImage());
-    
+
     // Run alignment when the image is loaded
     this.mapImage.addEventListener('load', () => this.alignHotspotsWithImage());
-    
+
     eventBus.emit('interactiveMap:initialized');
   }
-  
+
   /**
    * Align hotspots container with the actual image dimensions
    */
@@ -61,57 +61,61 @@ class InteractiveMap {
       // Get the actual rendered dimensions of the image
       const imgRect = this.mapImage.getBoundingClientRect();
       const containerRect = this.mapImage.parentElement.getBoundingClientRect();
-      
+
       // Calculate offsets between container and actual image
       const leftOffset = (containerRect.width - imgRect.width) / 2;
       const topOffset = (containerRect.height - imgRect.height) / 2;
-      
-      // Set the hotspot container to match image dimensions
+
+      // Set the hotspot container to match image dimensions exactly
       this.hotspotsContainer.style.left = `${leftOffset}px`;
       this.hotspotsContainer.style.top = `${topOffset}px`;
       this.hotspotsContainer.style.width = `${imgRect.width}px`;
       this.hotspotsContainer.style.height = `${imgRect.height}px`;
-      
+
+      // Force a reflow/repaint to ensure the container dimensions are updated
+      // before any hotspot interactions
+      this.hotspotsContainer.offsetHeight;
+
       eventBus.emit('interactiveMap:aligned');
     }
   }
-  
+
   /**
    * Set up hotspot click handlers
    */
   setupHotspots() {
     if (!this.hotspots.length || !this.infoPanel) return;
-    
+
     this.hotspots.forEach(hotspot => {
-      hotspot.addEventListener('click', (e) => {
+      hotspot.addEventListener('click', e => {
         e.preventDefault();
         this.handleHotspotClick(hotspot);
       });
     });
   }
-  
+
   /**
    * Handle hotspot click
    * @param {HTMLElement} hotspot - Clicked hotspot element
    */
   handleHotspotClick(hotspot) {
     const section = hotspot.getAttribute('data-section');
-    
+
     // Hide all info contents
     this.hideAllInfoContents();
-    
+
     // Show the selected content
     const activeContent = document.getElementById(section);
     if (activeContent) {
       activeContent.classList.add('active');
     }
-    
+
     // Position the info panel
     this.positionInfoPanel(hotspot);
-    
+
     eventBus.emit('interactiveMap:hotspotClicked', { section });
   }
-  
+
   /**
    * Hide all info content panels
    */
@@ -120,7 +124,7 @@ class InteractiveMap {
       content.classList.remove('active');
     });
   }
-  
+
   /**
    * Position the info panel next to a hotspot
    * @param {HTMLElement} hotspot - The hotspot element
@@ -129,47 +133,47 @@ class InteractiveMap {
     // Position the info panel next to the clicked dot
     const rect = hotspot.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-    
+
     // Calculate position relative to the map container
     const left = rect.left - containerRect.left + rect.width / 2;
     const top = rect.top - containerRect.top + rect.height / 2;
     this.infoPanel.style.left = `${left}px`;
     this.infoPanel.style.top = `${top}px`;
-    
+
     // Reset any edge positioning classes
     this.infoPanel.classList.remove('edge-left', 'edge-right', 'edge-top', 'edge-bottom');
-    
+
     // Show the panel first to properly calculate its dimensions
     this.infoPanel.classList.add('visible');
-    
+
     // After panel is visible, check if it's going off screen and adjust if needed
     setTimeout(() => {
       this.adjustInfoPanelPosition();
     }, 10);
   }
-  
+
   /**
    * Adjust info panel position to stay within viewport
    */
   adjustInfoPanelPosition() {
     if (!this.infoPanel.classList.contains('visible')) return;
-    
+
     const panelRect = this.infoPanel.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-    
+
     // Check if we're on mobile
     const isMobile = window.innerWidth <= this.mobileThreshold;
-    
+
     if (isMobile) {
       // For mobile, position handled by CSS
       this.infoPanel.classList.add('edge-bottom');
     } else {
       // Desktop positioning - adjust if panel is going off screen
-      const rightOverflow = (panelRect.right > containerRect.right - 20);
-      const leftOverflow = (panelRect.left < containerRect.left + 20);
-      const topOverflow = (panelRect.top < containerRect.top + 20);
-      const bottomOverflow = (panelRect.bottom > containerRect.bottom - 20);
-      
+      const rightOverflow = panelRect.right > containerRect.right - 20;
+      const leftOverflow = panelRect.left < containerRect.left + 20;
+      const topOverflow = panelRect.top < containerRect.top + 20;
+      const bottomOverflow = panelRect.bottom > containerRect.bottom - 20;
+
       // Apply appropriate edge class based on overflow
       if (rightOverflow) this.infoPanel.classList.add('edge-right');
       if (leftOverflow) this.infoPanel.classList.add('edge-left');
@@ -177,30 +181,32 @@ class InteractiveMap {
       if (bottomOverflow) this.infoPanel.classList.add('edge-bottom');
     }
   }
-  
+
   /**
    * Set up info panel close button and outside click
    */
   setupInfoPanel() {
     if (!this.infoPanel) return;
-    
+
     // Close info panel when clicking X
     if (this.infoClose) {
       this.infoClose.addEventListener('click', () => {
         this.closeInfoPanel();
       });
     }
-    
+
     // Close panel when clicking outside of it
-    document.addEventListener('click', (e) => {
-      if (this.infoPanel.classList.contains('visible') && 
-          !e.target.closest('.map-info-panel') && 
-          !e.target.closest('.hotspot')) {
+    document.addEventListener('click', e => {
+      if (
+        this.infoPanel.classList.contains('visible') &&
+        !e.target.closest('.map-info-panel') &&
+        !e.target.closest('.hotspot')
+      ) {
         this.closeInfoPanel();
       }
     });
   }
-  
+
   /**
    * Close the info panel
    */
@@ -211,7 +217,7 @@ class InteractiveMap {
       eventBus.emit('interactiveMap:panelClosed');
     }
   }
-  
+
   /**
    * Factory method to create an InteractiveMap from selectors
    * @param {Object} selectors - Selector strings for elements
@@ -226,12 +232,12 @@ class InteractiveMap {
       hotspots: '.hotspot',
       infoPanel: '.map-info-panel',
       infoContents: '.info-content',
-      infoClose: '.info-close'
+      infoClose: '.info-close',
     };
-    
+
     // Merge default selectors with provided ones
     const finalSelectors = { ...defaultSelectors, ...selectors };
-    
+
     // Get elements based on selectors
     const container = document.querySelector(finalSelectors.container);
     const mapImage = document.querySelector(finalSelectors.mapImage);
@@ -240,7 +246,7 @@ class InteractiveMap {
     const infoPanel = document.querySelector(finalSelectors.infoPanel);
     const infoContents = getElements(finalSelectors.infoContents);
     const infoClose = document.querySelector(finalSelectors.infoClose);
-    
+
     // Create and return new instance
     return new InteractiveMap({
       container,
@@ -249,9 +255,9 @@ class InteractiveMap {
       hotspots,
       infoPanel,
       infoContents,
-      infoClose
+      infoClose,
     });
   }
 }
 
-export default InteractiveMap; 
+export default InteractiveMap;

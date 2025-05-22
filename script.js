@@ -87,11 +87,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const leftOffset = (containerRect.width - imgRect.width) / 2;
         const topOffset = (containerRect.height - imgRect.height) / 2;
 
-        // Set the hotspot container to match image dimensions and position
+        // Set the hotspot container to match image dimensions and position exactly
         mapHotspots.style.left = `${leftOffset}px`;
         mapHotspots.style.top = `${topOffset}px`;
         mapHotspots.style.width = `${imgRect.width}px`;
         mapHotspots.style.height = `${imgRect.height}px`;
+
+        // Force a reflow/repaint to ensure the container dimensions are updated
+        mapHotspots.offsetHeight;
       }
     }
 
