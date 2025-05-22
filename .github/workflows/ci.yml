@@ -61,7 +61,10 @@ jobs:
     - name: Build project
       run: |
         mkdir -p dist
-        cp -r index.html *.js css js images dist/
+        # Copy main files, exclude development config files
+        cp index.html favicon.ico style.css script.js dist/
+        # Copy directories
+        cp -r css js images dist/
     
     - name: Deploy to production
       env:
@@ -98,7 +101,7 @@ jobs:
             host: process.env.FTP_SERVER,
             port: 21,
             localRoot: __dirname + '/dist/',
-            remoteRoot: '/public_html/',
+            remoteRoot: '/',
             include: ['*', '**/*'],
             exclude: [],
             deleteRemote: false,

@@ -30,7 +30,10 @@ function copyFiles() {
   
   // Copy HTML and JS files in the root
   fs.readdirSync('./').forEach(file => {
-    if (file.endsWith('.html') || file.endsWith('.js')) {
+    // Include HTML, main JS files, and favicon
+    if (file.endsWith('.html') || 
+        (file.endsWith('.js') && !['babel.config.js', 'eslint.config.js', '.eslintrc.js', 'debug.js'].includes(file)) || 
+        file === 'favicon.ico') {
       fs.copyFileSync(file, `./dist/${file}`);
     }
   });
@@ -160,7 +163,7 @@ const environments = {
     description: 'Namecheap production hosting',
     host: 'server228.web-hosting.com', // Namecheap server address
     username: 'rabbidfly@prologuecross.ca', // Subdomain FTP account
-    path: '/public_html',
+    path: '/',
     protocol: 'ftpes', // Using FTPES (explicit SSL)
     secure: true
   }
