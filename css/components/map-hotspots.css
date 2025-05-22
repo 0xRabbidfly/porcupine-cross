@@ -30,6 +30,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  box-sizing: content-box;
 }
 
 /* Hotspot positioning from data attributes */
@@ -37,23 +38,23 @@
   position: absolute;
 }
 
-/* Position each hotspot using their data-position values */
-.hotspot[data-section="start-finish"] {
+/* Position each hotspot using percentage coordinates relative to the map-hotspots container */
+.hotspot[data-section='start-finish'] {
   top: 52%;
   left: 65%;
 }
 
-.hotspot[data-section="sand-pit"] {
+.hotspot[data-section='sand-pit'] {
   top: 40%;
   left: 88%;
 }
 
-.hotspot[data-section="run-up"] {
+.hotspot[data-section='run-up'] {
   top: 37%;
   left: 25%;
 }
 
-.hotspot[data-section="technical"] {
+.hotspot[data-section='technical'] {
   top: 40%;
   left: 50%;
 }
@@ -89,27 +90,39 @@
   height: 15px;
   background-color: var(--theme-red, #e73e3a);
   border-radius: 50%;
-  box-shadow: 0 0 0 2px white, 0 0 8px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow:
+    0 0 0 2px white,
+    0 0 8px rgba(0, 0, 0, 0.5);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .hotspot:hover .hotspot-dot,
 .hotspot:focus .hotspot-dot {
   transform: scale(1.1);
-  box-shadow: 0 0 0 3px white, 0 0 12px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 0 3px white,
+    0 0 12px rgba(0, 0, 0, 0.6);
   animation: pulse 1.5s infinite;
 }
 
 /* Pulse animation for hotspots */
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 3px white, 0 0 8px rgba(0, 0, 0, 0.5);
+    box-shadow:
+      0 0 0 3px white,
+      0 0 8px rgba(0, 0, 0, 0.5);
   }
   50% {
-    box-shadow: 0 0 0 3px white, 0 0 15px rgba(231, 62, 58, 0.8);
+    box-shadow:
+      0 0 0 3px white,
+      0 0 15px rgba(231, 62, 58, 0.8);
   }
   100% {
-    box-shadow: 0 0 0 3px white, 0 0 8px rgba(0, 0, 0, 0.5);
+    box-shadow:
+      0 0 0 3px white,
+      0 0 8px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -126,7 +139,9 @@
   z-index: 10;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
   pointer-events: none;
 }
 
@@ -193,16 +208,16 @@
     width: 24px;
     height: 24px;
   }
-  
+
   .hotspot-dot {
     width: 12px;
     height: 12px;
   }
-  
+
   .map-info-panel {
     left: 50% !important;
     transform: translateX(-50%) !important;
     width: calc(100% - 40px);
     max-width: 100%;
   }
-} 
+}
