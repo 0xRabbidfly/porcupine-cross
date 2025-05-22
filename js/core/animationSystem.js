@@ -6,10 +6,10 @@
  */
 
 // Feature detection - use safer checks to avoid linter errors
-// Note: We'll determine module support at runtime instead of static check
 const supportsPromises = typeof Promise !== 'undefined';
 const supportsTransitions = typeof window !== 'undefined' && 'ontransitionend' in window;
 const supportsAnimations = typeof window !== 'undefined' && 'onanimationend' in window;
+const supportsCssVariables = typeof window !== 'undefined' && window.CSS && window.CSS.supports && window.CSS.supports('--custom: value');
 
 /**
  * AnimationSystem - Singleton pattern
@@ -19,6 +19,20 @@ const AnimationSystem = (function() {
   const queue = [];
   let isProcessing = false;
   let lastId = 0;
+  const activeAnimations = new Map();
+  
+  // Animation types registry
+  const animationTypes = {
+    'fade-in': { cssClass: 'fade-in', duration: 300 },
+    'fade-out': { cssClass: 'fade-out', duration: 300 },
+    'slide-in-left': { cssClass: 'slide-in-left', duration: 300 },
+    'slide-in-right': { cssClass: 'slide-in-right', duration: 300 },
+    'slide-in-top': { cssClass: 'slide-in-top', duration: 300 },
+    'slide-in-bottom': { cssClass: 'slide-in-bottom', duration: 300 },
+    'bounce': { cssClass: 'bounce', duration: 300 },
+    'mud-splat': { cssClass: 'mud-splat', duration: 900 },
+    'mud-splat-viewport': { cssClass: 'mud-splat-viewport', duration: 800 }
+  };
   
   // Detect module support
   const detectModuleSupport = () => {
@@ -87,8 +101,102 @@ const AnimationSystem = (function() {
     return particle;
   };
   
+  // Add event listener with proper event cleanup
+  const addAnimationEndListener = (element, callback, options = {}) => {
+    const { duration = 500, type = 'animation', once = true } = options;
+    
+    let eventName;
+    if (type === 'animation' && supportsAnimations) {
+      eventName = 'animationend';
+    } else if (type === 'transition' && supportsTransitions) {
+      eventName = 'transitionend';
+    }
+    
+    // If proper event is supported, use it
+    if (eventName) {
+      element.addEventListener(eventName, callback, { once });
+      return () => element.removeEventListener(eventName, callback);
+    }
+    
+    // Fallback to timeout
+    const timeoutId = setTimeout(callback, duration);
+    return () => clearTimeout(timeoutId);
+  };
+  
   // Public API
   return {
+    // Animation registry
+    animations: animationTypes,
+    
+    /**
+     * Register a new animation type
+     * @param {string} name - Animation name
+     * @param {Object} config - Animation configuration
+     * @returns {this} For chaining
+     */
+    registerAnimation(name, config) {
+      if (!name || typeof name !== 'string') {
+        console.error('Animation name must be a string');
+        return this;
+      }
+      
+      animationTypes[name] = {
+        cssClass: config.cssClass || name,
+        duration: config.duration || 300,
+        ...config
+      };
+      
+      return this;
+    },
+    
+    /**
+     * Run a named animation on an element
+     * @param {HTMLElement} element - Element to animate
+     * @param {string} animationName - Name of the animation to run
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    animate(element, animationName, options = {}) {
+      if (!element || !(element instanceof HTMLElement)) {
+        return Promise.reject(new Error('Valid HTMLElement required'));
+      }
+      
+      if (!animationName || !animationTypes[animationName]) {
+        return Promise.reject(new Error(`Unknown animation: ${animationName}`));
+      }
+      
+      const animationConfig = animationTypes[animationName];
+      const animationId = generateId();
+      
+      return new Promise((resolve) => {
+        // Track this animation
+        activeAnimations.set(animationId, { element, config: animationConfig });
+        
+        // Apply CSS variables if supported and provided
+        if (supportsCssVariables && options.variables) {
+          Object.entries(options.variables).forEach(([key, value]) => {
+            element.style.setProperty(`--${key}`, value);
+          });
+        }
+        
+        // Add animation class
+        element.classList.add('animate', animationConfig.cssClass);
+        
+        // Set up cleanup
+        const cleanup = () => {
+          element.classList.remove('animate', animationConfig.cssClass);
+          activeAnimations.delete(animationId);
+          resolve();
+        };
+        
+        // Add event listener
+        addAnimationEndListener(element, cleanup, {
+          duration: options.duration || animationConfig.duration,
+          type: options.type || 'animation'
+        });
+      });
+    },
+    
     /**
      * Create mud splat effect at a specific element
      * @param {HTMLElement} element - Element to create splat at
@@ -153,13 +261,11 @@ const AnimationSystem = (function() {
             }
           };
           
-          // Listen for animation end
-          if (supportsAnimations) {
-            particle.addEventListener('animationend', cleanup, { once: true });
-          } else {
-            // Fallback to timeout
-            setTimeout(cleanup, 900);
-          }
+          // Add event listener
+          addAnimationEndListener(particle, cleanup, {
+            duration: 900,
+            type: 'animation'
+          });
         }
       });
     },
@@ -229,13 +335,11 @@ const AnimationSystem = (function() {
             }
           };
           
-          // Listen for animation end
-          if (supportsAnimations) {
-            particle.addEventListener('animationend', cleanup, { once: true });
-          } else {
-            // Fallback to timeout
-            setTimeout(cleanup, 800);
-          }
+          // Add event listener
+          addAnimationEndListener(particle, cleanup, {
+            duration: 800,
+            type: 'animation'
+          });
         }
       });
     },
@@ -251,26 +355,122 @@ const AnimationSystem = (function() {
         return this;
       }
       
-      const animation = {
-        id: generateId(),
+      const id = generateId();
+      queue.push({
+        id,
         execute: () => {
-          return Promise.resolve().then(animationFn);
+          return Promise.resolve().then(() => animationFn());
         }
-      };
+      });
       
-      queue.push(animation);
-      processQueue();
+      // Start processing if not already
+      if (!isProcessing) {
+        processQueue();
+      }
+      
       return this;
     },
     
     /**
-     * Feature detection for progressive enhancement
+     * Apply a fade-in animation to an element
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
      */
-    supports: {
-      modules: detectModuleSupport(),
-      promises: supportsPromises,
-      transitions: supportsTransitions,
-      animations: supportsAnimations
+    fadeIn(element, options = {}) {
+      return this.animate(element, 'fade-in', options);
+    },
+    
+    /**
+     * Apply a fade-out animation to an element
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    fadeOut(element, options = {}) {
+      return this.animate(element, 'fade-out', options);
+    },
+    
+    /**
+     * Apply a slide-in animation from the left
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    slideInLeft(element, options = {}) {
+      return this.animate(element, 'slide-in-left', options);
+    },
+    
+    /**
+     * Apply a slide-in animation from the right
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    slideInRight(element, options = {}) {
+      return this.animate(element, 'slide-in-right', options);
+    },
+    
+    /**
+     * Apply a slide-in animation from the top
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    slideInTop(element, options = {}) {
+      return this.animate(element, 'slide-in-top', options);
+    },
+    
+    /**
+     * Apply a slide-in animation from the bottom
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    slideInBottom(element, options = {}) {
+      return this.animate(element, 'slide-in-bottom', options);
+    },
+    
+    /**
+     * Apply a bounce animation to an element
+     * @param {HTMLElement} element - Element to animate
+     * @param {Object} options - Animation options
+     * @returns {Promise} Animation completion promise
+     */
+    bounce(element, options = {}) {
+      return this.animate(element, 'bounce', options);
+    },
+    
+    /**
+     * Cancel all active animations on an element
+     * @param {HTMLElement} element - Element to cancel animations for
+     * @returns {this} For chaining
+     */
+    cancelAnimations(element) {
+      if (!element) return this;
+      
+      activeAnimations.forEach((animation, id) => {
+        if (animation.element === element) {
+          element.classList.remove('animate', animation.config.cssClass);
+          activeAnimations.delete(id);
+        }
+      });
+      
+      return this;
+    },
+    
+    /**
+     * Check if the browser supports modern animation features
+     * @returns {Object} Object with support flags
+     */
+    getSupportInfo() {
+      return {
+        promises: supportsPromises,
+        transitions: supportsTransitions,
+        animations: supportsAnimations,
+        cssVariables: supportsCssVariables,
+        modules: detectModuleSupport()
+      };
     }
   };
 })();
