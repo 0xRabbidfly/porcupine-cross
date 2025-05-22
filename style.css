@@ -519,9 +519,13 @@ footer {
         animation: fadeInMenu 0.3s ease-in-out;
     }
     nav#main-nav.open {
-        display: flex; 
+        display: flex !important; /* Force display */
         flex-direction: column;
         align-items: flex-start;
+        opacity: 1;
+        visibility: visible;
+        height: auto;
+        transform: translateY(0);
     }
     nav#main-nav a { font-size: 0.9rem; padding: 0.8rem 1.8rem; width: 100%; border-bottom: 1px solid #eee; text-align: left; }
     nav#main-nav a:last-child { border-bottom: none; }

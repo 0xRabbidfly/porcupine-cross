@@ -194,19 +194,132 @@ class App {
       if (menuToggle && mainNav) {
         console.log('Setting up mobile menu toggle');
         
-        menuToggle.addEventListener('click', (e) => {
+        // State management with animation protection
+        this.isMenuOpen = false;
+        let isAnimating = false;
+        
+        // Open menu with animation support
+        this.openMenu = () => {
+          if (isAnimating || this.isMenuOpen) return;
+          
+          isAnimating = true;
+          this.isMenuOpen = true;
+          
+          // Add classes first for visibility
+          mainNav.classList.add('open');
+          menuToggle.classList.add('open');
+          menuToggle.setAttribute('aria-expanded', 'true');
+          
+          // Force menu visibility with inline styles
+          mainNav.style.display = 'block';
+          mainNav.style.visibility = 'visible';
+          mainNav.style.opacity = '1';
+          mainNav.style.height = 'auto';
+          
+          // Clear animation state after transition completes
+          setTimeout(() => {
+            isAnimating = false;
+          }, 300);
+        };
+        
+        // Close menu with animation support
+        this.closeMenu = () => {
+          if (isAnimating || !this.isMenuOpen) return;
+          
+          isAnimating = true;
+          this.isMenuOpen = false;
+          
+          mainNav.classList.remove('open');
+          menuToggle.classList.remove('open');
+          menuToggle.setAttribute('aria-expanded', 'false');
+          
+          // Remove forced inline styles
+          mainNav.style.display = '';
+          mainNav.style.visibility = '';
+          mainNav.style.opacity = '';
+          mainNav.style.height = '';
+          
+          // Clear animation state after transition completes
+          setTimeout(() => {
+            isAnimating = false;
+          }, 300);
+        };
+        
+        // Toggle menu with proper event handling
+        const handleMenuToggleClick = (e) => {
           e.preventDefault();
-          this.isMenuOpen = !this.isMenuOpen;
+          e.stopPropagation();
           
           if (this.isMenuOpen) {
-            mainNav.classList.add('open');
-            menuToggle.classList.add('open');
+            this.closeMenu();
           } else {
-            mainNav.classList.remove('open');
-            menuToggle.classList.remove('open');
+            this.openMenu();
           }
-          
-          menuToggle.setAttribute('aria-expanded', this.isMenuOpen ? 'true' : 'false');
+        };
+        
+        menuToggle.addEventListener('click', handleMenuToggleClick);
+        
+        // Prevent clicks inside menu from closing it
+        mainNav.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'A') {
+            e.stopPropagation();
+          }
+        });
+        
+        // Close on outside clicks
+        document.addEventListener('click', (e) => {
+          if (this.isMenuOpen && 
+              !isAnimating && 
+              !mainNav.contains(e.target) && 
+              !menuToggle.contains(e.target)) {
+            this.closeMenu();
+          }
+        });
+        
+        // Set up menu links with advanced animations for mobile
+        const menuLinks = mainNav.querySelectorAll('a[href^="#"]');
+        menuLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            // Only add special handling on mobile
+            if (window.innerWidth <= 768) {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              const href = link.getAttribute('href');
+              
+              // Create viewport-wide mud splat on mobile
+              try {
+                // Check which animation method is available
+                if (typeof window.createViewportWideMudSplat === 'function') {
+                  window.createViewportWideMudSplat(true);
+                } 
+                else if (typeof window.createParticlesDirectly === 'function') {
+                  window.createParticlesDirectly(true);
+                }
+                else {
+                  // Try local variable as last resort
+                  createViewportWideMudSplat(true);
+                }
+              } catch (error) {
+                console.error('Animation error:', error);
+              }
+              
+              // Play click sound
+              if (this.components.audioManager) {
+                this.components.audioManager.playClickSound();
+              }
+              
+              // Close menu with a delay to let animation play
+              setTimeout(() => {
+                this.closeMenu();
+              }, 300);
+              
+              // Navigate after delay to show animation
+              setTimeout(() => {
+                window.location.hash = href;
+              }, 800);
+            }
+          });
         });
       }
     } catch (error) {
@@ -322,5 +435,8 @@ const app = new App();
 // Auto-initialize if loaded as a module
 console.log('Auto-initializing app');
 app.init();
+
+// Export app globally for debugging
+window.app = app;
 
 export default app; 

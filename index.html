@@ -171,6 +171,49 @@
         <source src="sounds/click.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Load the non-module fallback first -->
+    <script src="js/directAnimations.js"></script>
+    
+    <!-- Load our animation bridge to expose functions -->
+    <script type="module" src="js/animationBridge.js"></script>
+    
+    <!-- Force menu visibility with inline styles -->
+    <style>
+      /* Force mobile menu to be visible when open */
+      @media (max-width: 768px) {
+        nav#main-nav.open {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          position: absolute !important;
+          top: 60px !important;
+          left: 0 !important;
+          width: 100% !important;
+          background-color: white !important;
+          z-index: 9999 !important;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+          padding-top: 10px !important;
+          padding-bottom: 10px !important;
+          height: auto !important;
+        }
+        
+        /* Ensure nav links are visible */
+        nav#main-nav.open a {
+          display: block !important;
+          padding: 12px 20px !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          text-align: left !important;
+          font-size: 16px !important;
+          border-bottom: 1px solid #eee !important;
+        }
+        
+        nav#main-nav.open a:last-child {
+          border-bottom: none !important;
+        }
+      }
+    </style>
+    
     <!-- Load our modular JavaScript -->
     <script type="module" src="js/main.js"></script>
 </body>

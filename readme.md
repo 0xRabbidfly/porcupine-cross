@@ -35,6 +35,14 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Refactor code to improve testability
 - Aim for 100% code coverage
 
+### Phase 5.5: UI Refactoring & CSS Best Practices
+- Implement proper CSS architecture for UI components
+- Refactor mobile menu using CSS best practices
+- Enhance animation framework with unified API
+- Fix event handling and propagation issues
+- Replace timeout-based animations with CSS transitions
+- Implement proper state management for UI components
+
 ### Phase 6: CI/CD Integration
 - Set up GitHub Actions for automated testing
 - Configure pre-commit hooks for test verification
@@ -82,6 +90,40 @@ A testable, modular implementation of the Prologue Cyclocross Race website.
 - Improved domUtils utility test coverage from 20% to 47%
 - Fixed failing tests and implemented robust mocks
 - Reached an overall coverage improvement from 39% to 44%
+- Identified and implemented critical fixes for mobile menu functionality
+- Created animation bridge for ES module and non-module environments
+
+### Phase 5.5: UI Refactoring & CSS Best Practices (Planned)
+- Identified CSS best practices violations in current implementation
+- Documented technical debt from expedient mobile menu/animation fixes
+- Planned comprehensive refactoring of UI components architecture
+- Created scope for animation framework enhancement
+
+## Details: Phase 5.5 UI Refactoring & CSS Best Practices
+
+After addressing critical mobile menu and animation issues, we've identified the need for a dedicated refactoring phase to implement proper CSS/JS architecture:
+
+### Mobile Menu Refactoring:
+- Separate state management (JS) from presentation (CSS)
+- Replace direct style manipulation with CSS class toggles
+- Implement proper CSS transitions using transform/opacity instead of display/visibility
+- Add transition event listeners to replace setTimeout-based animation locks
+- Fix event propagation issues with proper event delegation
+
+### CSS Architecture Improvements:
+- Create a proper state machine for UI components with clear state transitions
+- Use transform-based animations for better performance
+- Implement the checkbox hack for simple UI toggles where appropriate
+- Establish a documented z-index scale to prevent stacking context issues
+- Use pointer-events strategically to manage interaction during animations
+
+### Animation Framework Enhancement:
+- Refactor animation bridge to follow singleton pattern
+- Create unified API for animations that works in both module and non-module contexts
+- Implement animation queue to prevent animation conflicts
+- Add feature detection for progressive enhancement
+
+This phase will fix the technical debt introduced by expedient hotfixes and establish a solid foundation for future UI components.
 
 ## Current Test Coverage
 
