@@ -12,12 +12,14 @@
   margin: 2rem auto;
   border-radius: 8px;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
 
 /* Map image */
 .course-map {
   display: block;
-  width: 100%;
+  max-width: 100%;
   height: auto;
   border-radius: 8px;
 }
@@ -132,22 +134,22 @@
 
 /* Edge positioning for the info panel */
 .map-info-panel.edge-left {
-  left: 20px !important;
+  left: 5% !important;
   transform: translateY(0) translateX(0);
 }
 
 .map-info-panel.edge-right {
-  right: 20px !important;
+  right: 5% !important;
   left: auto !important;
   transform: translateY(0) translateX(0);
 }
 
 .map-info-panel.edge-top {
-  top: 20px !important;
+  top: 5% !important;
 }
 
 .map-info-panel.edge-bottom {
-  bottom: 20px !important;
+  bottom: 5% !important;
   top: auto !important;
 }
 

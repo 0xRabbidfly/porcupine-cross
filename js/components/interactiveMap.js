@@ -58,31 +58,30 @@ class InteractiveMap {
    */
   alignHotspotsWithImage() {
     if (!this.mapImage || !this.hotspotsContainer || !this.hotspots.length) return;
-    
+
     // Get the actual rendered dimensions and position of the image
     const imgRect = this.mapImage.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-    
-    // Calculate offsets between container and actual image
+
+    // Calculate the image's position relative to its container (accounts for centering)
     const leftOffset = imgRect.left - containerRect.left;
-    const topOffset = imgRect.top - containerRect.top;
-    
+
     // Set the hotspot container to exactly match the image size and position
     this.hotspotsContainer.style.position = 'absolute';
     this.hotspotsContainer.style.left = `${leftOffset}px`;
-    this.hotspotsContainer.style.top = `${topOffset}px`;
+    this.hotspotsContainer.style.top = '0';
     this.hotspotsContainer.style.width = `${imgRect.width}px`;
     this.hotspotsContainer.style.height = `${imgRect.height}px`;
-    
+
     // Now position each hotspot directly using its percentage-based position data
     Array.from(this.hotspots).forEach(hotspot => {
       const section = hotspot.getAttribute('data-section');
       let percentX = 0;
       let percentY = 0;
-      
+
       // Get the percentage positions based on data-section
       // These values should match what's in the CSS
-      switch(section) {
+      switch (section) {
         case 'start-finish':
           percentX = 65;
           percentY = 52;
@@ -104,19 +103,15 @@ class InteractiveMap {
           percentX = parseFloat(hotspot.getAttribute('data-x') || 50);
           percentY = parseFloat(hotspot.getAttribute('data-y') || 50);
       }
-      
-      // Convert percentages to pixels within the image dimensions
-      const pixelX = (percentX / 100) * imgRect.width;
-      const pixelY = (percentY / 100) * imgRect.height;
-      
-      // Force the hotspot to this exact pixel position
-      hotspot.style.left = `${pixelX}px`;
-      hotspot.style.top = `${pixelY}px`;
+
+      // Position using percentages rather than absolute pixels
+      hotspot.style.left = `${percentX}%`;
+      hotspot.style.top = `${percentY}%`;
     });
-    
+
     // Force a reflow/repaint to ensure the positions are updated
     this.hotspotsContainer.offsetHeight;
-    
+
     eventBus.emit('interactiveMap:aligned');
   }
 
@@ -177,8 +172,13 @@ class InteractiveMap {
     // Calculate position relative to the map container
     const left = rect.left - containerRect.left + rect.width / 2;
     const top = rect.top - containerRect.top + rect.height / 2;
-    this.infoPanel.style.left = `${left}px`;
-    this.infoPanel.style.top = `${top}px`;
+
+    // Position as percentage of container width/height
+    const percentX = (left / containerRect.width) * 100;
+    const percentY = (top / containerRect.height) * 100;
+
+    this.infoPanel.style.left = `${percentX}%`;
+    this.infoPanel.style.top = `${percentY}%`;
 
     // Reset any edge positioning classes
     this.infoPanel.classList.remove('edge-left', 'edge-right', 'edge-top', 'edge-bottom');
