@@ -45,4 +45,7 @@ Desktop.ini
 *~
 
 # Debug files
-debug.js 
+debug.js
+
+# Ignore all .exe files
+*.exe 
