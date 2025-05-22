@@ -37,33 +37,7 @@
   overflow: visible;
 }
 
-/* Hotspot positioning from data attributes */
-.hotspot[data-position] {
-  position: absolute;
-}
-
-/* Position each hotspot using percentage coordinates relative to the map-hotspots container */
-.hotspot[data-section='start-finish'] {
-  top: 52%;
-  left: 65%;
-}
-
-.hotspot[data-section='sand-pit'] {
-  top: 40%;
-  left: 88%;
-}
-
-.hotspot[data-section='run-up'] {
-  top: 37%;
-  left: 25%;
-}
-
-.hotspot[data-section='technical'] {
-  top: 40%;
-  left: 50%;
-}
-
-/* Hotspot base styles */
+/* Hotspot positioning */
 .hotspot {
   position: absolute;
   background: transparent;

@@ -58,40 +58,65 @@ class InteractiveMap {
    */
   alignHotspotsWithImage() {
     if (!this.mapImage || !this.hotspotsContainer || !this.hotspots.length) return;
-
-    // Get the actual rendered dimensions of the image
+    
+    // Get the actual rendered dimensions and position of the image
     const imgRect = this.mapImage.getBoundingClientRect();
     const containerRect = this.container.getBoundingClientRect();
-
+    
     // Calculate offsets between container and actual image
     const leftOffset = imgRect.left - containerRect.left;
     const topOffset = imgRect.top - containerRect.top;
-
-    // Set the hotspot container to match exactly the image position and dimensions
+    
+    // Set the hotspot container to exactly match the image size and position
     this.hotspotsContainer.style.position = 'absolute';
     this.hotspotsContainer.style.left = `${leftOffset}px`;
     this.hotspotsContainer.style.top = `${topOffset}px`;
     this.hotspotsContainer.style.width = `${imgRect.width}px`;
     this.hotspotsContainer.style.height = `${imgRect.height}px`;
-
-    // Force a reflow/repaint to ensure the container dimensions are updated
-    this.hotspotsContainer.offsetHeight;
-
-    // Additional verification - ensure each hotspot stays within image bounds
+    
+    // Now position each hotspot directly using its percentage-based position data
     Array.from(this.hotspots).forEach(hotspot => {
-      // Ensure the hotspot's position is within the image bounds
-      const left = parseFloat(window.getComputedStyle(hotspot).left);
-      const top = parseFloat(window.getComputedStyle(hotspot).top);
-
-      if (isNaN(left) || isNaN(top)) return;
-
-      // Constrain to image boundaries if outside
-      if (left < 0) hotspot.style.left = '0px';
-      if (left > imgRect.width) hotspot.style.left = `${imgRect.width}px`;
-      if (top < 0) hotspot.style.top = '0px';
-      if (top > imgRect.height) hotspot.style.top = `${imgRect.height}px`;
+      const section = hotspot.getAttribute('data-section');
+      let percentX = 0;
+      let percentY = 0;
+      
+      // Get the percentage positions based on data-section
+      // These values should match what's in the CSS
+      switch(section) {
+        case 'start-finish':
+          percentX = 65;
+          percentY = 52;
+          break;
+        case 'sand-pit':
+          percentX = 88;
+          percentY = 40;
+          break;
+        case 'run-up':
+          percentX = 25;
+          percentY = 37;
+          break;
+        case 'technical':
+          percentX = 50;
+          percentY = 40;
+          break;
+        default:
+          // Try to read from data attributes if available
+          percentX = parseFloat(hotspot.getAttribute('data-x') || 50);
+          percentY = parseFloat(hotspot.getAttribute('data-y') || 50);
+      }
+      
+      // Convert percentages to pixels within the image dimensions
+      const pixelX = (percentX / 100) * imgRect.width;
+      const pixelY = (percentY / 100) * imgRect.height;
+      
+      // Force the hotspot to this exact pixel position
+      hotspot.style.left = `${pixelX}px`;
+      hotspot.style.top = `${pixelY}px`;
     });
-
+    
+    // Force a reflow/repaint to ensure the positions are updated
+    this.hotspotsContainer.offsetHeight;
+    
     eventBus.emit('interactiveMap:aligned');
   }
 
