@@ -73,6 +73,68 @@ function copyDir(src, dest) {
   });
 }
 
+// Add this function after copyDir function
+function testFtpConnection(config) {
+  console.log('Testing FTP connection...');
+  
+  try {
+    const FtpDeploy = require('ftp-deploy');
+    const ftpDeploy = new FtpDeploy();
+    
+    if (!process.env.FTP_PASSWORD) {
+      console.error('FTP_PASSWORD environment variable is not set.');
+      console.log('Please set it using:');
+      console.log('$env:FTP_PASSWORD = "your-password"  # For Windows PowerShell');
+      console.log('export FTP_PASSWORD="your-password"  # For Mac/Linux');
+      return false;
+    }
+    
+    const testDir = path.join(__dirname, '..', 'dist', 'test');
+    
+    // Create test directory and file for FTP testing
+    if (!fs.existsSync(path.join(__dirname, '..', 'dist'))) {
+      fs.mkdirSync(path.join(__dirname, '..', 'dist'), { recursive: true });
+    }
+    
+    if (!fs.existsSync(testDir)) {
+      fs.mkdirSync(testDir, { recursive: true });
+    }
+    
+    const testFile = path.join(testDir, 'connection-test.txt');
+    fs.writeFileSync(testFile, 'FTP connection test');
+    
+    const ftpConfig = {
+      user: config.username,
+      password: process.env.FTP_PASSWORD,
+      host: config.host,
+      port: 21,
+      localRoot: path.join(__dirname, '..', 'dist'),
+      remoteRoot: config.path,
+      include: ['test/**'],
+      exclude: [],
+      deleteRemote: false
+    };
+    
+    console.log('Connecting to FTP server...');
+    console.log(`Host: ${config.host}`);
+    console.log(`Username: ${config.username}`);
+    console.log(`Remote path: ${config.path}`);
+    
+    return ftpDeploy.deploy(ftpConfig)
+      .then(() => {
+        console.log('FTP connection successful!');
+        return true;
+      })
+      .catch((err) => {
+        console.error('FTP connection test failed:', err);
+        return false;
+      });
+  } catch (error) {
+    console.error('Failed to test FTP connection:', error.message);
+    return false;
+  }
+}
+
 // Configuration for different environments
 const environments = {
   development: {
@@ -82,8 +144,8 @@ const environments = {
   },
   production: {
     description: 'Namecheap production hosting',
-    host: 'ftp.yourdomain.com', // Replace with your Namecheap FTP host
-    username: 'yourdomain_username', // Replace with your Namecheap FTP username
+    host: 'ftp.prologuecross.ca', // Replace with your Namecheap FTP host
+    username: 'rabbidfly@prologuecross.ca', // Replace with your Namecheap FTP username
     path: '/public_html',
     protocol: 'ftp'
   }
@@ -128,35 +190,56 @@ try {
     if (config.protocol === 'ftp') {
       console.log('Using FTP deployment...');
       
-      // Instructions for actual deployment
-      console.log('\nTo complete FTP deployment:');
-      console.log('1. Install ftp-deploy: npm install ftp-deploy');
-      console.log('2. Set FTP_PASSWORD environment variable with your password');
-      console.log('3. Use this code for actual deployment:');
-      console.log(`
-// Deployment code for production:
-const FtpDeploy = require('ftp-deploy');
-const ftpDeploy = new FtpDeploy();
-
-const ftpConfig = {
-  user: '${config.username}',
-  password: process.env.FTP_PASSWORD,
-  host: '${config.host}',
-  port: 21,
-  localRoot: path.resolve('./dist'),
-  remoteRoot: '${config.path}',
-  include: ['**/*'],
-  exclude: [],
-  deleteRemote: false
-};
-
-ftpDeploy.deploy(ftpConfig)
-  .then(res => console.log('Deployment complete!'))
-  .catch(err => {
-    console.error('Deployment failed:', err);
-    process.exit(1);
-  });
-`);
+      // Check if this is a test run
+      const isTest = args.includes('--test');
+      
+      if (isTest) {
+        console.log('Running in test mode - only testing connection...');
+        testFtpConnection(config)
+          .then(success => {
+            if (success) {
+              console.log('\nTest successful! FTP credentials work correctly.');
+              console.log('You can now commit your changes and push to GitHub.');
+            } else {
+              console.error('\nFTP connection test failed. Please check your credentials.');
+            }
+          })
+          .catch(() => {
+            console.error('\nFTP connection test failed. Please check your credentials.');
+          });
+      } else {
+        // Add actual deployment code here - modify existing code to use this:
+        const FtpDeploy = require('ftp-deploy');
+        const ftpDeploy = new FtpDeploy();
+        
+        if (!process.env.FTP_PASSWORD) {
+          console.error('FTP_PASSWORD environment variable is not set.');
+          console.log('Please set it using:');
+          console.log('$env:FTP_PASSWORD = "your-password"  # For Windows PowerShell');
+          console.log('export FTP_PASSWORD="your-password"  # For Mac/Linux');
+          process.exit(1);
+        }
+        
+        const ftpConfig = {
+          user: config.username,
+          password: process.env.FTP_PASSWORD,
+          host: config.host,
+          port: 21,
+          localRoot: path.resolve('./dist'),
+          remoteRoot: config.path,
+          include: ['**/*'],
+          exclude: [],
+          deleteRemote: false
+        };
+        
+        console.log('Starting FTP deployment...');
+        ftpDeploy.deploy(ftpConfig)
+          .then(res => console.log('Deployment complete!'))
+          .catch(err => {
+            console.error('Deployment failed:', err);
+            process.exit(1);
+          });
+      }
     }
     
     console.log('\nSimulation complete!');
