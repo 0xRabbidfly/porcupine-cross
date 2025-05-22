@@ -101,7 +101,20 @@ function testFtpConnection(config) {
     }
     
     const testFile = path.join(testDir, 'connection-test.txt');
-    fs.writeFileSync(testFile, 'FTP connection test');
+    fs.writeFileSync(testFile, 'FTP connection test ' + new Date().toISOString());
+    
+    // Add debug listeners
+    ftpDeploy.on('uploaded', function(data) {
+      console.log('Uploaded: ' + data.filename);
+    });
+    
+    ftpDeploy.on('upload-error', function(data) {
+      console.log('Upload error: ' + data.filename + ' - ' + data.err);
+    });
+    
+    ftpDeploy.on('log', function(data) {
+      console.log('Log: ' + data);
+    });
     
     const ftpConfig = {
       user: config.username,
@@ -119,7 +132,7 @@ function testFtpConnection(config) {
     console.log('Connecting to FTP server...');
     console.log(`Host: ${config.host}`);
     console.log(`Username: ${config.username}`);
-    console.log(`Remote path: ${config.path}`);
+    console.log(`Remote path: ${config.path || '(default FTP directory)'}`);
     
     return ftpDeploy.deploy(ftpConfig)
       .then(() => {
@@ -147,7 +160,7 @@ const environments = {
     description: 'Namecheap production hosting',
     host: 'ftp.prologuecross.ca', // Replace with your Namecheap FTP host
     username: 'rabbidfly@prologuecross.ca', // Replace with your Namecheap FTP username
-    path: '/public_html',
+    path: '',
     protocol: 'ftp'
   }
 };
@@ -221,6 +234,19 @@ try {
           process.exit(1);
         }
         
+        // Add debug listeners
+        ftpDeploy.on('uploaded', function(data) {
+          console.log('Uploaded: ' + data.filename);
+        });
+        
+        ftpDeploy.on('upload-error', function(data) {
+          console.log('Upload error: ' + data.filename + ' - ' + data.err);
+        });
+        
+        ftpDeploy.on('log', function(data) {
+          console.log('Log: ' + data);
+        });
+        
         const ftpConfig = {
           user: config.username,
           password: process.env.FTP_PASSWORD,
@@ -235,6 +261,7 @@ try {
         };
         
         console.log('Starting FTP deployment...');
+        console.log(`Configuration: Host=${config.host}, User=${config.username}, RemotePath=${config.path || '(default)'}`);
         ftpDeploy.deploy(ftpConfig)
           .then(res => console.log('Deployment complete!'))
           .catch(err => {
