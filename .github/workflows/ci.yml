@@ -73,9 +73,6 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
         npm install ftp-deploy
-        echo "Creating test file for deployment..."
-        mkdir -p dist
-        echo "Test deployment $(date)" > dist/test.html
         
         echo "Starting deployment with debug mode..."
         node -e "
