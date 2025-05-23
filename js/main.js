@@ -172,26 +172,22 @@ class App {
       console.log('Setting up mud splats for', desktopNavLinks.length, 'nav links');
 
       addEventListeners(desktopNavLinks, 'click', event => {
-        const href = event.currentTarget.getAttribute('href');
+        // Always trigger mud splat for nav links
+        if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
+          // For mobile menu, create a viewport-wide splat
+          AnimationSystem.createViewportSplat({ mobile: true });
+        } else if (window.innerWidth > 768) {
+          // For desktop, create individual splat
+          AnimationSystem.createMudSplat(event.currentTarget);
+        }
 
-        // Only trigger mud splatter for internal anchor links
-        if (href && href.startsWith('#')) {
-          if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
-            // For mobile menu, create a viewport-wide splat
-            AnimationSystem.createViewportSplat({ mobile: true });
-          } else if (window.innerWidth > 768) {
-            // For desktop, create individual splat
-            AnimationSystem.createMudSplat(event.currentTarget);
-          }
+        if (this.components.audioManager) {
+          this.components.audioManager.playClickSound();
+        }
 
-          if (this.components.audioManager) {
-            this.components.audioManager.playClickSound();
-          }
-
-          // Tactile feedback if available
-          if (window.navigator && window.navigator.vibrate) {
-            window.navigator.vibrate([10, 30, 10]);
-          }
+        // Tactile feedback if available
+        if (window.navigator && window.navigator.vibrate) {
+          window.navigator.vibrate([10, 30, 10]);
         }
       });
 
