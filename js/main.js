@@ -148,6 +148,10 @@ class App {
       const desktopNavLinks = getElements('nav#main-nav a');
 
       addEventListeners(desktopNavLinks, 'click', event => {
+        // Prevent double-firing if handled by mobile menu
+        if (window.innerWidth <= 768 && this.components.mobileMenu?.menu?.contains(event.target)) {
+          return;
+        }
         // Always trigger mud splat for nav links
         if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
           // For mobile menu, create a viewport-wide splat
@@ -158,6 +162,7 @@ class App {
         }
 
         if (this.components.audioManager) {
+          this.components.audioManager.primeAudio();
           this.components.audioManager.playClickSound();
         }
 
@@ -363,6 +368,7 @@ class App {
       elements,
       enabled: true, // Start with sound enabled but control still hidden
       playbackProbability: 0.3, // 30% chance of playing sound when enabled
+      playThrottleMs: 1000, // 1 second between sounds
     });
   }
 

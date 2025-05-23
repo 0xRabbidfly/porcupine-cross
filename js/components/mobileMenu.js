@@ -127,8 +127,9 @@ class MobileMenu {
         window.AnimationSystem.createViewportSplat();
       }
 
-      // Play click sound if available
-      if (window.app && window.app.components.audioManager) {
+      // Prime audio and play click sound if available and only for user-initiated events
+      if (event.isTrusted && window.app && window.app.components.audioManager) {
+        window.app.components.audioManager.primeAudio();
         window.app.components.audioManager.playClickSound();
       }
 

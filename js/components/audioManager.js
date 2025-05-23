@@ -53,31 +53,7 @@ class AudioManager {
    * Set up audio priming for mobile compatibility
    */
   setupPriming() {
-    // Only setup priming if we have click sound
-    if (!this.elements.clickSound) {
-      return;
-    }
-
-    // Prime audio on first user interaction for mobile compatibility
-    const primeAudio = () => {
-      if (!this.audioPrimed && this.elements.clickSound) {
-        this.elements.clickSound
-          .play()
-          .then(() => {
-            this.elements.clickSound.pause();
-            this.elements.clickSound.currentTime = 0;
-            this.audioPrimed = true;
-
-            eventBus.emit('audioManager:primed');
-          })
-          .catch(() => {
-            // Silent failure for browsers that block audio
-          });
-      }
-    };
-
-    window.addEventListener('touchstart', primeAudio, { once: true });
-    window.addEventListener('click', primeAudio, { once: true });
+    // No global priming; handled in click handlers
   }
 
   /**
@@ -165,6 +141,12 @@ class AudioManager {
    */
   playClickSound() {
     if (this.elements.clickSound) {
+      console.info(
+        'playClickSound called, enabled:',
+        this.enabled,
+        'audioPrimed:',
+        this.audioPrimed
+      );
       return this.playSound(this.elements.clickSound);
     }
     return null;
@@ -196,6 +178,25 @@ class AudioManager {
    */
   isSoundEnabled() {
     return this.enabled;
+  }
+
+  /**
+   * Prime audio for mobile compatibility (should be called on real user interaction)
+   */
+  primeAudio() {
+    if (!this.audioPrimed && this.elements.clickSound) {
+      this.elements.clickSound
+        .play()
+        .then(() => {
+          this.elements.clickSound.pause();
+          this.elements.clickSound.currentTime = 0;
+          this.audioPrimed = true;
+          eventBus.emit('audioManager:primed');
+        })
+        .catch(() => {
+          // Silent failure for browsers that block audio
+        });
+    }
   }
 }
 

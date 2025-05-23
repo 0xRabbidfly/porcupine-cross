@@ -140,84 +140,6 @@ describe('AudioManager', () => {
     });
   });
 
-  describe('setupPriming', () => {
-    test('should set up event listeners for audio priming when click sound exists', () => {
-      audioManager = new AudioManager({ elements: mockElements });
-
-      // Manually call to test just this method
-      audioManager.setupPriming();
-
-      expect(window.addEventListener).toHaveBeenCalledWith('touchstart', expect.any(Function), {
-        once: true,
-      });
-      expect(window.addEventListener).toHaveBeenCalledWith('click', expect.any(Function), {
-        once: true,
-      });
-    });
-
-    test('should not set up priming when click sound does not exist', () => {
-      audioManager = new AudioManager({
-        elements: { soundToggle: mockSoundToggle, soundIcon: mockSoundIcon },
-      });
-
-      // Manually call to test just this method
-      audioManager.setupPriming();
-
-      expect(window.addEventListener).not.toHaveBeenCalled();
-    });
-
-    test('should prime audio on user interaction', () => {
-      audioManager = new AudioManager({ elements: mockElements });
-
-      // Get the priming function
-      audioManager.setupPriming();
-      const primeAudioFn = window.addEventListener.mock.calls[0][1];
-
-      // Call the priming function
-      primeAudioFn();
-
-      expect(mockClickSound.play).toHaveBeenCalled();
-    });
-
-    test('should handle audio priming success', async () => {
-      audioManager = new AudioManager({ elements: mockElements });
-
-      // Get the priming function
-      audioManager.setupPriming();
-      const primeAudioFn = window.addEventListener.mock.calls[0][1];
-
-      // Call the priming function
-      await primeAudioFn();
-
-      expect(mockClickSound.pause).toHaveBeenCalled();
-      expect(mockClickSound.currentTime).toBe(0);
-      expect(audioManager.audioPrimed).toBe(true);
-      expect(eventBus.emit).toHaveBeenCalledWith('audioManager:primed');
-    });
-
-    test('should handle audio priming failure', async () => {
-      // Skip this test for now until we can fix it properly
-      // This prevents the test suite from failing while we move forward with other tests
-      console.warn = jest.fn(); // Mock console.warn directly
-
-      // Mock the AudioManager implementation to force a warning
-      const originalMethod = AudioManager.prototype.setupPriming;
-      AudioManager.prototype.setupPriming = function () {
-        // Force a warning to occur
-        console.warn('AudioManager: Failed to prime audio', new Error('Mocked error'));
-      };
-
-      // Create a new AudioManager to trigger the warning
-      new AudioManager({ elements: mockElements });
-
-      // Verify that warn was called
-      expect(console.warn).toHaveBeenCalled();
-
-      // Restore the original implementation
-      AudioManager.prototype.setupPriming = originalMethod;
-    });
-  });
-
   describe('toggleSound', () => {
     test('should toggle sound on to off', () => {
       audioManager = new AudioManager({
@@ -518,6 +440,18 @@ describe('AudioManager', () => {
       audioManager.setEnabled(true);
 
       expect(audioManager.isSoundEnabled()).toBe(true);
+    });
+  });
+
+  describe('primeAudio', () => {
+    test('should prime audio and set audioPrimed to true', async () => {
+      audioManager = new AudioManager({ elements: mockElements });
+      audioManager.audioPrimed = false;
+      await audioManager.primeAudio();
+      expect(mockClickSound.play).toHaveBeenCalled();
+      expect(mockClickSound.pause).toHaveBeenCalled();
+      expect(mockClickSound.currentTime).toBe(0);
+      expect(audioManager.audioPrimed).toBe(true);
     });
   });
 });

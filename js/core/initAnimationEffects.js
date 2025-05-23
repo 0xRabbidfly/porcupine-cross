@@ -10,6 +10,7 @@ export function initAnimationEffects(app) {
     });
     const desktopNavLinks = app.getElements('nav#main-nav a');
     app.addEventListeners(desktopNavLinks, 'click', event => {
+      if (!event.isTrusted) return;
       if (window.innerWidth <= 768 && app.components.mobileMenu?.getState().isOpen) {
         app.AnimationSystem.createViewportSplat({ mobile: true });
       } else if (window.innerWidth > 768) {
