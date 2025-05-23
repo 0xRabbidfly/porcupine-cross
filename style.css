@@ -1066,70 +1066,60 @@ nav#main-nav a[aria-current='page'] .menu-icon {
   align-items: center;
   justify-content: center;
   background: var(--forest-green);
-  border: 3px solid #ffb300;
-  color: #fff200;
+  border: 3px solid #ffc107;
+  color: #ffc107;
   border-radius: 50%;
   width: 54px;
   height: 54px;
   font-size: 2.1rem;
-  box-shadow:
-    0 2px 10px rgba(44, 62, 80, 0.18),
-    0 0 0 4px #ffe066 inset;
+  box-shadow: 0 2px 10px rgba(44, 62, 80, 0.18);
   cursor: pointer;
   margin-right: 10px;
   transition:
     background 0.18s,
     color 0.18s,
-    box-shadow 0.18s,
     border-color 0.18s,
+    box-shadow 0.18s,
     transform 0.15s;
   outline: none;
   position: relative;
   z-index: 1;
+  animation: play-btn-pulse 1.2s infinite;
 }
 .audio-play-btn:focus,
 .audio-play-btn:hover {
-  background: var(--forest-green);
-  color: #fff200;
-  border-color: #ffd600;
-  box-shadow:
-    0 4px 18px rgba(255, 193, 7, 0.22),
-    0 0 0 6px #ffe066 inset;
+  background: #ffc107;
+  color: var(--forest-green);
+  border-color: var(--forest-green);
+  box-shadow: 0 4px 18px rgba(255, 193, 7, 0.22);
   transform: scale(1.08);
 }
 .audio-play-btn:active {
-  background: var(--forest-green);
-  color: #fff;
-  border-color: #ffb300;
+  background: #ffc107;
+  color: var(--forest-green);
+  border-color: var(--forest-green);
   transform: scale(0.96);
 }
 .audio-play-btn i.fas.fa-play,
 .audio-play-btn i.fas.fa-pause {
-  color: #fff200;
+  color: inherit;
   filter: none;
   opacity: 1;
-  font-size: 1.4em;
+  font-size: 0.9em;
   animation: icon-pulse-yellow 1.2s infinite;
+  align-self: center;
+  justify-self: center;
 }
-@keyframes icon-pulse-yellow {
+@keyframes play-btn-pulse {
   0% {
-    color: #fffde7;
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
   }
-  25% {
-    color: #ffe066;
-  }
-  50% {
-    color: #ffd600;
-  }
-  75% {
-    color: #ffc107;
+  70% {
+    box-shadow: 0 0 0 12px rgba(255, 193, 7, 0);
   }
   100% {
-    color: #fffde7;
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
   }
-}
-.audio-play-btn::before {
-  display: none !important;
 }
 
 /* --- Section grid utility for two-column layouts --- */
@@ -1291,4 +1281,30 @@ nav#main-nav {
   transition:
     filter 0.25s ease-out,
     transform 0.25s ease-out;
+}
+
+.exodus-frame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111;
+  border: 6px solid #6b4f36;
+  border-radius: 16px;
+  padding: 10px 18px;
+  margin: 0 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  min-width: 120px;
+  min-height: 60px;
+}
+.sponsor-logo.center {
+  background: none !important;
+  max-width: 110px;
+  max-height: 48px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  filter: none !important;
+  opacity: 1 !important;
 }
