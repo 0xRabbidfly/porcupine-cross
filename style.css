@@ -733,7 +733,8 @@ section:not(.visible) {
 }
 
 .interactive-map-container:hover .course-map {
-  transform: scale(1.02);
+  /* Remove transform on hover so the map never lifts or moves */
+  transform: none !important;
 }
 
 .map-hotspots {
