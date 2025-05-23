@@ -1,7 +1,18 @@
+/* eslint-disable no-undef */
+/* eslint-env jest */
 import app from '../../js/main.js';
 import eventBus from '../../js/core/eventBus.js';
 
 describe('App Integration', () => {
+  beforeAll(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+  afterAll(() => {
+    console.error.mockRestore();
+    console.warn.mockRestore();
+  });
+
   beforeEach(() => {
     // Set up minimal DOM for all components
     document.body.innerHTML = `

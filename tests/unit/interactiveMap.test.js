@@ -10,6 +10,8 @@ if (typeof globalThis.KeyboardEvent === 'undefined') {
   };
 }
 
+import InteractiveMap from '../../js/components/interactiveMap.js';
+
 describe('Interactive Map', () => {
   let hotspots, infoPanel, closeButton, infoContents;
 
@@ -33,6 +35,16 @@ describe('Interactive Map', () => {
     infoPanel = document.querySelector('.map-info-panel');
     closeButton = document.querySelector('.info-close');
     infoContents = document.querySelectorAll('.info-content');
+    // Instantiate InteractiveMap so event listeners are attached
+    new InteractiveMap({
+      container: document.querySelector('.interactive-map-container'),
+      mapImage: document.querySelector('.course-map'),
+      hotspotsContainer: document.querySelector('.map-hotspots'),
+      hotspots,
+      infoPanel,
+      infoContents,
+      infoClose: closeButton,
+    });
   });
 
   test('hotspots have correct ARIA labels', () => {
@@ -86,5 +98,16 @@ describe('Interactive Map', () => {
     // Simulate effect
     infoPanel.classList.remove('visible');
     expect(infoPanel.classList.contains('visible')).toBe(false);
+  });
+
+  test('clicking a hotspot shows the info panel and activates correct info content', () => {
+    // Simulate click on the second hotspot
+    hotspots[1].click();
+    // The info panel should be visible
+    expect(infoPanel.classList.contains('visible')).toBe(true);
+    // The correct info content should be active
+    expect(infoContents[1].classList.contains('active')).toBe(true);
+    // All other info contents should not be active
+    expect(infoContents[0].classList.contains('active')).toBe(false);
   });
 });

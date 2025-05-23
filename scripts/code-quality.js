@@ -39,8 +39,7 @@ try {
   try {
     execSync('npm run lint', { stdio: 'inherit' });
     // console.log(`${colors.green}✓ ESLint check passed${colors.reset}\n`);
-  } catch (error) {
-    // console.log(`${colors.red}✗ ESLint check failed${colors.reset}\n`);
+  } catch {
     hasErrors = true;
   }
 
@@ -67,8 +66,7 @@ try {
     } else {
       // console.log(`${colors.yellow}! Could not find coverage summary${colors.reset}\n`);
     }
-  } catch (error) {
-    // console.log(`${colors.red}✗ Test coverage check failed${colors.reset}\n`);
+  } catch {
     hasErrors = true;
   }
 
@@ -77,28 +75,22 @@ try {
   try {
     const output = execSync('npm outdated --json', { encoding: 'utf8' });
     const outdated = output.trim() === '' ? {} : JSON.parse(output);
-    const outdatedCount = Object.keys(outdated).length;
-
-    if (outdatedCount > 0) {
-      // console.log(`${colors.yellow}! Found ${outdatedCount} outdated dependencies${colors.reset}`);
-      // console.log('Run npm outdated for details\n');
-    } else {
-      // console.log(`${colors.green}✓ All dependencies up to date${colors.reset}\n`);
+    if (Object.keys(outdated).length > 0) {
+      // Optionally handle outdated dependencies
     }
-  } catch (error) {
-    // npm outdated returns exit code 1 when outdated packages are found
-    if (error.status === 1) {
+  } catch (err) {
+    if (err.status === 1) {
       try {
-        const output = error.stdout.toString();
+        const output = err.stdout.toString();
         const outdated = JSON.parse(output);
-        const outdatedCount = Object.keys(outdated).length;
-        // console.log(`${colors.yellow}! Found ${outdatedCount} outdated dependencies${colors.reset}`);
-        // console.log('Run npm outdated for details\n');
-      } catch (e) {
-        // console.log(`${colors.yellow}! Could not parse outdated dependencies${colors.reset}\n`);
+        if (Object.keys(outdated).length > 0) {
+          // Optionally handle outdated dependencies
+        }
+      } catch {
+        // Optionally handle parse error
       }
     } else {
-      // console.log(`${colors.yellow}! Could not check for outdated dependencies${colors.reset}\n`);
+      // Optionally handle other errors
     }
   }
 
@@ -109,7 +101,7 @@ try {
     // console.log(`${colors.red}======================================${colors.reset}\n`);
     throw new Error('Code quality check failed');
   }
-} catch (error) {
+} catch {
   // console.error(`${colors.red}An unexpected error occurred:${colors.reset}`, error);
   throw new Error('An unexpected error occurred');
 }

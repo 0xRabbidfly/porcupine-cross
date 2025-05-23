@@ -89,6 +89,9 @@ class InteractiveMap {
 
     this.hotspots.forEach(hotspot => {
       hotspot.setAttribute('tabindex', '0');
+      hotspot.addEventListener('click', () => {
+        this.handleHotspotClick(hotspot);
+      });
       hotspot.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();

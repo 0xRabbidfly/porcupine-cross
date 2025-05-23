@@ -1,11 +1,19 @@
-export default {
+/* eslint-disable */
+module.exports = {
   env: {
     browser: true,
     es6: true,
     node: true,
     jest: true,
   },
-  ignorePatterns: ['dist/', 'coverage/', 'scripts/', 'babel.config.js', '.eslintrc.js'],
+  ignorePatterns: [
+    'dist/',
+    'coverage/',
+    'scripts/',
+    'babel.config.js',
+    '.eslintrc.js',
+    'eslint.config.js',
+  ],
   extends: ['eslint:recommended', 'plugin:jest/recommended', 'prettier'],
   parserOptions: {
     ecmaVersion: 2020,
@@ -23,6 +31,14 @@ export default {
     require: 'readonly',
     __dirname: 'readonly',
     global: 'readonly',
+    beforeAll: 'readonly',
+    afterAll: 'readonly',
+    beforeEach: 'readonly',
+    afterEach: 'readonly',
+    describe: 'readonly',
+    test: 'readonly',
+    expect: 'readonly',
+    jest: 'readonly',
   },
   rules: {
     'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
