@@ -1110,3 +1110,25 @@ a:focus {
     0 0 0 2px #fff,
     0 0 0 4px #e73e3a;
 }
+
+button,
+.hotspot,
+.info-close,
+.audio-play-btn,
+.cta-button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hotspot,
+.info-close,
+.audio-play-btn {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+@media (max-width: 768px) {
+  .info-close {
+    padding: 8px 12px;
+  }
+}
