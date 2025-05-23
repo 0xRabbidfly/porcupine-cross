@@ -44,7 +44,10 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    color: var(--theme-dark-grey, #333);
+    color: var(--cream) !important;
+    text-shadow:
+      0 2px 8px rgba(44, 62, 80, 0.18),
+      0 1px 0 #0002;
     border-bottom: none;
     text-align: center;
     width: auto;
@@ -74,7 +77,10 @@
   nav#main-nav a:hover,
   nav#main-nav a:focus {
     background-color: rgba(255, 255, 255, 0.08);
-    color: var(--theme-accent-gold);
+    color: var(--theme-accent-gold) !important;
+    text-shadow:
+      0 2px 12px rgba(255, 193, 7, 0.18),
+      0 1px 0 #0002;
     transform: translateX(4px);
     box-shadow: 0 2px 8px rgba(255, 193, 7, 0.08);
   }
@@ -89,7 +95,10 @@
   nav#main-nav a.active,
   nav#main-nav a[aria-current='page'] {
     background-color: rgba(255, 193, 7, 0.13);
-    color: var(--theme-accent-gold);
+    color: var(--theme-accent-gold) !important;
+    text-shadow:
+      0 2px 12px rgba(255, 193, 7, 0.18),
+      0 1px 0 #0002;
     font-weight: 700;
   }
 
@@ -105,6 +114,8 @@
     opacity: 0.8;
     transition: all 0.3s ease;
     position: relative;
+    color: var(--cream) !important;
+    filter: drop-shadow(0 2px 4px #0004);
   }
 
   /* Add mud splatter effect behind icons - like mobile */
@@ -127,11 +138,14 @@
   }
 
   nav#main-nav a:hover .menu-icon,
-  nav#main-nav a:focus .menu-icon {
+  nav#main-nav a:focus .menu-icon,
+  nav#main-nav a.active .menu-icon,
+  nav#main-nav a[aria-current='page'] .menu-icon {
     opacity: 1;
     transform: scale(1.1) rotate(5deg);
     margin-right: 14px;
-    color: var(--theme-red);
+    color: var(--theme-accent-gold) !important;
+    filter: drop-shadow(0 2px 8px #ffc10788);
   }
 
   nav#main-nav a:active .menu-icon {
