@@ -1071,3 +1071,42 @@ nav#main-nav a[aria-current='page'] .menu-icon {
     gap: 24px;
   }
 }
+
+/* Visually hidden skip link, visible on focus */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 10000;
+  background: #fff;
+  color: #222;
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-weight: bold;
+  transition: left 0.2s;
+}
+.skip-link:focus {
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+  outline: 2px solid #e73e3a;
+  outline-offset: 2px;
+}
+
+/* Ensure all buttons and links have a visible focus style */
+button:focus,
+.audio-play-btn:focus,
+.hotspot:focus,
+.info-close:focus,
+a:focus {
+  outline: 2px solid #e73e3a;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #e73e3a;
+}

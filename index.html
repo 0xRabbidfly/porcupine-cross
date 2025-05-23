@@ -16,14 +16,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
     <header>
         <div class="logo-container">
             <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo">
         </div>
-        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false">
+        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false" aria-controls="main-nav">
             <span class="hamburger"></span>
         </a>
-        <nav id="main-nav">
+        <nav id="main-nav" role="navigation" aria-label="Main navigation">
             <a href="#home"><i class="fas fa-home menu-icon"></i>Home</a>
             <a href="#schedule"><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a>
             <a href="#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
@@ -45,7 +46,7 @@
         </div>
     </header>
 
-    <main>
+    <main id="main" role="main">
         <section id="home" class="hero section-grid">
             <div class="hero-bg-side"></div>
             <div class="hero-content-side">
@@ -138,23 +139,23 @@
                 
                 <!-- Overlay hotspots -->
                 <div class="map-hotspots">
-                    <button class="hotspot" data-section="start-finish">
+                    <button class="hotspot" data-section="start-finish" aria-label="Show info for Start/Finish Line">
                         <span class="hotspot-dot"></span>
                     </button>
-                    <button class="hotspot" data-section="sand-pit">
+                    <button class="hotspot" data-section="sand-pit" aria-label="Show info for Sand Pit Challenge">
                         <span class="hotspot-dot"></span>
                     </button>
-                    <button class="hotspot" data-section="run-up">
+                    <button class="hotspot" data-section="run-up" aria-label="Show info for Forest Run-Up">
                         <span class="hotspot-dot"></span>
                     </button>
-                    <button class="hotspot" data-section="technical">
+                    <button class="hotspot" data-section="technical" aria-label="Show info for Technical Descent">
                         <span class="hotspot-dot"></span>
                     </button>
                 </div>
                 
                 <!-- Information panel that appears when clicking hotspots -->
                 <div class="map-info-panel">
-                    <div class="info-close">×</div>
+                    <button class="info-close" aria-label="Close info panel">×</button>
                     <div class="info-content" id="start-finish">
                         <h4>Start/Finish Line</h4>
                         <p>Experience the UCI-style start/finish straight with Eric Prydz's OPUS playing, just like at Koppenbergcross!</p>
