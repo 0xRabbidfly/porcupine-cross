@@ -678,8 +678,25 @@ footer {
 }
 
 .audio-text {
-  font-size: 0.75rem; /* Refined size */
+  font-size: 1.1rem;
+  color: var(--cream);
+  font-weight: 600;
+  text-shadow:
+    0 2px 8px rgba(44, 62, 80, 0.18),
+    0 1px 0 #0002;
+  display: inline;
+  margin-left: 8px;
   white-space: nowrap;
+}
+
+.audio-text .listen-emoji {
+  font-size: 1.5em;
+  color: var(--theme-accent-gold);
+  vertical-align: middle;
+  margin-right: 6px;
+  text-shadow:
+    0 2px 8px rgba(255, 193, 7, 0.18),
+    0 1px 0 #0002;
 }
 
 /* Add a new rule for initial state of section before it becomes visible to have the rotation */
@@ -885,22 +902,6 @@ section:not(.visible) {
     font-size: 18px;
     top: 8px;
     right: 8px;
-  }
-}
-
-/* Add listen emoji spacing */
-.audio-text .listen-emoji {
-  margin-right: 4px;
-  font-size: 1em;
-  vertical-align: middle;
-}
-
-@media (max-width: 768px) {
-  .audio-text {
-    display: inline;
-    font-size: 0.8rem;
-    margin-left: 2px;
-    white-space: nowrap;
   }
 }
 
