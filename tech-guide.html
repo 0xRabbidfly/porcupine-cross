@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Guide | Prologue Cyclocross</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/components/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      .pdf-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        background: var(--cream, #f5f0e6);
+        border-radius: 16px;
+        margin: 60px auto 40px auto;
+        max-width: 900px;
+        box-shadow: 0 4px 24px rgba(44,62,80,0.07);
+        border: 2px dashed var(--theme-accent-gold, #ffc107);
+        padding: 48px 24px;
+      }
+      .pdf-placeholder i {
+        font-size: 3.5rem;
+        color: var(--theme-accent-gold, #ffc107);
+        margin-bottom: 18px;
+      }
+      .pdf-placeholder h2 {
+        color: var(--theme-red, #e73e3a);
+        margin-bottom: 12px;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+      }
+      .pdf-placeholder p {
+        color: var(--theme-dark-grey, #333);
+        font-size: 1.15rem;
+        margin-bottom: 0;
+      }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo">
+        </div>
+        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false">
+            <span class="hamburger"></span>
+        </a>
+        <nav id="main-nav">
+            <a href="index.html#home"><i class="fas fa-home menu-icon"></i>Home</a>
+            <a href="index.html#schedule"><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a>
+            <a href="index.html#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
+            <a href="tech-guide.html" aria-current="page"><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a>
+        </nav>
+        <div class="audio-promo-container compact">
+            <audio id="race-day-audio" controls preload="none">
+                <source src="sounds/crosstoberfest.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <span class="audio-text"><span class="listen-emoji" aria-label="Listen">🎧</span> Course Outline</span>
+        </div>
+    </header>
+    <main>
+      <div class="pdf-placeholder">
+        <i class="fas fa-file-pdf"></i>
+        <h2>Tech Guide Coming Soon</h2>
+        <p>The official Prologue Cyclocross Tech Guide PDF will be available here soon.<br>
+        Please check back closer to the event date!</p>
+      </div>
+    </main>
+    <script src="js/directAnimations.js"></script>
+    <script type="module" src="js/animationBridge.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
