@@ -53,6 +53,7 @@
     transition: all 0.3s ease;
     border-radius: 6px;
     overflow: hidden;
+    text-decoration: none;
   }
 
   /* Left side accent bar (similar to mobile) */
