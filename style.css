@@ -86,6 +86,9 @@ header::after {
 /* Note: Navigation styles moved to component files */
 
 main {
+  display: grid;
+  grid-template-rows: auto;
+  /* No gap, no extra spacing */
 }
 
 section {
@@ -96,6 +99,7 @@ section {
   transition:
     opacity 0.6s ease-out,
     transform 0.7s ease-out;
+  margin: 0;
 }
 
 section.visible {
@@ -106,8 +110,25 @@ section.visible {
     transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* More dynamic easing and duration */
 }
 
+section:first-child {
+  margin-top: 0;
+}
+
 section:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
+}
+
+section + .section-divider.tight {
+  margin-top: 0;
+}
+
+section + .section-divider.tight {
+  margin-bottom: 0;
+}
+
+.section-divider.tight {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 h1,
@@ -125,8 +146,8 @@ section > h2 {
 
 /* Hero Section Styling - Refined */
 .hero {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -141,6 +162,15 @@ section > h2 {
     rgba(255, 255, 255, 0.04) 0 12px,
     transparent 12px 24px
   );
+}
+
+@media (max-width: 900px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 25px 0;
+  }
 }
 
 .hero-bg-side {
@@ -478,6 +508,10 @@ section > h2 {
 
 /* Footer - Refined */
 footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   padding: 30px 20px;
   background: var(--mud-brown);
@@ -917,6 +951,11 @@ section:not(.visible) {
   display: block;
 }
 
+.section-divider.tight {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 nav#main-nav a {
   color: var(--cream) !important;
   text-shadow:
@@ -1015,5 +1054,20 @@ nav#main-nav a[aria-current='page'] .menu-icon {
   }
   #race-day-audio {
     display: none !important;
+  }
+}
+
+/* --- Section grid utility for two-column layouts --- */
+.section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .section-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }

@@ -23,11 +23,6 @@ class AudioManager {
     this.lastPlayedTime = 0;
     this.playThrottleMs = options.playThrottleMs || 100; // Minimum ms between sound plays
 
-    console.log('AudioManager: constructor', {
-      elements: this.elements,
-      enabled: this.enabled,
-    });
-
     this.init();
   }
 
@@ -35,7 +30,6 @@ class AudioManager {
    * Initialize the audio manager
    */
   init() {
-    console.log('AudioManager: init');
     this.setupEventListeners();
     this.setupPriming();
     this.updateIcon();
@@ -47,15 +41,11 @@ class AudioManager {
    * Set up event listeners
    */
   setupEventListeners() {
-    console.log('AudioManager: setupEventListeners');
     // Sound toggle functionality
     if (this.elements.soundToggle && this.elements.soundIcon) {
-      console.log('AudioManager: Setting up sound toggle listener');
       this.elements.soundToggle.addEventListener('click', () => {
         this.toggleSound();
       });
-    } else {
-      console.log('AudioManager: Sound toggle elements not found, skipping');
     }
   }
 
@@ -63,17 +53,14 @@ class AudioManager {
    * Set up audio priming for mobile compatibility
    */
   setupPriming() {
-    console.log('AudioManager: setupPriming');
     // Only setup priming if we have click sound
     if (!this.elements.clickSound) {
-      console.log('AudioManager: No click sound element, skipping priming');
       return;
     }
 
     // Prime audio on first user interaction for mobile compatibility
     const primeAudio = () => {
       if (!this.audioPrimed && this.elements.clickSound) {
-        console.log('AudioManager: Priming audio');
         this.elements.clickSound
           .play()
           .then(() => {
@@ -82,11 +69,9 @@ class AudioManager {
             this.audioPrimed = true;
 
             eventBus.emit('audioManager:primed');
-            console.log('AudioManager: Audio primed successfully');
           })
-          .catch(err => {
+          .catch(() => {
             // Silent failure for browsers that block audio
-            console.warn('AudioManager: Failed to prime audio', err);
           });
       }
     };
@@ -100,7 +85,6 @@ class AudioManager {
    * @returns {boolean} New sound enabled state
    */
   toggleSound() {
-    console.log('AudioManager: Toggling sound, current:', this.enabled);
     this.enabled = !this.enabled;
     this.updateIcon();
 
@@ -118,7 +102,6 @@ class AudioManager {
    */
   updateIcon() {
     if (this.elements.soundIcon && this.elements.soundToggle) {
-      console.log('AudioManager: Updating icon to', this.enabled ? 'enabled' : 'disabled');
       if (this.enabled) {
         this.elements.soundIcon.className = 'fa fa-volume-up';
         this.elements.soundToggle.classList.remove('muted');
@@ -126,8 +109,6 @@ class AudioManager {
         this.elements.soundIcon.className = 'fa fa-volume-mute';
         this.elements.soundToggle.classList.add('muted');
       }
-    } else {
-      console.log('AudioManager: No sound toggle elements to update');
     }
   }
 
@@ -139,12 +120,10 @@ class AudioManager {
   playSound(soundElement) {
     // Only play the sound based on probability and if enabled
     if (!soundElement) {
-      console.log('AudioManager: No sound element provided');
       return null;
     }
 
     if (!this.enabled) {
-      console.log('AudioManager: Sound disabled, not playing');
       return null;
     }
 
@@ -152,40 +131,30 @@ class AudioManager {
     const now = Date.now();
     const timeSinceLastPlay = now - this.lastPlayedTime;
     if (timeSinceLastPlay < this.playThrottleMs) {
-      console.log(
-        `AudioManager: Throttled (${timeSinceLastPlay}ms < ${this.playThrottleMs}ms), not playing sound`
-      );
       return null;
     }
 
     // Check against probability - if random number is GREATER than playbackProbability, don't play
     const randomValue = Math.random();
     if (randomValue > this.playbackProbability) {
-      console.log(
-        `AudioManager: Random check failed (${randomValue} > ${this.playbackProbability}), not playing sound`
-      );
       return null;
     }
 
     if (soundElement.readyState < 2) {
-      console.log('AudioManager: Sound not ready');
       return null;
     }
 
     // Update last played time
     this.lastPlayedTime = now;
 
-    console.log('AudioManager: Playing sound');
     try {
       soundElement.currentTime = 0;
-      return soundElement.play().catch(err => {
+      return soundElement.play().catch(() => {
         // Suppress errors - browser might block autoplay until user interaction
-        console.warn('AudioManager: Sound play prevented:', err);
         return null;
       });
     } catch (err) {
       // Fallback for any errors
-      console.warn('AudioManager: Error playing sound:', err);
       return null;
     }
   }
@@ -207,7 +176,6 @@ class AudioManager {
    */
   setEnabled(enabled) {
     if (this.enabled !== enabled) {
-      console.log('AudioManager: Setting enabled state to', enabled);
       this.enabled = enabled;
       this.updateIcon();
       eventBus.emit('audioManager:toggled', { enabled: this.enabled });

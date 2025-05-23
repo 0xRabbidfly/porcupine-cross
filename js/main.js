@@ -12,9 +12,17 @@ import MobileMenu from './components/mobileMenu.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
 import AnimationSystem from './core/animationSystem.js';
-
-// Log initialization start
-console.log('Main module loaded');
+import { initSectionObserver } from './core/initSectionObserver.js';
+import { initAnimationEffects } from './core/initAnimationEffects.js';
+import { initMobileMenu } from './core/initMobileMenu.js';
+import { createMenuStyleSwitcher } from './core/createMenuStyleSwitcher.js';
+import { showTestNotification } from './core/showTestNotification.js';
+import { initAudioManager } from './core/initAudioManager.js';
+import { initCountdownTimer } from './core/initCountdownTimer.js';
+import { initInteractiveMap } from './core/initInteractiveMap.js';
+import { initSmoothScrolling } from './core/initSmoothScrolling.js';
+import { initHeroAnimation } from './core/initHeroAnimation.js';
+import { setupAudioPlayButton } from './utils/audioUtils.js';
 
 // Application class
 class App {
@@ -22,25 +30,20 @@ class App {
     this.components = {};
     this.initialized = false;
     this.isMenuOpen = false;
-    console.log('App constructed');
   }
 
   /**
    * Initialize the application
    */
   init() {
-    console.log('App.init() called, readyState:', document.readyState);
     // Wait for DOM content to be loaded
     if (document.readyState === 'loading') {
-      console.log('Document still loading, adding DOMContentLoaded listener');
       document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOMContentLoaded fired');
         this.initComponents();
         this.initSectionObserver();
         this.initAnimationEffects();
       });
     } else {
-      console.log('Document already loaded, initializing components directly');
       this.initComponents();
       this.initSectionObserver();
       this.initAnimationEffects();
@@ -56,28 +59,22 @@ class App {
    * Initialize all components
    */
   initComponents() {
-    console.log('initComponents called, initialized:', this.initialized);
     if (this.initialized) return;
 
     try {
       // Initialize AudioManager
-      console.log('Initializing AudioManager');
       this.initAudioManager();
 
       // Initialize CountdownTimer
-      console.log('Initializing CountdownTimer');
       this.initCountdownTimer();
 
       // Initialize InteractiveMap
-      console.log('Initializing InteractiveMap');
       this.initInteractiveMap();
 
       // Initialize Hero Animation
-      console.log('Initializing Hero Animation');
       this.initHeroAnimation();
 
       this.initialized = true;
-      console.log('All components initialized successfully');
       eventBus.emit('app:initialized');
     } catch (error) {
       console.error('Error initializing components:', error);
@@ -89,11 +86,9 @@ class App {
    */
   initSectionObserver() {
     try {
-      console.log('Setting up IntersectionObserver for sections');
       const sections = getElements('section');
 
       if (sections.length === 0) {
-        console.warn('No sections found to observe');
         return;
       }
 
@@ -102,7 +97,6 @@ class App {
       if (heroSection) {
         heroSection.classList.add('visible');
         heroSection.classList.add('loaded');
-        console.log('Hero section made visible');
       }
 
       const observerOptions = {
@@ -115,7 +109,6 @@ class App {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
-            console.log(`Section ${entry.target.id || 'unknown'} made visible`);
 
             // Optional: stop observing once animated to improve performance
             observer.unobserve(entry.target);
@@ -133,11 +126,8 @@ class App {
       sections.forEach(section => {
         if (section.id !== 'home') {
           sectionObserver.observe(section);
-          console.log(`Now observing section: ${section.id || 'unknown'}`);
         }
       });
-
-      console.log('Section observer setup complete');
 
       // Keep a reference to the observer to prevent garbage collection
       this.components.sectionObserver = sectionObserver;
@@ -151,14 +141,11 @@ class App {
    */
   initAnimationEffects() {
     try {
-      console.log('Setting up animation effects');
-
       // Set up mobile menu toggle
       this.initMobileMenu();
 
       // Add mud splatter to CTA buttons
       const ctaButtons = getElements('.cta-button');
-      console.log('Setting up mud splats for', ctaButtons.length, 'CTA buttons');
 
       addEventListeners(ctaButtons, 'click', event => {
         AnimationSystem.createMudSplat(event.currentTarget);
@@ -169,7 +156,6 @@ class App {
 
       // Add mud splatter to desktop nav links
       const desktopNavLinks = getElements('nav#main-nav a');
-      console.log('Setting up mud splats for', desktopNavLinks.length, 'nav links');
 
       addEventListeners(desktopNavLinks, 'click', event => {
         // Always trigger mud splat for nav links
@@ -190,8 +176,6 @@ class App {
           window.navigator.vibrate([10, 30, 10]);
         }
       });
-
-      console.log('Animation effects setup complete');
     } catch (error) {
       console.error('Error setting up animation effects:', error);
     }
@@ -222,8 +206,6 @@ class App {
 
       // Create animation style switcher (visible only in development)
       this.createMenuStyleSwitcher();
-
-      console.log('Mobile menu component initialized');
     } catch (error) {
       console.error('Error setting up mobile menu:', error);
     }
@@ -317,8 +299,6 @@ class App {
       // Append the elements to the body
       document.head.appendChild(styleElement);
       document.body.appendChild(styleSwitcher);
-
-      console.log('Menu style switcher created (development only)');
     } catch (error) {
       console.error('Error creating menu style switcher:', error);
     }
@@ -389,7 +369,6 @@ class App {
       soundIcon: getElement('sound-icon'),
     };
 
-    console.log('AudioManager elements:', elements);
     this.components.audioManager = new AudioManager({
       elements,
       enabled: true, // Start with sound enabled but control still hidden
@@ -416,7 +395,6 @@ class App {
       secondsParent: getElement('countdown-seconds')?.parentElement,
     };
 
-    console.log('CountdownTimer elements:', elements);
     if (elements.days && elements.hours && elements.minutes && elements.seconds) {
       this.components.countdownTimer = new CountdownTimer('September 21, 2025 08:00:00', elements, {
         animationClasses: {
@@ -426,7 +404,6 @@ class App {
       });
 
       this.components.countdownTimer.start();
-      console.log('CountdownTimer started');
     } else {
       console.warn('CountdownTimer elements not found');
     }
@@ -438,7 +415,6 @@ class App {
   initInteractiveMap() {
     try {
       this.components.interactiveMap = InteractiveMap.createFromSelectors();
-      console.log('InteractiveMap created');
     } catch (error) {
       console.error('Error creating InteractiveMap:', error);
     }
@@ -450,7 +426,6 @@ class App {
   initSmoothScrolling() {
     try {
       const anchorLinks = getElements('a[href^="#"]');
-      console.log('Setting up smooth scrolling for', anchorLinks.length, 'anchor links');
 
       addEventListeners(anchorLinks, 'click', e => {
         e.preventDefault();
@@ -494,7 +469,6 @@ class App {
   initHeroAnimation() {
     try {
       const heroSection = getElement('home');
-      console.log('Setting up hero animation for', heroSection ? '#home' : 'none found');
 
       if (heroSection) {
         // Use AnimationSystem to fade in the hero section
@@ -502,8 +476,6 @@ class App {
           duration: 500,
           variables: { '--hero-opacity': '1' },
         });
-
-        console.log('Hero section animation applied');
       }
     } catch (error) {
       console.error('Error setting up hero animation:', error);
@@ -515,63 +487,11 @@ class App {
 const app = new App();
 
 // Auto-initialize if loaded as a module
-console.log('Auto-initializing app');
 app.init();
 
 // Export app globally for debugging
 window.app = app;
 
 export default app;
-
-// Custom audio play button logic for menu
-function setupAudioPlayButton() {
-  const playBtn = document.querySelector('.audio-play-btn');
-  const audio = document.getElementById('race-day-audio');
-  if (!playBtn || !audio) return;
-
-  let isPlaying = false;
-
-  function updateIcon() {
-    playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
-    playBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
-  }
-
-  playBtn.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.play();
-      isPlaying = true;
-    } else {
-      audio.pause();
-      isPlaying = false;
-    }
-    updateIcon();
-  });
-
-  // Keyboard accessibility
-  playBtn.addEventListener('keydown', e => {
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      playBtn.click();
-    }
-  });
-
-  // Update icon if audio ends
-  audio.addEventListener('ended', () => {
-    isPlaying = false;
-    updateIcon();
-  });
-
-  // Sync icon if paused by other means
-  audio.addEventListener('pause', () => {
-    isPlaying = false;
-    updateIcon();
-  });
-  audio.addEventListener('play', () => {
-    isPlaying = true;
-    updateIcon();
-  });
-
-  updateIcon();
-}
 
 document.addEventListener('DOMContentLoaded', setupAudioPlayButton);

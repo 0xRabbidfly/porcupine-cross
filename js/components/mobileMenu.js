@@ -65,8 +65,6 @@ class MobileMenu {
 
     // Setup menu links
     this.setupMenuLinks();
-
-    console.log('Mobile menu initialized');
   }
 
   /**
@@ -156,13 +154,6 @@ class MobileMenu {
       return;
     }
 
-    console.log(
-      'MobileMenu: Transition ended, current state:',
-      this.state.isOpen ? 'open' : 'closed',
-      'isAnimating:',
-      this.state.isAnimating
-    );
-
     this.state.isAnimating = false;
 
     // Emit completion event based on state
@@ -204,7 +195,6 @@ class MobileMenu {
     // This ensures the menu can be interacted with again even if transitionend fails
     this._clearAnimationTimeout();
     this._animationTimeout = setTimeout(() => {
-      console.log('MobileMenu: Animation timeout fired (open)');
       if (this.state.isAnimating) {
         this.state.isAnimating = false;
         eventBus.emit('mobileMenu:transitionComplete', { isOpen: true });
@@ -232,7 +222,6 @@ class MobileMenu {
     // This ensures the menu can be interacted with again even if transitionend fails
     this._clearAnimationTimeout();
     this._animationTimeout = setTimeout(() => {
-      console.log('MobileMenu: Animation timeout fired (close)');
       if (this.state.isAnimating) {
         this.state.isAnimating = false;
         eventBus.emit('mobileMenu:transitionComplete', { isOpen: false });
@@ -308,8 +297,6 @@ class MobileMenu {
 
     // Clear any pending timeouts
     this._clearAnimationTimeout();
-
-    console.log('Mobile menu destroyed');
   }
 
   /**
@@ -329,9 +316,6 @@ class MobileMenu {
     } else if (style === 'slide') {
       document.body.classList.add('animation-slide');
     }
-
-    // Log the change
-    console.log(`Menu animation style changed to: ${style}`);
 
     // Emit event for the animation style change
     eventBus.emit('mobileMenu:animationStyleChanged', { style });
