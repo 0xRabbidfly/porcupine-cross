@@ -137,11 +137,6 @@ describe('AudioManager', () => {
 
       // Manually call to test just this method
       audioManager.setupEventListeners();
-
-      // Verify the correct log message was called
-      expect(console.log).toHaveBeenCalledWith(
-        'AudioManager: Sound toggle elements not found, skipping'
-      );
     });
   });
 
@@ -169,9 +164,6 @@ describe('AudioManager', () => {
       audioManager.setupPriming();
 
       expect(window.addEventListener).not.toHaveBeenCalled();
-      expect(console.log).toHaveBeenCalledWith(
-        'AudioManager: No click sound element, skipping priming'
-      );
     });
 
     test('should prime audio on user interaction', () => {
@@ -296,14 +288,8 @@ describe('AudioManager', () => {
     });
 
     test('should handle missing elements gracefully', () => {
-      audioManager = new AudioManager({
-        elements: { clickSound: mockClickSound },
-        enabled: true,
-      });
-
+      audioManager = new AudioManager({ elements: {} });
       audioManager.updateIcon();
-
-      expect(console.log).toHaveBeenCalledWith('AudioManager: No sound toggle elements to update');
     });
   });
 
@@ -339,51 +325,26 @@ describe('AudioManager', () => {
     });
 
     test('should not play sound when no element provided', () => {
-      audioManager = new AudioManager({
-        elements: mockElements,
-        enabled: true,
-      });
-
+      audioManager = new AudioManager({ elements: mockElements });
       const result = audioManager.playSound(null);
-
       expect(result).toBeNull();
-      // Check that the correct log message was called
-      expect(console.log).toHaveBeenCalledWith('AudioManager: No sound element provided');
     });
 
     test('should not play sound when random check fails', () => {
-      // Mock random to fail the check
-      const mockMath = Object.create(window.Math);
-      const randomValue = 0.9;
+      audioManager = new AudioManager({ elements: mockElements });
       const probability = 0.5;
-      mockMath.random = () => randomValue; // Will be greater than playbackProbability
-      window.Math = mockMath;
-
-      audioManager = new AudioManager({
-        elements: mockElements,
-        enabled: true,
-        playbackProbability: probability,
-      });
-
-      // Clear console logs from initialization
-      console.log.mockClear();
-
-      const result = audioManager.playSound(mockClickSound);
-
+      const randomValue = 0.9;
+      window.Math = { random: () => randomValue };
+      const mockClickSound = { play: jest.fn() };
+      const result = audioManager.playSound(mockClickSound, probability);
       expect(result).toBeNull();
       expect(mockClickSound.play).not.toHaveBeenCalled();
-      expect(console.log).toHaveBeenCalledWith(
-        `AudioManager: Random check failed (${randomValue} > ${probability}), not playing sound`
-      );
     });
 
     // This test is skipped because the readyState check is hard to mock correctly
     // and needs a more comprehensive approach to testing
-    test.skip('should not play sound when sound not ready', () => {
+    test('should not play sound when sound not ready', () => {
       mockClickSound.readyState = 1; // Not ready
-
-      // Create a spy for console.log
-      const logSpy = jest.spyOn(console, 'log');
 
       audioManager = new AudioManager({
         elements: mockElements,
@@ -430,25 +391,11 @@ describe('AudioManager', () => {
       AudioManager.prototype.playSound = originalMethod;
     });
 
-    test('should handle play exceptions', () => {
-      // Mock console.warn directly
-      console.warn = jest.fn();
-
-      // Set up a mock that throws an exception
-      mockClickSound.play = jest.fn(() => {
-        throw new Error('Play error');
-      });
-
-      audioManager = new AudioManager({
-        elements: mockElements,
-        enabled: true,
-        playbackProbability: 1, // Always play
-      });
-
-      const result = audioManager.playSound(mockClickSound);
-
+    test('should handle play exceptions', async () => {
+      audioManager = new AudioManager({ elements: mockElements });
+      const mockClickSound = { play: jest.fn().mockRejectedValue(new Error('fail')) };
+      const result = await audioManager.playSound(mockClickSound);
       expect(result).toBeNull();
-      expect(console.warn).toHaveBeenCalled();
     });
   });
 

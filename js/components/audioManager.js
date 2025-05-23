@@ -153,7 +153,7 @@ class AudioManager {
         // Suppress errors - browser might block autoplay until user interaction
         return null;
       });
-    } catch (err) {
+    } catch {
       // Fallback for any errors
       return null;
     }

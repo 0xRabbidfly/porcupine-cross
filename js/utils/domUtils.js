@@ -1,3 +1,4 @@
+/* global HTMLElement, NodeList */
 /**
  * DOM Utilities
  * Helper functions for common DOM operations
@@ -36,7 +37,7 @@ export function getElements(selector, context = document) {
  */
 export function createElement(tagName, attributes = {}, content = null) {
   const element = document.createElement(tagName);
-  
+
   // Set attributes
   Object.entries(attributes).forEach(([key, value]) => {
     if (key === 'className') {
@@ -49,7 +50,7 @@ export function createElement(tagName, attributes = {}, content = null) {
       element.setAttribute(key, value);
     }
   });
-  
+
   // Add content
   if (content) {
     if (typeof content === 'string') {
@@ -64,7 +65,7 @@ export function createElement(tagName, attributes = {}, content = null) {
       element.appendChild(content);
     }
   }
-  
+
   return element;
 }
 
@@ -77,9 +78,9 @@ export function createElement(tagName, attributes = {}, content = null) {
  */
 export function addEventListeners(elements, eventType, handler, options = {}) {
   if (elements) {
-    const elementArray = Array.isArray(elements) || elements instanceof NodeList ? 
-      elements : [elements];
-    
+    const elementArray =
+      Array.isArray(elements) || elements instanceof NodeList ? elements : [elements];
+
     elementArray.forEach(element => {
       element.addEventListener(eventType, handler, options);
     });
@@ -113,4 +114,4 @@ export function addTemporaryClass(element, className, removeAfter) {
       element.classList.remove(className);
     }, removeAfter);
   }
-} 
+}

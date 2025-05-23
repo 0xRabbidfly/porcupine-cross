@@ -1,5 +1,3 @@
-/* global clearInterval, setInterval, IntersectionObserver */
-
 // This file remains for backwards compatibility only
 // See js/main.js for the current modular implementation
 // This simplified version delegates to the modern components whenever possible
@@ -30,12 +28,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // DOMContentLoaded event with minimal legacy fallbacks
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('script.js: Running in compatibility mode');
-
   // Only run legacy functionality if modern system is not available
   if (!window.app || !window.app.components) {
-    console.log('script.js: Modern system not detected, using legacy fallbacks');
-
     // Mobile menu toggle (minimal legacy implementation)
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
@@ -57,7 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.setAttribute('aria-expanded', isMenuOpen ? 'true' : 'false');
       });
     }
-  } else {
-    console.log('script.js: Modern system detected, deferring to it');
   }
 });

@@ -1,58 +1,65 @@
+/* global URL, process */
 /**
  * Deployment automation script
  * This script handles deployment to different environments
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+
+// ESM-compatible __dirname
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // Helper function for cross-platform file copying
 function copyFiles() {
-  console.log('Copying files to dist...');
-  
+  // console.log('Copying files to dist...');
+
   // Create directories
   if (!fs.existsSync('./dist')) {
     fs.mkdirSync('./dist', { recursive: true });
   }
-  
+
   if (!fs.existsSync('./dist/css')) {
     fs.mkdirSync('./dist/css', { recursive: true });
   }
-  
+
   if (!fs.existsSync('./dist/js')) {
     fs.mkdirSync('./dist/js', { recursive: true });
   }
-  
+
   if (!fs.existsSync('./dist/images')) {
     fs.mkdirSync('./dist/images', { recursive: true });
   }
-  
+
   // Copy HTML and JS files in the root
   fs.readdirSync('./').forEach(file => {
     // Include HTML, main JS files, and favicon
-    if (file.endsWith('.html') || 
-        (file.endsWith('.js') && !['babel.config.js', 'eslint.config.js', '.eslintrc.js', 'debug.js'].includes(file)) || 
-        file === 'favicon.ico') {
+    if (
+      file.endsWith('.html') ||
+      (file.endsWith('.js') &&
+        !['babel.config.js', 'eslint.config.js', '.eslintrc.js', 'debug.js'].includes(file)) ||
+      file === 'favicon.ico'
+    ) {
       fs.copyFileSync(file, `./dist/${file}`);
     }
   });
-  
+
   // Copy CSS files
   if (fs.existsSync('./css')) {
     copyDir('./css', './dist/css');
   }
-  
+
   // Copy JS files and subdirectories
   if (fs.existsSync('./js')) {
     copyDir('./js', './dist/js');
   }
-  
+
   // Copy images
   if (fs.existsSync('./images')) {
     copyDir('./images', './dist/images');
   }
-  
+
   // Copy sounds except crosstoberfest.mp3
   if (fs.existsSync('./sounds')) {
     fs.readdirSync('./sounds').forEach(file => {
@@ -71,16 +78,18 @@ function copyFiles() {
       }
     });
   }
-  
-  console.log('Files copied successfully to dist/');
+
+  // console.log('Files copied successfully to dist/');
 }
 
 // Helper function to recursively copy directories
 function copyDir(src, dest) {
+  // console.log('Copying directory...');
+
   fs.readdirSync(src).forEach(item => {
     const srcPath = path.join(src, item);
     const destPath = path.join(dest, item);
-    
+
     const stats = fs.statSync(srcPath);
     if (stats.isDirectory()) {
       if (!fs.existsSync(destPath)) {
@@ -94,48 +103,49 @@ function copyDir(src, dest) {
 }
 
 // Add this function after copyDir function
-function testFtpConnection(config) {
-  console.log('Testing FTP connection...');
-  
+async function testFtpConnection(config) {
+  // console.log('Testing FTP connection...');
   try {
-    const FtpDeploy = require('ftp-deploy');
+    // Dynamic import for ESM compatibility
+    const { default: FtpDeploy } = await import('ftp-deploy');
     const ftpDeploy = new FtpDeploy();
-    
+
+    // Node-only: process.env
     if (!process.env.FTP_PASSWORD) {
       console.error('FTP_PASSWORD environment variable is not set.');
-      console.log('Please set it using:');
-      console.log('$env:FTP_PASSWORD = "your-password"  # For Windows PowerShell');
-      console.log('export FTP_PASSWORD="your-password"  # For Mac/Linux');
+      // console.log('Please set it using:');
+      // console.log('$env:FTP_PASSWORD = "your-password"  # For Windows PowerShell');
+      // console.log('export FTP_PASSWORD="your-password"  # For Mac/Linux');
       return false;
     }
-    
+
     const testDir = path.join(__dirname, '..', 'dist', 'test');
-    
+
     // Create test directory and file for FTP testing
     if (!fs.existsSync(path.join(__dirname, '..', 'dist'))) {
       fs.mkdirSync(path.join(__dirname, '..', 'dist'), { recursive: true });
     }
-    
+
     if (!fs.existsSync(testDir)) {
       fs.mkdirSync(testDir, { recursive: true });
     }
-    
+
     const testFile = path.join(testDir, 'connection-test.txt');
     fs.writeFileSync(testFile, 'FTP connection test ' + new Date().toISOString());
-    
+
     // Add debug listeners
-    ftpDeploy.on('uploaded', function(data) {
+    ftpDeploy.on('uploaded', function (data) {
       console.log('Uploaded: ' + data.filename);
     });
-    
-    ftpDeploy.on('upload-error', function(data) {
+
+    ftpDeploy.on('upload-error', function (data) {
       console.log('Upload error: ' + data.filename + ' - ' + data.err);
     });
-    
-    ftpDeploy.on('log', function(data) {
+
+    ftpDeploy.on('log', function (data) {
       console.log('Log: ' + data);
     });
-    
+
     const ftpConfig = {
       user: config.username,
       password: process.env.FTP_PASSWORD,
@@ -148,20 +158,21 @@ function testFtpConnection(config) {
       deleteRemote: false,
       forcePasv: true,
       secure: config.secure || false,
-      secureOptions: { rejectUnauthorized: false }
+      secureOptions: { rejectUnauthorized: false },
     };
-    
+
     console.log('Connecting to FTP server...');
     console.log(`Host: ${config.host}`);
     console.log(`Username: ${config.username}`);
     console.log(`Remote path: ${config.path || '(default FTP directory)'}`);
-    
-    return ftpDeploy.deploy(ftpConfig)
+
+    return ftpDeploy
+      .deploy(ftpConfig)
       .then(() => {
         console.log('FTP connection successful!');
         return true;
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('FTP connection test failed:', err);
         return false;
       });
@@ -176,7 +187,7 @@ const environments = {
   development: {
     description: 'Local development environment',
     path: './dist',
-    isLocal: true
+    isLocal: true,
   },
   production: {
     description: 'Namecheap production hosting',
@@ -184,8 +195,8 @@ const environments = {
     username: 'rabbidfly@prologuecross.ca', // Subdomain FTP account
     path: '/',
     protocol: 'ftpes', // Using FTPES (explicit SSL)
-    secure: true
-  }
+    secure: true,
+  },
 };
 
 // Parse command line arguments
@@ -194,110 +205,99 @@ const env = args[0] || 'development';
 
 if (!environments[env]) {
   console.error(`Unknown environment: ${env}`);
-  console.error('Available environments: ' + Object.keys(environments).join(', '));
-  process.exit(1);
+  // console.error('Available environments: ' + Object.keys(environments).join(', '));
+  throw new Error('Unknown environment');
 }
 
 // Get configuration for the specified environment
 const config = environments[env];
 console.log(`Deploying to ${env} environment (${config.description})...`);
 
-try {
-  // Run tests before deployment
-  console.log('Running tests...');
-  execSync('npm test', { stdio: 'inherit' });
+(async () => {
+  try {
+    // Run tests before deployment
+    console.log('Running tests...');
+    execSync('npm test', { stdio: 'inherit' });
 
-  // Generate code coverage report
-  console.log('Generating code coverage report...');
-  execSync('npm run test:coverage', { stdio: 'inherit' });
+    // Generate code coverage report
+    console.log('Generating code coverage report...');
+    execSync('npm run test:coverage', { stdio: 'inherit' });
 
-  // Build the project
-  console.log('Building project...');
-  copyFiles();
+    // Build the project
+    console.log('Building project...');
+    copyFiles();
 
-  // For local development environment
-  if (config.isLocal) {
-    console.log(`Files prepared in ${config.path}`);
-    console.log('To test locally: cd dist && npx http-server');
-  } 
-  // For production environment
-  else {
-    console.log(`Deploying to ${config.host}:${config.path} via ${config.protocol}...`);
-    
-    if (config.protocol === 'ftp' || config.protocol === 'ftpes') {
-      console.log(`Using ${config.protocol.toUpperCase()} deployment...`);
-      
-      // Check if this is a test run
-      const isTest = args.includes('--test');
-      
-      if (isTest) {
-        console.log('Running in test mode - only testing connection...');
-        testFtpConnection(config)
-          .then(success => {
-            if (success) {
-              console.log('\nTest successful! FTP credentials work correctly.');
-              console.log('You can now commit your changes and push to GitHub.');
-            } else {
-              console.error('\nFTP connection test failed. Please check your credentials.');
-            }
-          })
-          .catch(() => {
-            console.error('\nFTP connection test failed. Please check your credentials.');
+    // For local development environment
+    if (config.isLocal) {
+      console.log(`Files prepared in ${config.path}`);
+      console.log('To test locally: cd dist && npx http-server');
+    }
+    // For production environment
+    else {
+      console.log(`Deploying to ${config.host}:${config.path} via ${config.protocol}...`);
+
+      if (config.protocol === 'ftp' || config.protocol === 'ftpes') {
+        console.log(`Using ${config.protocol.toUpperCase()} deployment...`);
+
+        // Check if this is a test run
+        const isTest = args.includes('--test');
+
+        if (isTest) {
+          console.log('Running in test mode - only testing connection...');
+          await testFtpConnection(config);
+        } else {
+          // Dynamic import for ESM compatibility
+          const { default: FtpDeploy } = await import('ftp-deploy');
+          const ftpDeploy = new FtpDeploy();
+          if (!process.env.FTP_PASSWORD) {
+            console.error('FTP_PASSWORD environment variable is not set.');
+            throw new Error('FTP_PASSWORD not set');
+          }
+          // Add debug listeners
+          ftpDeploy.on('uploaded', function (data) {
+            console.log('Uploaded: ' + data.filename);
           });
-      } else {
-        // Add actual deployment code here - modify existing code to use this:
-        const FtpDeploy = require('ftp-deploy');
-        const ftpDeploy = new FtpDeploy();
-        
-        if (!process.env.FTP_PASSWORD) {
-          console.error('FTP_PASSWORD environment variable is not set.');
-          console.log('Please set it using:');
-          console.log('$env:FTP_PASSWORD = "your-password"  # For Windows PowerShell');
-          console.log('export FTP_PASSWORD="your-password"  # For Mac/Linux');
-          process.exit(1);
+
+          ftpDeploy.on('upload-error', function (data) {
+            console.log('Upload error: ' + data.filename + ' - ' + data.err);
+          });
+
+          ftpDeploy.on('log', function (data) {
+            console.log('Log: ' + data);
+          });
+
+          const ftpConfig = {
+            user: config.username,
+            password: process.env.FTP_PASSWORD,
+            host: config.host,
+            port: 21,
+            localRoot: path.resolve('./dist'),
+            remoteRoot: config.path,
+            include: ['**/*'],
+            exclude: [],
+            deleteRemote: false,
+            forcePasv: true,
+            secure: config.secure || false,
+            secureOptions: { rejectUnauthorized: false },
+          };
+
+          console.log('Starting FTP deployment...');
+          console.log(
+            `Configuration: Host=${config.host}, User=${config.username}, RemotePath=${config.path || '(default)'}`
+          );
+          console.log(`Protocol: ${config.protocol || 'FTP'} ${config.secure ? '(Secure)' : ''}`);
+          ftpDeploy
+            .deploy(ftpConfig)
+            .then(() => console.info('Deployment complete!'))
+            .catch(err => {
+              console.error('Deployment failed:', err);
+              throw new Error('Deployment failed');
+            });
         }
-        
-        // Add debug listeners
-        ftpDeploy.on('uploaded', function(data) {
-          console.log('Uploaded: ' + data.filename);
-        });
-        
-        ftpDeploy.on('upload-error', function(data) {
-          console.log('Upload error: ' + data.filename + ' - ' + data.err);
-        });
-        
-        ftpDeploy.on('log', function(data) {
-          console.log('Log: ' + data);
-        });
-        
-        const ftpConfig = {
-          user: config.username,
-          password: process.env.FTP_PASSWORD,
-          host: config.host,
-          port: 21,
-          localRoot: path.resolve('./dist'),
-          remoteRoot: config.path,
-          include: ['**/*'],
-          exclude: [],
-          deleteRemote: false,
-          forcePasv: true,
-          secure: config.secure || false,
-          secureOptions: { rejectUnauthorized: false }
-        };
-        
-        console.log('Starting FTP deployment...');
-        console.log(`Configuration: Host=${config.host}, User=${config.username}, RemotePath=${config.path || '(default)'}`);
-        console.log(`Protocol: ${config.protocol || 'FTP'} ${config.secure ? '(Secure)' : ''}`);
-        ftpDeploy.deploy(ftpConfig)
-          .then(res => console.log('Deployment complete!'))
-          .catch(err => {
-            console.error('Deployment failed:', err);
-            process.exit(1);
-          });
       }
     }
+  } catch (error) {
+    console.error('Deployment failed:', error.message);
+    throw new Error('Deployment failed');
   }
-} catch (error) {
-  console.error('Deployment failed:', error.message);
-  process.exit(1);
-} 
+})();

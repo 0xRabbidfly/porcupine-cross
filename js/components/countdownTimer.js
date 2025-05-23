@@ -5,8 +5,6 @@
 
 /* global setInterval, clearInterval */
 
-import AnimationSystem from '../core/animationSystem.js';
-
 /**
  * Calculate time remaining between target date and current date
  * @param {number} targetDate - Target date timestamp

@@ -1,18 +1,28 @@
-module.exports = {
+export default {
   env: {
     browser: true,
     es6: true,
     node: true,
-    jest: true
+    jest: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:jest/recommended',
-    'prettier'
-  ],
+  ignorePatterns: ['dist/', 'coverage/', 'scripts/', 'babel.config.js', '.eslintrc.js'],
+  extends: ['eslint:recommended', 'plugin:jest/recommended', 'prettier'],
   parserOptions: {
     ecmaVersion: 2020,
-    sourceType: 'module'
+    sourceType: 'module',
+  },
+  globals: {
+    HTMLElement: 'readonly',
+    NodeList: 'readonly',
+    IntersectionObserver: 'readonly',
+    Node: 'readonly',
+    MouseEvent: 'readonly',
+    setInterval: 'readonly',
+    clearInterval: 'readonly',
+    process: 'readonly',
+    require: 'readonly',
+    __dirname: 'readonly',
+    global: 'readonly',
   },
   rules: {
     'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
@@ -22,6 +32,6 @@ module.exports = {
     'jest/no-disabled-tests': 'warn',
     'jest/no-focused-tests': 'error',
     'jest/no-identical-title': 'error',
-    'jest/prefer-to-have-length': 'warn'
-  }
-}; 
+    'jest/prefer-to-have-length': 'warn',
+  },
+};

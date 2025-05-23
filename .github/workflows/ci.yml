@@ -85,15 +85,15 @@ jobs:
           
           // Enable debugging
           ftpDeploy.on('uploaded', function(data) {
-            console.log('Uploaded: ' + data.filename);
+            // console.log('Uploaded: ' + data.filename); // comment out or remove
           });
           
           ftpDeploy.on('upload-error', function(data) {
-            console.log('Upload error: ' + data.filename + ' - ' + data.err);
+            // console.log('Upload error: ' + data.filename + ' - ' + data.err); // comment out or remove
           });
           
           ftpDeploy.on('log', function(data) {
-            console.log('FTP Log: ' + data);
+            // console.log('FTP Log: ' + data); // comment out or remove
           });
           
           const config = {

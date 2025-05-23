@@ -3,6 +3,29 @@ import eventBus from '../../js/core/eventBus.js';
 
 describe('App Integration', () => {
   beforeEach(() => {
+    // Set up minimal DOM for all components
+    document.body.innerHTML = `
+      <button id="sound-toggle"><span id="sound-icon"></span></button>
+      <audio id="click-sound"></audio>
+      <div id="countdown-timer">
+        <span id="countdown-days">00</span>:
+        <span id="countdown-hours">00</span>:
+        <span id="countdown-minutes">00</span>:
+        <span id="countdown-seconds">00</span>
+      </div>
+      <div class="interactive-map-container">
+        <img src="images/prologue-course-map.png" alt="Prologue Course Map" class="course-map">
+        <div class="map-hotspots">
+          <button class="hotspot" data-section="start-finish" aria-label="Show info for Start/Finish Line"><span class="hotspot-dot"></span></button>
+        </div>
+        <div class="map-info-panel">
+          <button class="info-close" aria-label="Close info panel">×</button>
+          <div class="info-content" id="start-finish">Start/Finish Info</div>
+        </div>
+      </div>
+      <nav id="main-nav"></nav>
+      <button id="menu-toggle"></button>
+    `;
     // Reset app state if needed
     if (window.app) {
       window.app.initialized = false;

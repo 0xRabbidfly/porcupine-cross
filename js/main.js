@@ -12,16 +12,6 @@ import MobileMenu from './components/mobileMenu.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
 import AnimationSystem from './core/animationSystem.js';
-import { initSectionObserver } from './core/initSectionObserver.js';
-import { initAnimationEffects } from './core/initAnimationEffects.js';
-import { initMobileMenu } from './core/initMobileMenu.js';
-import { createMenuStyleSwitcher } from './core/createMenuStyleSwitcher.js';
-import { showTestNotification } from './core/showTestNotification.js';
-import { initAudioManager } from './core/initAudioManager.js';
-import { initCountdownTimer } from './core/initCountdownTimer.js';
-import { initInteractiveMap } from './core/initInteractiveMap.js';
-import { initSmoothScrolling } from './core/initSmoothScrolling.js';
-import { initHeroAnimation } from './core/initHeroAnimation.js';
 import { setupAudioPlayButton } from './utils/audioUtils.js';
 
 // Application class
@@ -374,13 +364,6 @@ class App {
       enabled: true, // Start with sound enabled but control still hidden
       playbackProbability: 0.3, // 30% chance of playing sound when enabled
     });
-
-    // Log initialization status
-    console.log(
-      'AudioManager initialized with probability:',
-      this.components.audioManager.getPlaybackProbability()
-    );
-    console.log('AudioManager sound enabled:', this.components.audioManager.isSoundEnabled());
   }
 
   /**
