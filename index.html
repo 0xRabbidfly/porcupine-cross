@@ -19,7 +19,7 @@
     <a href="#main" class="skip-link">Skip to main content</a>
     <header>
         <div class="logo-container">
-            <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo">
+            <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo" loading="lazy">
         </div>
         <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false" aria-controls="main-nav">
             <span class="hamburger"></span>
@@ -86,9 +86,9 @@
 
         <section class="sponsors">
             <div class="sponsor-logos">
-                <a href="https://www.peterboroughcc.com/" target="_blank" rel="noopener"><img src="images/PCC_Logo-459w.webp" alt="PCC Logo" class="sponsor-logo left"></a>
-                <a href="https://www.exodusgraphics.com/" target="_blank" rel="noopener"><img src="images/exodus.jpg" alt="Exodus Logo" class="sponsor-logo center"></a>
-                <a href="https://www.uxbridgecycling.com/" target="_blank" rel="noopener"><img src="images/UCC-logo.webp" alt="UCC Logo" class="sponsor-logo right"></a>
+                <a href="https://www.peterboroughcc.com/" target="_blank" rel="noopener"><img src="images/PCC_Logo-459w.webp" alt="PCC Logo" class="sponsor-logo left" loading="lazy"></a>
+                <a href="https://www.exodusgraphics.com/" target="_blank" rel="noopener"><img src="images/exodus.jpg" alt="Exodus Logo" class="sponsor-logo center" loading="lazy"></a>
+                <a href="https://www.uxbridgecycling.com/" target="_blank" rel="noopener"><img src="images/UCC-logo.webp" alt="UCC Logo" class="sponsor-logo right" loading="lazy"></a>
             </div>
         </section>
 
@@ -135,7 +135,7 @@
             <b>Ante up</b> and join us for a day of thrilling cyclocross action and fun!</p>
             
             <div class="interactive-map-container">
-                <img src="images/prologue-course-map.png" alt="Prologue Course Map" class="course-map">
+                <img src="images/prologue-course-map.png" alt="Prologue Course Map" class="course-map" loading="lazy">
                 
                 <!-- Overlay hotspots -->
                 <div class="map-hotspots">
@@ -197,5 +197,18 @@
     
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>
+
+    <!-- Loading Spinner -->
+    <div id="main-loading-spinner" class="loading-spinner" aria-live="polite" aria-busy="true">
+        <div class="spinner"></div>
+        <span class="sr-only">Loading content…</span>
+    </div>
+
+    <script>
+        // Hide spinner when main content is loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('main-loading-spinner').style.display = 'none';
+        });
+    </script>
 </body>
 </html> 

@@ -466,15 +466,21 @@ class App {
   }
 }
 
-// Create and export a singleton instance
-const app = new App();
-
-// Auto-initialize if loaded as a module
-app.init();
-
-// Export app globally for debugging
+let app = null;
+try {
+  // Create and export a singleton instance
+  app = new App();
+  app.init();
+} catch (error) {
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'app-error-boundary';
+  errorDiv.innerHTML = '<h2>Something went wrong</h2><p>' + (error.message || error) + '</p>';
+  errorDiv.style =
+    'background: #fff3f3; color: #b71c1c; padding: 2em; margin: 2em auto; border-radius: 8px; max-width: 600px; text-align: center; font-size: 1.2em;';
+  document.body.prepend(errorDiv);
+  console.error('App initialization error:', error);
+}
 window.app = app;
-
 export default app;
 
 document.addEventListener('DOMContentLoaded', setupAudioPlayButton);

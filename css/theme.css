@@ -1,0 +1,32 @@
+:root {
+  --color-primary: #e73e3a;
+  --color-accent: #ffc107;
+  --color-secondary: #2e4f2e;
+  --color-background: #f5f0e6;
+  --color-surface: #fff;
+  --color-dark: #333;
+  --color-medium: #555;
+  --color-light: #777;
+  --color-mud: #8b4513;
+  --color-sand: #e6d5ac;
+  --color-orange: #d35400;
+  --color-blue: #e8f1f2;
+  --font-main: 'Montserrat', 'Arial', sans-serif;
+  --font-heading: 'Impact', Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+/* Fallbacks for legacy browsers */
+body {
+  color: var(--color-dark, #333);
+  background: var(--color-background, #f5f0e6);
+  font-family: var(--font-main, Arial, sans-serif);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading, Impact, Arial, sans-serif);
+}

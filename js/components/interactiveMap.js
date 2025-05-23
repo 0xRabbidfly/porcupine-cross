@@ -5,6 +5,7 @@
 
 import eventBus from '../core/eventBus.js';
 import { getElements } from '../utils/domUtils.js';
+import AnimationSystem from '../core/animationSystem.js';
 
 class InteractiveMap {
   /**
@@ -87,9 +88,12 @@ class InteractiveMap {
     if (!this.hotspots.length || !this.infoPanel) return;
 
     this.hotspots.forEach(hotspot => {
-      hotspot.addEventListener('click', e => {
-        e.preventDefault();
-        this.handleHotspotClick(hotspot);
+      hotspot.setAttribute('tabindex', '0');
+      hotspot.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.handleHotspotClick(hotspot);
+        }
       });
     });
   }
@@ -100,19 +104,13 @@ class InteractiveMap {
    */
   handleHotspotClick(hotspot) {
     const section = hotspot.getAttribute('data-section');
-
-    // Hide all info contents
     this.hideAllInfoContents();
-
-    // Show the selected content
     const activeContent = document.getElementById(section);
     if (activeContent) {
+      AnimationSystem.fadeIn(activeContent);
       activeContent.classList.add('active');
     }
-
-    // Position the info panel
     this.positionInfoPanel(hotspot);
-
     eventBus.emit('interactiveMap:hotspotClicked', { section });
   }
 
@@ -211,6 +209,15 @@ class InteractiveMap {
         this.closeInfoPanel();
       }
     });
+
+    if (this.infoClose) {
+      this.infoClose.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          this.hideInfoPanel();
+        }
+      });
+    }
   }
 
   /**
