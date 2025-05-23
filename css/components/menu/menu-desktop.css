@@ -50,7 +50,7 @@
     width: auto;
     position: relative;
     margin: 0 var(--desktop-menu-item-spacing);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.3, 0, 0.2, 1);
     border-radius: 6px;
     overflow: hidden;
     text-decoration: none;
@@ -63,20 +63,20 @@
     left: 0;
     top: 0;
     height: 100%;
-    width: 4px;
-    background-color: var(--theme-red);
+    width: 5px;
+    background-color: var(--theme-accent-gold);
+    border-radius: 4px 0 0 4px;
     transform: scaleY(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.3, 0, 0.2, 1);
   }
 
   /* Hover state for desktop items - similar to mobile */
   nav#main-nav a:hover,
   nav#main-nav a:focus {
-    color: var(--theme-red);
-    background-color: var(--desktop-menu-hover-bg);
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--theme-accent-gold);
     transform: translateX(4px);
-    padding-left: calc(var(--desktop-menu-item-padding) * 1.1);
-    box-shadow: 0 2px 8px rgba(231, 62, 58, 0.1);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.08);
   }
 
   /* Animate accent bar on hover - like mobile */
@@ -86,9 +86,16 @@
   }
 
   /* Active state for desktop items */
-  nav#main-nav a:active {
-    transform: scale(0.98) translateX(4px);
-    background-color: var(--menu-item-active-bg);
+  nav#main-nav a.active,
+  nav#main-nav a[aria-current='page'] {
+    background-color: rgba(255, 193, 7, 0.13);
+    color: var(--theme-accent-gold);
+    font-weight: 700;
+  }
+
+  nav#main-nav a.active::before,
+  nav#main-nav a[aria-current='page']::before {
+    transform: scaleY(1);
   }
 
   /* Menu icon styling for desktop */
