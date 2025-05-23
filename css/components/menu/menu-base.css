@@ -1,0 +1,86 @@
+/**
+ * Menu Base Styles
+ * 
+ * Shared styles for both mobile and desktop menu components
+ * Part of the separation of concerns strategy
+ */
+
+:root {
+  /* Menu shared variables */
+  --menu-transition-duration: 0.35s;
+  --menu-transition-easing: cubic-bezier(0.3, 0, 0.2, 1);
+  --theme-red: #e73e3a;
+  --theme-accent-gold: #ffc107;
+  --menu-icon-color: var(--theme-red);
+}
+
+/* Hamburger button base styling - shared across breakpoints */
+#menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  z-index: 9999;
+  transition: transform 0.2s ease;
+}
+
+#menu-toggle:active {
+  transform: scale(0.9);
+}
+
+/* Hamburger icon styling - shared */
+.hamburger {
+  position: relative;
+  width: 24px;
+  height: 2px;
+  background-color: var(--menu-icon-color);
+  transition: background-color 0.3s ease;
+  border-radius: 1px;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background-color: var(--menu-icon-color);
+  transition: transform 0.3s ease;
+  border-radius: 1px;
+}
+
+.hamburger::before {
+  top: -7px;
+}
+
+.hamburger::after {
+  bottom: -7px;
+}
+
+/* Open state for hamburger button - shared */
+#menu-toggle.open .hamburger {
+  background-color: transparent;
+}
+
+#menu-toggle.open .hamburger::before {
+  transform: translateY(7px) rotate(45deg);
+  background-color: var(--theme-red);
+}
+
+#menu-toggle.open .hamburger::after {
+  transform: translateY(-7px) rotate(-45deg);
+  background-color: var(--theme-red);
+}
+
+/* Menu icon base styling - shared */
+.menu-icon {
+  text-align: center;
+  color: var(--menu-icon-color);
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+  position: relative;
+}

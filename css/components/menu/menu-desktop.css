@@ -1,0 +1,106 @@
+/**
+ * Desktop Menu Styles
+ * 
+ * Desktop-specific menu styling and enhancements
+ * Applies only at desktop breakpoints
+ */
+
+:root {
+  /* Desktop menu variables */
+  --desktop-menu-item-spacing: 0.8rem;
+  --desktop-menu-item-padding: 0.7rem 1.2rem;
+  --desktop-menu-font-size: 0.85rem;
+  --desktop-menu-indicator-height: 3px;
+  --desktop-menu-hover-bg: rgba(231, 62, 58, 0.05);
+}
+
+@media (min-width: 769px) {
+  /* Main navigation for desktop */
+  nav#main-nav {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    background: none;
+    box-shadow: none;
+    width: auto;
+    padding: 0;
+    animation: none;
+    order: 0;
+    flex-basis: auto;
+  }
+
+  /* Hide mobile-only elements on desktop */
+  #menu-toggle {
+    display: none !important;
+  }
+
+  /* Desktop menu items */
+  nav#main-nav a {
+    padding: var(--desktop-menu-item-padding);
+    font-size: var(--desktop-menu-font-size);
+    font-family: 'Montserrat', 'Arial', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--theme-dark-grey, #333);
+    border-bottom: none;
+    text-align: center;
+    width: auto;
+    position: relative;
+    margin: 0 var(--desktop-menu-item-spacing);
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  /* Enhanced indicator bar for desktop (replaces the underline) */
+  nav#main-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: var(--desktop-menu-indicator-height);
+    background-color: var(--theme-accent-gold);
+    transition:
+      width 0.3s ease,
+      left 0.3s ease;
+    transform: none;
+  }
+
+  /* Hover state for desktop items */
+  nav#main-nav a:hover,
+  nav#main-nav a:focus {
+    color: var(--theme-red);
+    background-color: var(--desktop-menu-hover-bg);
+    transform: translateY(-2px);
+  }
+
+  nav#main-nav a:hover::after,
+  nav#main-nav a:focus::after {
+    width: 70%;
+    left: 15%;
+  }
+
+  /* Active state for desktop items */
+  nav#main-nav a:active {
+    transform: translateY(0) scale(0.97);
+  }
+
+  /* Menu icon styling for desktop */
+  nav#main-nav .menu-icon {
+    margin-right: 10px;
+    font-size: 1rem;
+    opacity: 0.8;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  nav#main-nav a:hover .menu-icon,
+  nav#main-nav a:focus .menu-icon {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}

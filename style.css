@@ -47,57 +47,7 @@ header {
   transition: height 0.3s ease;
 }
 
-nav {
-  display: flex;
-  align-items: center;
-}
-
-nav a {
-  color: var(--theme-medium-grey); /* Harmonized color */
-  text-decoration: none;
-  padding: 0.7rem 1.2rem; /* Increased padding for better tap targets implicitly */
-  margin: 0 0.3rem;
-  font-weight: bold;
-  font-size: 0.8rem; /* Refined size */
-  text-transform: uppercase;
-  position: relative;
-  transition:
-    color 0.2s ease,
-    background-color 0.2s ease; /* Added background-color transition */
-  border-radius: 4px; /* Subtle rounding for hover effect */
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  display: block;
-  margin-top: 4px;
-  right: 0;
-  background: var(--theme-accent-gold); /* Using accent for underline */
-  transition: width 0.25s ease-in-out; /* Slightly adjusted timing */
-}
-
-nav a:hover,
-nav a:focus {
-  color: var(--theme-red);
-  background-color: rgba(0, 0, 0, 0.03); /* Very subtle background hover - R5 */
-}
-
-nav a:active {
-  /* Gear shift + subtle splat */
-  transform: translateY(1px) scale(0.97);
-  color: var(--theme-red);
-  box-shadow: 0 0 0 2px var(--theme-red); /* Quick radial shadow as splat */
-}
-
-nav a:hover::after,
-nav a:focus::after {
-  width: 100%;
-  left: 0;
-  right: auto;
-}
+/* Note: Navigation styles moved to component files */
 
 main {
 }
@@ -592,33 +542,13 @@ footer {
     padding: 45px 4%;
   }
 
-  /* NOTE: Mobile menu basic styling - CONFLICTS with css/components/mobile-menu.css
-     The mobile-menu.css file now uses .mobile-menu-enabled prefixes and !important to override these styles
-     Keeping this code here for reference but it should be removed or consolidated in the future
-  */
-  nav#main-nav {
-    display: flex !important;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    left: 0;
-    right: 0;
-    box-sizing: border-box;
-  }
-  nav#main-nav a {
-    width: 100%;
-    box-sizing: border-box;
-    text-align: left;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-  }
+  /* Note: Navigation styles moved to component files */
 }
 
 /* Hamburger menu styles (base, open states) - mostly adjusted sizing above */
 /* Mobile nav styles (positioning, animation) - mostly adjusted sizing above */
 
-/* Desktop: hide hamburger, ensure nav is flex - no fundamental changes needed */
+/* Desktop: hide hamburger, ensure nav is flex - styles moved to component files */
 @media (min-width: 769px) {
   header {
     height: var(--header-height-desktop); /* Restore fixed height for desktop */
@@ -632,29 +562,8 @@ footer {
     flex-basis: auto; /* Reset flex-basis */
     margin: 0 25px; /* Desktop margin */
   }
-  #menu-toggle {
-    display: none !important;
-  }
-  #main-nav {
-    display: flex !important;
-    position: static;
-    flex-direction: row;
-    align-items: center;
-    background: none;
-    box-shadow: none;
-    width: auto;
-    padding: 0;
-    animation: none;
-    order: 0; /* Reset order */
-    flex-basis: auto; /* Reset basis */
-  }
-  #main-nav a {
-    padding: 0.7rem 1.2rem;
-    font-size: 0.8rem;
-    border-bottom: none;
-    text-align: center;
-    width: auto;
-  }
+
+  /* Note: Menu styling moved to dedicated component files */
 }
 
 .event-logo-container {

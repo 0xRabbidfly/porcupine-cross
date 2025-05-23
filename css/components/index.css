@@ -6,7 +6,10 @@
 
 /* Import component CSS files */
 @import 'map-hotspots.css';
-@import 'mobile-menu.css';
+/* Menu components - new separation of concerns */
+@import 'menu/menu-base.css';
+@import 'menu/menu-mobile.css';
+@import 'menu/menu-desktop.css';
 @import 'transitions.css';
 @import 'countdown-timer.css';
 @import 'sound-toggle.css';
