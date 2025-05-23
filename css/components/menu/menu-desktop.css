@@ -12,6 +12,7 @@
   --desktop-menu-font-size: 0.85rem;
   --desktop-menu-indicator-height: 3px;
   --desktop-menu-hover-bg: rgba(231, 62, 58, 0.05);
+  --menu-item-active-bg: rgba(231, 62, 58, 0.12);
 }
 
 @media (min-width: 769px) {
@@ -54,75 +55,39 @@
     overflow: hidden;
   }
 
-  /* Cyclocross tire track effect - replaces traditional underline */
-  nav#main-nav a::before,
-  nav#main-nav a::after {
+  /* Left side accent bar (similar to mobile) */
+  nav#main-nav a::before {
     content: '';
     position: absolute;
-    width: 0;
-    height: 0;
-    background: none;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    opacity: 0;
-    z-index: -1;
-  }
-
-  /* Left tire track */
-  nav#main-nav a::before {
     left: 0;
     top: 0;
-    width: 6px;
     height: 100%;
-    background-image: radial-gradient(
-      circle at center,
-      var(--theme-accent-gold) 0%,
-      var(--theme-accent-gold) 30%,
-      transparent 30%,
-      transparent 100%
-    );
-    background-size: 6px 10px;
-    background-repeat: repeat-y;
-    transform: skewX(-15deg) translateX(-10px);
-  }
-
-  /* Right tire track / mud splatter */
-  nav#main-nav a::after {
-    right: 0;
-    bottom: 0;
-    transform: translateY(5px) translateX(10px) rotate(-5deg) scale(0);
-    width: 25px;
-    height: 15px;
-    border-radius: 50%;
+    width: 4px;
     background-color: var(--theme-red);
-    opacity: 0;
-    filter: blur(2px);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
   }
 
-  /* Hover state for desktop items */
+  /* Hover state for desktop items - similar to mobile */
   nav#main-nav a:hover,
   nav#main-nav a:focus {
     color: var(--theme-red);
     background-color: var(--desktop-menu-hover-bg);
-    transform: translateY(-2px) rotate(-0.5deg);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+    padding-left: calc(var(--desktop-menu-item-padding) * 1.1);
+    box-shadow: 0 2px 8px rgba(231, 62, 58, 0.1);
   }
 
-  /* Animate tire tracks on hover */
+  /* Animate accent bar on hover - like mobile */
   nav#main-nav a:hover::before,
   nav#main-nav a:focus::before {
-    opacity: 0.8;
-    transform: skewX(-15deg) translateX(0);
-  }
-
-  nav#main-nav a:hover::after,
-  nav#main-nav a:focus::after {
-    opacity: 0.15;
-    transform: translateY(0) translateX(0) rotate(-5deg) scale(1);
+    transform: scaleY(1);
   }
 
   /* Active state for desktop items */
   nav#main-nav a:active {
-    transform: translateY(0) scale(0.97) rotate(0.5deg);
+    transform: scale(0.98) translateX(4px);
+    background-color: var(--menu-item-active-bg);
   }
 
   /* Menu icon styling for desktop */
@@ -130,46 +95,38 @@
     margin-right: 10px;
     font-size: 1rem;
     opacity: 0.8;
-    transition:
-      transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-      opacity 0.3s ease,
-      color 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
-    z-index: 1;
   }
 
-  /* Icon background splatter effect */
-  nav#main-nav .menu-icon::before {
+  /* Add mud splatter effect behind icons - like mobile */
+  nav#main-nav .menu-icon::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background-color: var(--theme-accent-gold);
-    opacity: 0;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(231, 62, 58, 0.12);
     border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    transition: all 0.3s cubic-bezier(0.2, 1.4, 0.3, 1);
     z-index: -1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.3s ease;
+  }
+
+  nav#main-nav a:hover .menu-icon::after {
+    transform: translate(-50%, -50%) scale(1.1);
   }
 
   nav#main-nav a:hover .menu-icon,
   nav#main-nav a:focus .menu-icon {
     opacity: 1;
-    transform: translateY(-2px) rotate(-5deg) scale(1.2);
+    transform: scale(1.1) rotate(5deg);
+    margin-right: 14px;
     color: var(--theme-red);
   }
 
-  nav#main-nav a:hover .menu-icon::before,
-  nav#main-nav a:focus .menu-icon::before {
-    width: 24px;
-    height: 24px;
-    opacity: 0.15;
-    transform: translate(-50%, -50%) scale(1) rotate(10deg);
-  }
-
   nav#main-nav a:active .menu-icon {
-    transform: scale(0.9) rotate(5deg);
+    transform: scale(0.9);
   }
 }
