@@ -65,6 +65,7 @@ jobs:
         cp index.html favicon.ico style.css script.js dist/
         # Copy directories
         cp -r css js images dist/
+        cp -r docs dist/
         mkdir -p dist/sounds
         shopt -s extglob
         cp -r sounds/!(crosstoberfest.mp3) dist/sounds/
