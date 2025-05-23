@@ -62,7 +62,7 @@ jobs:
       run: |
         mkdir -p dist
         # Copy main files, exclude development config files
-        cp index.html favicon.ico style.css script.js dist/
+        cp *.html favicon.ico style.css script.js dist/
         # Copy directories
         cp -r css js images dist/
         cp -r docs dist/
