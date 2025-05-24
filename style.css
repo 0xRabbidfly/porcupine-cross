@@ -35,6 +35,11 @@ body {
   padding-top: var(--header-height-desktop);
   background-color: #6b4f36; /* earthy brown placeholder, replace with image later */
   overflow-x: hidden;
+  background-image: url('images/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 header {
