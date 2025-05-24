@@ -95,7 +95,6 @@ main {
 }
 
 section,
-.sponsors,
 #schedule,
 #course,
 .hero {
@@ -117,7 +116,6 @@ section,
 }
 
 section::before,
-.sponsors::before,
 #schedule::before,
 #course::before,
 .hero::before {
@@ -379,67 +377,6 @@ section > h2 {
   font-size: 1em; /* Icon size relative to button font size */
 }
 
-/* Sponsors Section - Refined */
-.sponsors {
-  background-color: var(--moss-green);
-  background-image: none;
-  text-align: center;
-  padding: 20px 0;
-  border-top: none;
-  color: var(--cream);
-  margin-bottom: 10px;
-  margin-top: 0;
-}
-
-.sponsor-logos {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 20px; /* Adjusted gap */
-  max-width: 1000px; /* Slightly wider */
-  margin: 0 auto;
-  padding: 0 15px;
-  min-height: 65px;
-}
-
-.sponsor-logo {
-  max-height: 60px;
-  max-width: 190px;
-  width: auto;
-  height: auto;
-  flex: 0 1 auto;
-  object-fit: contain;
-  opacity: 1;
-  margin: 0 8px;
-  transition:
-    filter 0.25s ease-out,
-    transform 0.25s ease-out;
-}
-
-.sponsor-logo:hover {
-  /* Enhanced hover effect */
-  filter: brightness(1.25);
-  transform: scale(1.08) rotate(2deg); /* More zany: slight scale and rotation */
-}
-
-.sponsor-logo[src$='UCC logo.webp'] {
-  max-height: calc(60px * 1.5);
-  max-width: calc(190px * 1.5);
-}
-
-.sponsors img {
-  vertical-align: middle;
-  filter: none;
-  opacity: 1;
-}
-
-.exodus-frame img {
-  padding: 8px;
-  background: #000;
-  box-shadow: none;
-  border: none;
-}
-
 /* Schedule Section - Refined */
 #schedule {
   background-color: var(--sand);
@@ -673,62 +610,6 @@ footer {
     gap: 12px;
   }
 
-  .sponsors {
-    padding: 10px 0;
-    background-color: var(--moss-green);
-    margin-bottom: 12px;
-    margin-top: 0;
-  }
-  .sponsor-logos {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin: 8px;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  .sponsor-logo,
-  .exodus-frame {
-    margin: 0 0px;
-    padding: 8px;
-    background: #000;
-    box-shadow: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-  }
-  .sponsor-logo img,
-  .exodus-frame img {
-    width: 100%;
-    height: auto;
-    max-width: 70%;
-    margin: 0;
-    display: block;
-    object-fit: contain;
-    background: #000;
-    box-shadow: none;
-    border: none;
-  }
-  /* Remove stacking override for very small screens */
-  /* --- Remove redundant/overlapping sponsor logo rules --- */
-  .sponsor-logo[src$='UCC-logo.webp'],
-  .sponsor-logo.right,
-  .sponsor-logo.left,
-  .sponsor-logo.center {
-    filter: none !important;
-    opacity: 1 !important;
-    box-shadow: none !important;
-    background: none !important;
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 4px !important;
-  }
-
   #schedule .schedule-grid {
     grid-template-columns: 1fr;
     gap: 25px 0;
@@ -787,49 +668,8 @@ footer {
     overflow: visible !important;
   }
 
-  .panel,
-  .card,
-  .map-info-panel,
-  .sponsors,
-  #schedule,
-  #course,
-  .hero,
-  main {
-    max-width: 100vw !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: visible !important;
-  }
-  #schedule .schedule-grid,
-  #schedule .schedule-item,
-  .sponsors > *,
-  #course > *,
-  .hero > *,
-  main > * {
-    max-width: 100vw !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: visible !important;
-  }
-  #schedule .event-description,
-  #schedule .event-time {
-    min-width: 0 !important;
-    width: 100% !important;
-    display: block !important;
-    box-sizing: border-box !important;
-    word-break: break-word !important;
-    white-space: normal !important;
-    overflow: visible !important;
-  }
-  #schedule .schedule-item * {
-    word-break: break-word !important;
-    white-space: normal !important;
-    overflow: visible !important;
-  }
-
   /* Ensure main sections are fully visible with margin on both sides */
   .hero,
-  .sponsors,
   #schedule,
   #course {
     margin-left: 3vw !important;
@@ -841,7 +681,6 @@ footer {
   }
 
   /* Ensure children do not overflow */
-  .sponsor-logos,
   #schedule .schedule-grid,
   #course > * {
     width: 100% !important;
@@ -854,18 +693,11 @@ footer {
 
   /* Remove any 100vw/max-width: 100vw on these sections/children */
   .hero,
-  .sponsors,
   #schedule,
   #course,
-  .sponsor-logos,
   #schedule .schedule-grid {
     max-width: none !important;
     width: auto !important;
-  }
-
-  .sponsor-logo.left {
-    padding: 0 !important;
-    box-shadow: none !important;
   }
 
   .audio-play-btn {
@@ -873,10 +705,6 @@ footer {
     height: 36px !important;
     font-size: 1.2rem !important;
     margin-right: 4px !important;
-  }
-
-  .sponsor-logo img[src*='UCC'] {
-    max-height: 60px !important;
   }
 }
 
@@ -896,19 +724,6 @@ footer {
     order: 0; /* Reset order for desktop if needed, default flow should work */
     flex-basis: auto; /* Reset flex-basis */
     margin: 0 25px; /* Desktop margin */
-  }
-
-  /* Note: Menu styling moved to dedicated component files */
-  .sponsor-logo.left {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: var(--moss-green) !important;
-    border: none !important;
-    border-radius: 0 !important;
-    margin: 0 12px !important;
-    opacity: 1 !important;
-    filter: none !important;
   }
 }
 
@@ -1405,23 +1220,4 @@ nav#main-nav {
     0 0 0 3px rgba(44, 62, 80, 0.1);
   border-radius: 0 0 18px 18px;
   outline: 2px solid rgba(44, 62, 80, 0.1);
-}
-
-/* All global and desktop-specific rules for .sponsor-logo.left, .sponsor-logo.center, .sponsor-logo.right, .exodus-frame, and .sponsor-logo.right (including their img children) have been deleted for a true clean slate. */
-
-@media (max-width: 768px) {
-  img[src*='UCC-logo'] {
-    max-height: 75px !important;
-    height: auto !important;
-    width: auto !important;
-    border: none !important;
-  }
-}
-@media (min-width: 769px) {
-  img[src*='UCC-logo'] {
-    max-height: 90px !important;
-    height: auto !important;
-    width: auto !important;
-    border: none !important;
-  }
 }

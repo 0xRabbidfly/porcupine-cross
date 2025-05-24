@@ -1,0 +1,132 @@
+/* sponsors.css - Styles for the sponsor section only
+   Refactored: Mobile-first, CSS variables, and improved structure. */
+
+:root {
+  --sponsor-bg: var(--moss-green);
+  --sponsor-text: var(--cream);
+  --sponsor-gap: 20px;
+  --sponsor-logo-max-width: 140px;
+  --sponsor-logo-max-height: 60px;
+  --sponsor-logo-bg: #000;
+}
+
+/* Base Styles (Mobile First) */
+.sponsors {
+  background-color: var(--sponsor-bg);
+  color: var(--sponsor-text);
+  text-align: center;
+  padding: 20px 0;
+  margin-bottom: 10px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  border-top: none;
+  background-image: none;
+}
+
+.sponsor-logos {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 15px;
+}
+
+.exodus-frame {
+  flex: 1 1 0;
+  margin: 0;
+  padding: 8px;
+  background: var(--sponsor-logo-bg);
+  box-shadow: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: var(--sponsor-logo-max-width);
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 1;
+  transition:
+    filter 0.25s ease-out,
+    transform 0.25s ease-out;
+}
+
+.exodus-frame img {
+  display: block;
+  margin: 0 auto;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  box-shadow: none;
+  border: none;
+}
+
+/* Special logo sizing for mobile */
+img[src*='exodus'] {
+  max-height: 20px !important;
+}
+img[src*='PCC_Logo'] {
+  max-height: 40px !important;
+}
+img[src*='UCC-logo'] {
+  max-height: 60px !important;
+}
+
+/* Responsive: Tablet and Up */
+@media (min-width: 769px) {
+  .sponsors {
+    padding: 20px 0;
+    margin-bottom: 10px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .sponsor-logos {
+    justify-content: space-around;
+    gap: var(--sponsor-gap);
+    padding: 0 15px;
+    min-height: 65px;
+  }
+  .sponsor-logo {
+    width: auto;
+    height: auto;
+    flex: 0 1 auto;
+    object-fit: contain;
+    opacity: 1;
+    margin: 0 8px;
+    transition:
+      filter 0.25s ease-out,
+      transform 0.25s ease-out;
+  }
+  .sponsor-logo:hover {
+    filter: brightness(1.25);
+    transform: scale(1.08) rotate(2deg);
+  }
+  /* Special case for UCC logo */
+  .sponsor-logo[src$='UCC logo.webp'] {
+    max-height: calc(var(--sponsor-logo-max-height) * 1.5);
+    max-width: calc(var(--sponsor-logo-max-width) * 1.5);
+  }
+  .sponsors img {
+    vertical-align: middle;
+    filter: none;
+    opacity: 1;
+  }
+
+  img[src*='exodus'] {
+    max-height: 40px !important; /* Set your desired desktop height */
+  }
+  img[src*='PCC_Logo'] {
+    max-height: 80px !important; /* Set your desired desktop height */
+  }
+  img[src*='UCC-logo'] {
+    max-height: 120px !important; /* Set your desired desktop height */
+  }
+}
