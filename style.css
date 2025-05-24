@@ -863,6 +863,13 @@ footer {
     padding: 0 !important;
     box-shadow: none !important;
   }
+
+  .audio-play-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1.2rem !important;
+    margin-right: 4px !important;
+  }
 }
 
 /* Hamburger menu styles (base, open states) - mostly adjusted sizing above */
