@@ -171,6 +171,19 @@ class App {
           window.navigator.vibrate([10, 30, 10]);
         }
       });
+
+      // Initialize experimental animations
+      setTimeout(() => {
+        this.initFlippingTitle();
+        this.initOrbitingIcons();
+
+        // Ensure hero section is marked as loaded for animations
+        const heroSection = document.querySelector('.hero');
+        if (heroSection) {
+          heroSection.classList.add('loaded');
+          console.log('Hero section marked as loaded for animations');
+        }
+      }, 500);
     } catch (error) {
       console.error('Error setting up animation effects:', error);
     }
@@ -469,6 +482,95 @@ class App {
     } catch (error) {
       console.error('Error setting up hero animation:', error);
     }
+  }
+
+  /**
+   * Initialize flipping title animation for PROLOGUE
+   */
+  initFlippingTitle() {
+    const titleElement = document.querySelector('.prologue-card-title');
+    if (!titleElement) {
+      console.log('Prologue title element not found');
+      return;
+    }
+
+    const titleText = titleElement.textContent.trim();
+    console.log('Found title text:', titleText);
+    titleElement.innerHTML = '';
+
+    // Available suits and their colors
+    const suits = [
+      { symbol: '♠', color: '#000000' }, // Spade - black
+      { symbol: '♣', color: '#000000' }, // Club - black
+      { symbol: '♥', color: '#e73e3a' }, // Heart - red
+      { symbol: '♦', color: '#e73e3a' }, // Diamond - red
+    ];
+
+    // Create flipping letter structure
+    titleText.split('').forEach((letter, index) => {
+      if (letter === ' ') {
+        titleElement.appendChild(document.createTextNode(' '));
+        return;
+      }
+
+      // Pick a random suit for this letter
+      const randomSuit = suits[Math.floor(Math.random() * suits.length)];
+
+      const letterContainer = document.createElement('span');
+      letterContainer.className = 'flip-letter';
+
+      const letterFront = document.createElement('span');
+      letterFront.className = 'letter-front';
+      letterFront.textContent = letter;
+
+      const letterBack = document.createElement('span');
+      letterBack.className = 'letter-back';
+      letterBack.textContent = randomSuit.symbol;
+      letterBack.style.color = randomSuit.color;
+
+      letterContainer.appendChild(letterFront);
+      letterContainer.appendChild(letterBack);
+      titleElement.appendChild(letterContainer);
+    });
+
+    console.log('Flipping letters initialized with random suits and colors');
+  }
+
+  /**
+   * Initialize orbiting suit icons around hero copy
+   */
+  initOrbitingIcons() {
+    const heroSection = document.querySelector('.hero');
+    const heroCopySide = document.querySelector('.hero-copy-side');
+
+    if (!heroSection || !heroCopySide) {
+      console.log('Hero section or copy side not found for orbiting icons');
+      return;
+    }
+
+    // Available suits and their colors
+    const suits = [
+      { symbol: '♠', color: '#000000' }, // Spade - black
+      { symbol: '♣', color: '#000000' }, // Club - black
+      { symbol: '♥', color: '#e73e3a' }, // Heart - red
+      { symbol: '♦', color: '#e73e3a' }, // Diamond - red
+    ];
+
+    // Set random suits and colors for the orbiting icons
+    const randomSuit1 = suits[Math.floor(Math.random() * suits.length)];
+    const randomSuit2 = suits[Math.floor(Math.random() * suits.length)];
+
+    // Apply the random suits via CSS custom properties
+    heroCopySide.style.setProperty('--orbit-suit-1', `"${randomSuit1.symbol}"`);
+    heroCopySide.style.setProperty('--orbit-color-1', randomSuit1.color);
+    heroCopySide.style.setProperty('--orbit-suit-2', `"${randomSuit2.symbol}"`);
+    heroCopySide.style.setProperty('--orbit-color-2', randomSuit2.color);
+
+    console.log(
+      'Orbiting icons initialized with random suits:',
+      randomSuit1.symbol,
+      randomSuit2.symbol
+    );
   }
 }
 
