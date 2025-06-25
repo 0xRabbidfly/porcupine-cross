@@ -67,6 +67,16 @@
   ) !important;
 }
 
+/* Contact section - Blue theme */
+#contact {
+  background: var(--color-blue-light) !important;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(30, 58, 138, 0.02) 0 12px,
+    transparent 12px 24px
+  ) !important;
+}
+
 /* Section text colors for better contrast */
 .hero h1,
 .hero h2,
@@ -118,6 +128,17 @@
 #register h3,
 #register p {
   color: var(--color-dark) !important;
+}
+
+/* Contact section text colors for blue background */
+#contact h2,
+#contact h3,
+#contact p {
+  color: var(--color-dark) !important;
+}
+
+#contact h2 {
+  color: var(--color-secondary) !important;
 }
 
 /* Sponsors section text colors for white background */

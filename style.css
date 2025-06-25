@@ -1419,3 +1419,137 @@ nav#main-nav {
     font-size: clamp(1.2rem, 5vw, 1.8rem);
   }
 }
+
+/* Contact Section Styling */
+#contact {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+#contact h2 {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin-bottom: 1rem;
+}
+
+.contact-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.contact-intro {
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  margin-bottom: 3rem;
+  font-weight: 500;
+  color: var(--color-dark);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.contact-item {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.1);
+  border: 2px solid rgba(30, 58, 138, 0.1);
+  transition: all 0.3s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+}
+
+.contact-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(30, 58, 138, 0.15);
+  border-color: var(--color-secondary);
+}
+
+.contact-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(214, 45, 32, 0.2);
+}
+
+.contact-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.contact-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-bottom: 0.5rem;
+  font-family: 'Stardos Stencil', 'Cinzel', serif;
+}
+
+.contact-info a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
+
+.contact-info p {
+  color: var(--color-dark);
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.social-description {
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 0.3rem;
+}
+
+.contact-outro {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  margin-top: 3rem;
+  font-weight: 500;
+  color: var(--color-dark);
+  font-style: italic;
+}
+
+/* Mobile responsiveness for contact section */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .contact-item {
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .contact-icon {
+    margin: 0 auto 1.5rem auto;
+  }
+}
