@@ -134,12 +134,12 @@ section:hover .ace-icon {
 
 /* Schedule item styling for white background */
 #schedule .schedule-item {
-  background: rgba(214, 45, 32, 0.05) !important;
+  background: rgba(214, 45, 32, 0.12) !important;
   border-left: 4px solid var(--color-primary) !important;
 }
 
 #schedule .schedule-item:hover {
-  background: rgba(214, 45, 32, 0.1) !important;
+  background: rgba(214, 45, 32, 0.18) !important;
   border-left-color: var(--color-red-medium) !important;
 }
 

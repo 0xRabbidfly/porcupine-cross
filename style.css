@@ -433,16 +433,32 @@ footer {
 
 #schedule .schedule-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
   margin: 30px 0 0 0;
   justify-items: stretch;
-  align-items: start;
+  align-items: stretch;
   box-sizing: border-box;
   width: 100%;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Medium screens - 3 columns */
+@media (max-width: 1100px) {
+  #schedule .schedule-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+/* Small screens - 2 columns */
+@media (max-width: 768px) {
+  #schedule .schedule-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -458,6 +474,10 @@ footer {
   margin-bottom: 0;
   width: 100%;
   min-width: 0;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   box-sizing: border-box;
   padding: 15px;
   background-color: var(--cream);
