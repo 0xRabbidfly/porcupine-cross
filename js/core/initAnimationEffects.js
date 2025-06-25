@@ -1,3 +1,8 @@
+/**
+ * Initialize Animation Effects
+ * Enhanced version with experimental animations
+ */
+
 export function initAnimationEffects(app) {
   try {
     app.initMobileMenu();
@@ -23,7 +28,96 @@ export function initAnimationEffects(app) {
         window.navigator.vibrate([10, 30, 10]);
       }
     });
+
+    // Initialize flipping letters for PROLOGUE title
+    initFlippingTitle();
+
+    // Enhanced click animations
+    document.addEventListener('click', e => {
+      if (e.target.closest('.cta-button, .menu-icon, .countdown-item')) {
+        app.components.audioManager.playClickSound();
+        createClickRipple(e);
+      }
+    });
+
+    // Enhanced hover effects for interactive elements
+    const interactiveElements = document.querySelectorAll('.countdown-item, .cta-button, .hotspot');
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        element.style.transform += ' scale(1.05)';
+      });
+      element.addEventListener('mouseleave', () => {
+        element.style.transform = element.style.transform.replace(' scale(1.05)', '');
+      });
+    });
   } catch (error) {
     console.error('Error setting up animation effects:', error);
   }
+}
+
+function initFlippingTitle() {
+  const titleElement = document.querySelector('.prologue-card-title');
+  if (!titleElement) return;
+
+  const titleText = titleElement.textContent.trim();
+  titleElement.innerHTML = '';
+
+  // Create flipping letter structure
+  titleText.split('').forEach((letter, index) => {
+    if (letter === ' ') {
+      titleElement.appendChild(document.createTextNode(' '));
+      return;
+    }
+
+    const letterContainer = document.createElement('span');
+    letterContainer.className = 'flip-letter';
+
+    const letterFront = document.createElement('span');
+    letterFront.className = 'letter-front';
+    letterFront.textContent = letter;
+
+    const letterBack = document.createElement('span');
+    letterBack.className = 'letter-back';
+    // The suit symbol will be added via CSS ::after
+
+    letterContainer.appendChild(letterFront);
+    letterContainer.appendChild(letterBack);
+    titleElement.appendChild(letterContainer);
+  });
+}
+
+function createClickRipple(e) {
+  const ripple = document.createElement('div');
+  ripple.style.cssText = `
+    position: fixed;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, transparent 70%);
+    transform: scale(0);
+    animation: ripple-effect 0.6s ease-out;
+    pointer-events: none;
+    z-index: 9999;
+    width: 100px;
+    height: 100px;
+    left: ${e.clientX - 50}px;
+    top: ${e.clientY - 50}px;
+  `;
+
+  document.body.appendChild(ripple);
+
+  // Add ripple animation keyframes if not already added
+  if (!document.querySelector('#ripple-keyframes')) {
+    const style = document.createElement('style');
+    style.id = 'ripple-keyframes';
+    style.textContent = `
+      @keyframes ripple-effect {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  setTimeout(() => ripple.remove(), 600);
 }
