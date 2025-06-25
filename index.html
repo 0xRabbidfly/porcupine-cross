@@ -109,7 +109,7 @@
             
             <p>Trying CX for the first time? We've got you covered. A limited number of rental cyclocross bikes will be available for first-timers, and we offer an untimed, beginner-friendly race for both adults and young kids. No pressure—just a chance to explore the sport, ride the course, and have fun.</p>
             
-            <p>Prologue Cross isn't just about racing—it's about the full experience. Expect high-energy vibes at the UCI-style start/finish line, complete with pumping music, cheering fans, and European-inspired snacks like hot fries with mayo and cold non-alcoholic beer from the chip truck.</p>
+            <p>Prologue Cross isn't just about racing—it's about the full experience. Expect high-energy vibes at the UCI-style start/finish line, complete with pumping music and cheering fans.</p>
             
             <p>Whether you're a seasoned racer tuning up for the season or a curious newcomer looking to dip your toes into CX, this is the race where everyone gets to play their hand.</p>
             
@@ -262,7 +262,7 @@
                         </div>
                         <div class="contact-info">
                             <h3>Follow us:</h3>
-                            <a href="https://instagram.com/PrologueCross" target="_blank" rel="noopener">@PrologueCross</a>
+                            <a href="https://www.instagram.com/PrologueCross/" target="_blank" rel="noopener" onclick="openInstagram(event)">@PrologueCross</a>
                             <p class="social-description">on Instagram for updates, course previews, and behind-the-scenes action</p>
                         </div>
                     </div>
@@ -309,6 +309,34 @@
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('main-loading-spinner').style.display = 'none';
         });
+
+        // Handle Instagram app deep linking
+        function openInstagram(event) {
+            event.preventDefault();
+            
+            // Try to open Instagram app first (mobile)
+            const instagramApp = 'instagram://user?username=PrologueCross';
+            const instagramWeb = 'https://www.instagram.com/PrologueCross/';
+            
+            // Check if we're on mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Try to open Instagram app, fallback to web if app not installed
+                const startTime = Date.now();
+                window.location.href = instagramApp;
+                
+                // If app doesn't open within 2 seconds, open web version
+                setTimeout(function() {
+                    if (Date.now() - startTime < 2100) {
+                        window.open(instagramWeb, '_blank', 'noopener');
+                    }
+                }, 2000);
+            } else {
+                // Desktop: open web version
+                window.open(instagramWeb, '_blank', 'noopener');
+            }
+        }
     </script>
 </body>
 </html> 

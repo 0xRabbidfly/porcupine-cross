@@ -149,6 +149,15 @@ section {
   margin-top: 0;
 }
 
+/* Reduce padding for specific sections (excluding hero and sponsors) */
+#about,
+#schedule,
+#course,
+#register,
+#contact {
+  padding: 30px 4%;
+}
+
 section.visible {
   opacity: 1;
   transform: translateY(0) rotate(0); /* Ensure rotation is reset if applied before visible */
@@ -396,8 +405,8 @@ footer {
 /* Schedule Section - Refined */
 #schedule {
   background-color: var(--sand);
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-top: 30px;
+  padding-bottom: 30px;
   background-image: repeating-linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.04) 0 12px,
@@ -519,8 +528,8 @@ footer {
 #course {
   background-color: var(--moss-green);
   color: #fff;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-top: 30px;
+  padding-bottom: 30px;
   background-image: url('images/mud-splatter.svg');
   background-repeat: repeat;
   background-size: 320px 180px;
@@ -652,6 +661,31 @@ footer {
 
   section {
     padding: 45px 4%;
+  }
+
+  /* Reduce mobile padding for specific sections (excluding hero and sponsors) */
+  #about,
+  #schedule,
+  #course,
+  #register,
+  #contact {
+    padding: 20px 4%;
+  }
+
+  /* Mobile-specific overrides for sections with separate top/bottom padding */
+  #schedule {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  #course {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  #register,
+  #contact {
+    padding: 20px 20px;
   }
 
   /* Note: Navigation styles moved to component files */
@@ -1248,7 +1282,7 @@ nav#main-nav {
 /* Register Section Styling */
 #register {
   text-align: center;
-  padding: 60px 20px;
+  padding: 30px 20px;
 }
 
 #register h2 {
@@ -1425,7 +1459,7 @@ nav#main-nav {
 /* Contact Section Styling */
 #contact {
   text-align: center;
-  padding: 60px 20px;
+  padding: 30px 20px;
 }
 
 #contact h2 {

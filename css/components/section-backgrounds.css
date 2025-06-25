@@ -110,6 +110,20 @@
 #about p,
 .about-section p {
   color: var(--color-dark) !important;
+  text-align: justify;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.2em;
+}
+
+/* Mobile responsive text alignment for about section */
+@media (max-width: 768px) {
+  #about p,
+  .about-section p {
+    text-align: left;
+    padding: 0 4%;
+  }
 }
 
 #course h2 {
