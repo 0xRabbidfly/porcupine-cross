@@ -5,7 +5,7 @@ alwaysApply: true
 ---
 # Frontend Guidelines & Best Practices
 
-## Code Organization & Architecture
+## 1. Architecture & Code Organization
 
 ### Component-Based Architecture
 - Each UI component should be self-contained with isolated state
@@ -20,85 +20,34 @@ alwaysApply: true
 - `/css/components/` - Component-specific styles
 - `/tests/unit/` - Unit tests for all components
 
-### Module System
-- Use ES6+ modules with import/export
-- Implement module bridge pattern for compatibility
-- Minimal global namespace pollution
-- Clear separation of concerns
-
-### Architecture Patterns
-
-#### File Organization Principles
+### File Organization Principles
 - **One Component, One File**: Never mix multiple components
 - **Flat Directory Structure**: Avoid deep nesting (max 3 levels)
 - **Consistent Naming**: Use kebab-case for files, PascalCase for classes
 - **Logical Grouping**: Group by feature, not by file type
 
-#### Dependency Management
+### Module System & Dependencies
+- Use ES6+ modules with import/export
 - **Import Ordering**: External → Internal → Relative imports
 - **Circular Dependencies**: Strictly forbidden
-- **Dead Code Detection**: Regular audits using tools
-- **Tree Shaking**: Structure exports for optimal bundling
+- Minimal global namespace pollution
+- Clear separation of concerns
 
-## CSS Best Practices
-
-### Modular CSS Architecture
-- Component-based CSS with scoped class names
-- Use CSS variables for theming and animation timing
-- Separate files for each component's styles
-- Clear hierarchy: theme.css → component CSS → specific overrides
-
-### Animation Standards
-- Use CSS transitions for smooth animations
-- Transform and opacity for performance (hardware acceleration)
-- Unified AnimationSystem API for complex animations
-- Hardware-accelerated animations where appropriate
-
-### Responsive Design
-- Mobile-first responsive design approach
-- Percentage-based positioning for responsive elements
-- Dynamic repositioning based on viewport dimensions
-- Container-relative positioning for accuracy
-
-### CSS Performance
-- **Selector Efficiency**: Avoid complex nested selectors
-- **Hardware Acceleration**: Use transform3d() for animations
-- **Critical Path**: Inline critical CSS, async load non-critical
-- **CSS Containment**: Use `contain` property for isolated components
-
-## JavaScript Best Practices
-
-### Event Management
-- Use event delegation for efficient handling
-- EventBus pattern for component communication
-- Publish-subscribe pattern for decoupled components
-- Throttled event handlers for performance
-
-### State Management
-- State machine pattern for UI components
-- Clear state transitions preventing invalid changes
-- Singleton pattern for core services (AnimationSystem, AudioManager)
-- Track animation states properly
-
-### Performance Optimization
-- Minimal DOM manipulation
-- CSS transitions over JavaScript animations
-- Efficient animation batching and queuing
-- Progressive enhancement approach
-
-### JavaScript Performance
-- **Event Delegation**: Use for multiple similar elements
-- **Debouncing/Throttling**: For scroll and resize events
-- **Memory Management**: Clean up event listeners and timers
-- **Animation**: Prefer CSS transforms over JavaScript manipulation
-
-## Code Cleanup & Maintenance
+## 2. Code Quality & Maintenance
 
 ### Zero-Tolerance Deprecated Code Policy
 - **Immediate Removal**: Delete deprecated code as soon as replacement is ready
 - **No Backwards Compatibility**: Clean breaks preferred over compatibility layers
 - **No Commented Code**: Delete unused code blocks immediately
 - **Aggressive Consolidation**: Merge duplicate functionality without delay
+
+### Quality Metrics & Targets
+- **Cyclomatic Complexity**: < 10 per function
+- **Function Length**: < 50 lines per function
+- **Class Size**: < 300 lines per class
+- **File Size**: CSS < 400 lines, JS < 500 lines
+- **Test Coverage**: > 80% coverage
+- **Total Project**: Aim for <10K lines of active code
 
 ### Regular Cleanup Schedule
 - **Weekly**: Review and remove unused CSS variables and classes
@@ -113,41 +62,97 @@ alwaysApply: true
 - [ ] Streamline HTML element structure
 - [ ] Consolidate inline scripts
 
-### File Size Targets
-- CSS files: < 400 lines (split if larger)
-- JS components: < 500 lines (split if larger)  
-- HTML files: Minimize inline scripts
-- Total project: Aim for <10K lines of active code
+## 3. CSS Best Practices
 
-## Bundle Size Optimization
+### Modular CSS Architecture
+- Component-based CSS with scoped class names
+- Use CSS variables for theming and animation timing
+- Separate files for each component's styles
+- Clear hierarchy: theme.css → component CSS → specific overrides
 
-### Asset Optimization
-- **CSS**: Use CSS shorthand properties aggressively
-- **JavaScript**: Prefer native APIs over libraries when possible
+### Responsive Design
+- Mobile-first responsive design approach
+- Percentage-based positioning for responsive elements
+- Dynamic repositioning based on viewport dimensions
+- Container-relative positioning for accuracy
+
+### CSS Performance & Animations
+- **Selector Efficiency**: Avoid complex nested selectors
+- **Hardware Acceleration**: Use transform3d() for animations
+- **Critical Path**: Inline critical CSS, async load non-critical
+- **CSS Containment**: Use `contain` property for isolated components
+- Use CSS transitions for smooth animations
+- Transform and opacity for performance
+- Unified AnimationSystem API for complex animations
+
+## 4. JavaScript Best Practices
+
+### Event Management
+- Use event delegation for efficient handling
+- EventBus pattern for component communication
+- Publish-subscribe pattern for decoupled components
+- **Debouncing/Throttling**: For scroll and resize events
+
+### State Management
+- State machine pattern for UI components
+- Clear state transitions preventing invalid changes
+- Singleton pattern for core services (AnimationSystem, AudioManager)
+- Track animation states properly
+
+### JavaScript Performance
+- Minimal DOM manipulation
+- CSS transitions over JavaScript animations
+- **Memory Management**: Clean up event listeners and timers
+- **Animation**: Prefer CSS transforms over JavaScript manipulation
+- Efficient animation batching and queuing
+- Progressive enhancement approach
+
+## 5. Performance Optimization
+
+### Core Web Vitals Targets
+- **LCP (Largest Contentful Paint)**: < 2.5 seconds
+- **FID (First Input Delay)**: < 100 milliseconds  
+- **CLS (Cumulative Layout Shift)**: < 0.1
+- **INP (Interaction to Next Paint)**: < 200 milliseconds
+
+### Asset Optimization & Loading
 - **Images**: Optimize with modern formats (WebP, AVIF)
 - **Fonts**: Load only required font weights and styles
+- **CSS**: Use shorthand properties aggressively
+- **JavaScript**: Prefer native APIs over libraries when possible
+- **Caching**: Implement proper caching strategies
 
-### Code Splitting Strategy
+### Code Splitting & Bundling
 - **Critical CSS**: Inline above-the-fold styles
 - **Component CSS**: Load component styles on-demand
 - **JavaScript**: Use dynamic imports for non-critical features
 - **Third-party Code**: Load asynchronously when possible
+- **Dead Code Detection**: Regular audits using tools
+- **Tree Shaking**: Structure exports for optimal bundling
 
-## Performance Optimization
+### Performance Metrics
+- **Bundle Size**: Track with each deploy
+- **Load Time**: Monitor real user metrics
+- **Build Time**: Keep under 30 seconds for dev builds
 
-### Core Web Vitals Focus
-- **LCP Target**: < 2.5 seconds
-- **FID Target**: < 100 milliseconds  
-- **CLS Target**: < 0.1
-- **INP Target**: < 200 milliseconds
+## 6. Security & Safety
 
-### Asset Optimization
-- Optimize images for web delivery
-- Minimize CSS and JavaScript bundle sizes
-- Use efficient loading strategies
-- Implement proper caching strategies
+### Input Validation & Sanitization
+- **User Input**: Always validate and sanitize
+- **URL Parameters**: Validate all query parameters
+- **Form Data**: Server-side validation required
+- **File Uploads**: Strict type and size validation
 
-## Testing Requirements
+### Safe Coding Practices
+- **No eval()**: Never use eval() or Function constructor
+- **CSP Headers**: Implement Content Security Policy
+- **XSS Prevention**: Escape all user-generated content
+- **Dependency Audits**: Regular npm audit runs
+- Implement proper error handling
+- Use feature detection over browser detection
+- Handle async operations safely
+
+## 7. Testing Requirements
 
 ### Test Coverage Standards
 - Unit tests for all components and utilities
@@ -161,41 +166,7 @@ alwaysApply: true
 - Component-specific coverage goals
 - Statement, branch, function, and line coverage metrics
 
-## Code Quality Metrics
-
-### Complexity Metrics
-- **Cyclomatic Complexity**: Target < 10 per function
-- **File Size**: CSS < 400 lines, JS < 500 lines
-- **Function Length**: Target < 50 lines per function
-- **Class Size**: Target < 300 lines per class
-
-### Performance Metrics
-- **Bundle Size**: Track with each deploy
-- **Load Time**: Monitor real user metrics
-- **Test Coverage**: Maintain > 80% coverage
-- **Build Time**: Keep under 30 seconds for dev builds
-
-## Security & Code Safety
-
-### Input Validation & Sanitization
-- **User Input**: Always validate and sanitize
-- **URL Parameters**: Validate all query parameters
-- **Form Data**: Server-side validation required
-- **File Uploads**: Strict type and size validation
-
-### Safe Coding Practices
-- **No eval()**: Never use eval() or Function constructor
-- **CSP Headers**: Implement Content Security Policy
-- **XSS Prevention**: Escape all user-generated content
-- **Dependency Audits**: Regular npm audit runs
-
-### Code Safety
-- Avoid eval() and similar unsafe functions
-- Implement proper error handling
-- Use feature detection over browser detection
-- Handle async operations safely
-
-## Development Tooling
+## 8. Development Tooling & Workflow
 
 ### Required Tools
 - **Linting**: ESLint + Prettier for consistent formatting
@@ -209,7 +180,13 @@ alwaysApply: true
 - **Analysis**: `npm run analyze` - bundle size analysis
 - **Performance**: `npm run perf` - performance benchmarking
 
-## Accessibility Standards
+### Development Workflow
+- Code review process for all changes
+- Verify test coverage before merging
+- Check for best practices compliance
+- **Zero backwards compatibility** - clean breaks only
+
+## 9. Accessibility & Browser Support
 
 ### ARIA Implementation
 - Proper ARIA attributes for interactive elements
@@ -223,67 +200,32 @@ alwaysApply: true
 - Feature detection for advanced APIs
 - Mobile-first approach
 
-## Browser Compatibility
-
-### Modern Browser Focus
+### Browser Compatibility
 - ES6+ features with graceful degradation
 - Feature detection for advanced APIs
 - CSS variables with fallbacks
 - Touch-friendly interactions for mobile
-
-### Mobile Support Requirements
 - Touch gesture support
 - Viewport-specific animations
 - Responsive layout for all screen sizes
-- Performance optimization for mobile devices
 
-## Code Quality Standards
+## 10. Project-Specific Guidelines
 
-### Development Workflow
-- Code review process for all changes
-- Verify test coverage before merging
-- Check for best practices compliance
-- **Zero backwards compatibility** - clean breaks only
-
-### Clean Code Principles
-- **Immediate removal** of deprecated code
-- Remove unused dependencies and functions immediately
-- Clear, descriptive variable and function names
-- Consistent code formatting and structure
-
-## Interactive Elements Guidelines
-
-### Map System Standards
-- Percentage-based hotspot positioning
-- Dynamic container adjustment for screen sizes
-- Automatic centering and alignment with images
-- Responsive info panels with edge detection
+### Interactive Elements
+- **Map System**: Percentage-based hotspot positioning, dynamic container adjustment, responsive info panels with edge detection
+- **Animation System**: Unified API, mud splatter effects, state-based triggers, clean cleanup and memory management
 - Event-based communication between elements
 
-### Animation System
-- Unified animation API across components
-- Mud splatter effects for interactive elements
-- State-based animation triggers
-- Clean animation cleanup and memory management
-
-## Documentation Standards
-
-### Code Documentation
-- JSDoc comments for all public APIs
-- Clear inline comments for complex logic
-- Component usage examples
-- API documentation for all methods
-
-### Project Documentation
-- Keep technical stack documentation updated
-- Document architectural decisions
-- Maintain testing guidelines
-- Update deployment procedures
+### Documentation Standards
+- **Code Documentation**: JSDoc comments for all public APIs, clear inline comments for complex logic, component usage examples
+- **Project Documentation**: Keep technical stack updated, document architectural decisions, maintain testing and deployment guidelines
 
 
 ---
 
 *This document should be updated as the project evolves and new best practices are established.*
+
+
 
 
 
