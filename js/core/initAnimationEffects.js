@@ -30,7 +30,14 @@ export function initAnimationEffects(app) {
     });
 
     // Initialize flipping letters for PROLOGUE title
-    initFlippingTitle();
+    setTimeout(() => {
+      initFlippingTitle();
+      // Ensure hero section is marked as loaded for ace icons
+      const heroSection = document.querySelector('.hero');
+      if (heroSection) {
+        heroSection.classList.add('loaded');
+      }
+    }, 500); // Small delay to ensure DOM is ready
 
     // Enhanced click animations
     document.addEventListener('click', e => {
@@ -57,9 +64,13 @@ export function initAnimationEffects(app) {
 
 function initFlippingTitle() {
   const titleElement = document.querySelector('.prologue-card-title');
-  if (!titleElement) return;
+  if (!titleElement) {
+    console.log('Prologue title element not found');
+    return;
+  }
 
   const titleText = titleElement.textContent.trim();
+  console.log('Found title text:', titleText);
   titleElement.innerHTML = '';
 
   // Create flipping letter structure
@@ -84,6 +95,8 @@ function initFlippingTitle() {
     letterContainer.appendChild(letterBack);
     titleElement.appendChild(letterContainer);
   });
+
+  console.log('Flipping letters initialized');
 }
 
 function createClickRipple(e) {
