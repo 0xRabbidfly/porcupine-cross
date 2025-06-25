@@ -1252,6 +1252,7 @@ nav#main-nav {
 #register h2 {
   font-size: clamp(1.8rem, 4vw, 2.4rem);
   margin-bottom: 2rem;
+  color: var(--color-secondary) !important;
 }
 
 .register-content {
@@ -1265,16 +1266,33 @@ nav#main-nav {
 
 .register-icon {
   position: relative;
-  display: inline-block;
-  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+  width: 120px;
+  height: 120px;
+  border: 3px solid var(--color-secondary);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
   animation: dealCards 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+  transform: scale(1.05);
 }
 
 .register-icon .fa-hand-paper {
-  font-size: 4rem;
+  font-size: 3rem;
   color: var(--color-secondary);
-  display: block;
-  margin-bottom: 1rem;
+  margin: 0;
+  z-index: 2;
+  position: relative;
 }
 
 .card-symbols {
@@ -1313,7 +1331,7 @@ nav#main-nav {
 
 .register-tagline {
   font-family: 'Stardos Stencil', 'Cinzel', serif;
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   color: var(--color-secondary);
   margin: 0;
@@ -1380,8 +1398,13 @@ nav#main-nav {
 
 /* Mobile responsiveness for register section */
 @media (max-width: 768px) {
+  .register-icon {
+    width: 100px;
+    height: 100px;
+  }
+
   .register-icon .fa-hand-paper {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .card-symbols {
@@ -1389,10 +1412,10 @@ nav#main-nav {
   }
 
   .card-symbol {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .register-tagline {
-    font-size: clamp(1.5rem, 6vw, 2.5rem);
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
   }
 }

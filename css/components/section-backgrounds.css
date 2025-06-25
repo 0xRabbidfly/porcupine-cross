@@ -111,7 +111,10 @@
 }
 
 /* Register section text colors for red background */
-#register h2,
+#register h2 {
+  color: var(--color-secondary) !important;
+}
+
 #register h3,
 #register p {
   color: var(--color-dark) !important;
