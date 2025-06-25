@@ -63,100 +63,60 @@
   }
 }
 
-/* Orbiting Suit Icons around "kick off..." copy */
+/* Single back-and-forth suit icon under "season heats up" */
 .hero-copy-side {
   position: relative;
 }
 
-.hero-copy-side::before,
 .hero-copy-side::after {
+  content: var(--back-forth-suit, '♠');
+  color: var(--back-forth-color, '#000000');
+  filter: drop-shadow(0 0 8px var(--back-forth-color, '#000000'));
   position: absolute;
-  font-size: 2rem;
+  font-size: 1.5rem;
   opacity: 0;
   pointer-events: none;
   z-index: 1;
   transition: opacity 0.5s ease;
   font-weight: bold;
-}
-
-.hero-copy-side::before {
-  content: var(--orbit-suit-1, '♠');
-  color: var(--orbit-color-1, '#000000');
-  filter: drop-shadow(0 0 8px var(--orbit-color-1, '#000000'));
-}
-
-.hero-copy-side::after {
-  content: var(--orbit-suit-2, '♥');
-  color: var(--orbit-color-2, '#e73e3a');
-  filter: drop-shadow(0 0 8px var(--orbit-color-2, '#e73e3a'));
-}
-
-.hero.loaded .hero-copy-side::before {
-  opacity: 0.7;
-  animation: orbit-suit-1 10s linear infinite;
+  bottom: -30px;
+  left: 0;
+  width: 100%;
 }
 
 .hero.loaded .hero-copy-side::after {
-  opacity: 0.6;
-  animation: orbit-suit-2 12s linear infinite reverse;
+  opacity: 0.7;
+  animation: back-and-forth 3s ease-in-out infinite;
 }
 
-@keyframes orbit-suit-1 {
+@keyframes back-and-forth {
   0% {
-    transform: rotate(0deg) translateX(200px) rotate(0deg);
-    top: 50%;
-    left: 50%;
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(150px);
   }
   100% {
-    transform: rotate(360deg) translateX(200px) rotate(-360deg);
-    top: 50%;
-    left: 50%;
+    transform: translateX(0px);
   }
 }
 
-@keyframes orbit-suit-2 {
-  0% {
-    transform: rotate(0deg) translateX(160px) rotate(0deg);
-    top: 50%;
-    left: 50%;
-  }
-  100% {
-    transform: rotate(360deg) translateX(160px) rotate(-360deg);
-    top: 50%;
-    left: 50%;
-  }
-}
-
-/* Mobile responsive orbiting */
+/* Mobile responsive back-and-forth */
 @media (max-width: 768px) {
-  .hero-copy-side::before,
   .hero-copy-side::after {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    bottom: -25px;
   }
 
-  @keyframes orbit-suit-1 {
+  @keyframes back-and-forth {
     0% {
-      transform: rotate(0deg) translateX(120px) rotate(0deg);
-      top: 50%;
-      left: 50%;
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(80px);
     }
     100% {
-      transform: rotate(360deg) translateX(120px) rotate(-360deg);
-      top: 50%;
-      left: 50%;
-    }
-  }
-
-  @keyframes orbit-suit-2 {
-    0% {
-      transform: rotate(0deg) translateX(100px) rotate(0deg);
-      top: 50%;
-      left: 50%;
-    }
-    100% {
-      transform: rotate(360deg) translateX(100px) rotate(-360deg);
-      top: 50%;
-      left: 50%;
+      transform: translateX(0px);
     }
   }
 }
@@ -221,11 +181,6 @@
     padding: 25px 5vw;
     flex-basis: auto;
     gap: 12px;
-  }
-
-  .hero-copy-side::before,
-  .hero-copy-side::after {
-    font-size: 1.5rem;
   }
 
   @keyframes orbit-ace-1 {

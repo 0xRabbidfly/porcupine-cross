@@ -537,14 +537,14 @@ class App {
   }
 
   /**
-   * Initialize orbiting suit icons around hero copy
+   * Initialize back-and-forth suit icon under hero copy
    */
   initOrbitingIcons() {
     const heroSection = document.querySelector('.hero');
     const heroCopySide = document.querySelector('.hero-copy-side');
 
     if (!heroSection || !heroCopySide) {
-      console.log('Hero section or copy side not found for orbiting icons');
+      console.log('Hero section or copy side not found for back-and-forth icon');
       return;
     }
 
@@ -556,21 +556,14 @@ class App {
       { symbol: '♦', color: '#e73e3a' }, // Diamond - red
     ];
 
-    // Set random suits and colors for the orbiting icons
-    const randomSuit1 = suits[Math.floor(Math.random() * suits.length)];
-    const randomSuit2 = suits[Math.floor(Math.random() * suits.length)];
+    // Set random suit and color for the back-and-forth icon
+    const randomSuit = suits[Math.floor(Math.random() * suits.length)];
 
-    // Apply the random suits via CSS custom properties
-    heroCopySide.style.setProperty('--orbit-suit-1', `"${randomSuit1.symbol}"`);
-    heroCopySide.style.setProperty('--orbit-color-1', randomSuit1.color);
-    heroCopySide.style.setProperty('--orbit-suit-2', `"${randomSuit2.symbol}"`);
-    heroCopySide.style.setProperty('--orbit-color-2', randomSuit2.color);
+    // Apply the random suit via CSS custom properties
+    heroCopySide.style.setProperty('--back-forth-suit', `"${randomSuit.symbol}"`);
+    heroCopySide.style.setProperty('--back-forth-color', randomSuit.color);
 
-    console.log(
-      'Orbiting icons initialized with random suits:',
-      randomSuit1.symbol,
-      randomSuit2.symbol
-    );
+    console.log('Back-and-forth icon initialized with random suit:', randomSuit.symbol);
   }
 }
 
