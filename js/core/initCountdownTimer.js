@@ -8,7 +8,7 @@ export function initCountdownTimer(app) {
   };
   if (elements.days && elements.hours && elements.minutes && elements.seconds) {
     app.components.countdownTimer = new app.CountdownTimer(
-      'September 21, 2025 08:00:00',
+      'September 14, 2025 08:00:00',
       elements,
       {
         animationClasses: {
