@@ -1,16 +1,32 @@
 :root {
-  --color-primary: #e73e3a;
-  --color-accent: #ffc107;
-  --color-secondary: #2e4f2e;
-  --color-background: #f5f0e6;
-  --color-surface: #fff;
-  --color-dark: #333;
-  --color-medium: #555;
-  --color-light: #777;
+  /* Primary Brand Colors - extracted from Prologue Cross Logo */
+  --color-primary: #d62d20; /* Deep red from logo card */
+  --color-secondary: #1e3a8a; /* Navy blue from spade symbol */
+  --color-accent: #ffffff; /* Clean white for contrast */
+
+  /* Light background variations */
+  --color-red-light: #ffeaea; /* Very light red for backgrounds */
+  --color-blue-light: #eff6ff; /* Very light blue for backgrounds */
+  --color-white-light: #fafafa; /* Off-white for subtle sections */
+
+  /* Medium tones for borders and subtle elements */
+  --color-red-medium: #ef4444; /* Medium red for hover states */
+  --color-blue-medium: #3b82f6; /* Medium blue for interactive elements */
+
+  /* Text colors */
+  --color-dark: #1f2937; /* Dark gray for primary text */
+  --color-medium: #4b5563; /* Medium gray for secondary text */
+  --color-light: #6b7280; /* Light gray for tertiary text */
+
+  /* Legacy colors for backwards compatibility */
+  --color-background: var(--color-white-light);
+  --color-surface: var(--color-accent);
   --color-mud: #8b4513;
   --color-sand: #e6d5ac;
   --color-orange: #d35400;
-  --color-blue: #e8f1f2;
+  --color-blue: var(--color-blue-light);
+
+  /* Typography */
   --font-main: 'Montserrat', 'Arial', sans-serif;
   --font-heading: 'Impact', Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }

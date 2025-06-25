@@ -11,8 +11,8 @@
   --desktop-menu-item-padding: 0.7rem 1.2rem;
   --desktop-menu-font-size: 0.85rem;
   --desktop-menu-indicator-height: 3px;
-  --desktop-menu-hover-bg: rgba(231, 62, 58, 0.05);
-  --menu-item-active-bg: rgba(231, 62, 58, 0.12);
+  --desktop-menu-hover-bg: rgba(255, 255, 255, 0.1);
+  --menu-item-active-bg: rgba(255, 255, 255, 0.15);
 }
 
 @media (min-width: 769px) {
@@ -44,10 +44,10 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    color: var(--cream) !important;
+    color: var(--color-accent) !important;
     text-shadow:
-      0 2px 8px rgba(44, 62, 80, 0.18),
-      0 1px 0 #0002;
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      0 1px 0 rgba(0, 0, 0, 0.2);
     border-bottom: none;
     text-align: center;
     width: auto;
@@ -67,7 +67,7 @@
     top: 0;
     height: 100%;
     width: 5px;
-    background-color: var(--theme-accent-gold);
+    background-color: var(--color-secondary);
     border-radius: 4px 0 0 4px;
     transform: scaleY(0);
     transition: transform 0.8s cubic-bezier(0.3, 0, 0.2, 1);
@@ -76,13 +76,13 @@
   /* Hover state for desktop items - similar to mobile */
   nav#main-nav a:hover,
   nav#main-nav a:focus {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: var(--theme-accent-gold) !important;
+    background-color: var(--desktop-menu-hover-bg);
+    color: var(--color-secondary) !important;
     text-shadow:
-      0 2px 12px rgba(255, 193, 7, 0.18),
-      0 1px 0 #0002;
+      0 2px 12px rgba(30, 58, 138, 0.3),
+      0 1px 0 rgba(0, 0, 0, 0.2);
     transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.08);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
   }
 
   /* Animate accent bar on hover - like mobile */
@@ -94,11 +94,11 @@
   /* Active state for desktop items */
   nav#main-nav a.active,
   nav#main-nav a[aria-current='page'] {
-    background-color: rgba(255, 193, 7, 0.13);
-    color: var(--theme-accent-gold) !important;
+    background-color: var(--menu-item-active-bg);
+    color: var(--color-secondary) !important;
     text-shadow:
-      0 2px 12px rgba(255, 193, 7, 0.18),
-      0 1px 0 #0002;
+      0 2px 12px rgba(30, 58, 138, 0.3),
+      0 1px 0 rgba(0, 0, 0, 0.2);
     font-weight: 700;
   }
 
@@ -150,8 +150,8 @@
     opacity: 1;
     transform: scale(1.1) rotate(5deg);
     margin-right: 14px;
-    color: var(--theme-accent-gold) !important;
-    filter: drop-shadow(0 2px 8px #ffc10788);
+    color: var(--color-secondary) !important;
+    filter: drop-shadow(0 2px 8px rgba(30, 58, 138, 0.5));
   }
 
   nav#main-nav a:active .menu-icon {

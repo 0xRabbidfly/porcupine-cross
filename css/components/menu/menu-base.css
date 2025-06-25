@@ -9,9 +9,9 @@
   /* Menu shared variables */
   --menu-transition-duration: 0.35s;
   --menu-transition-easing: cubic-bezier(0.3, 0, 0.2, 1);
-  --theme-red: #e73e3a;
-  --theme-accent-gold: #ffc107;
-  --menu-icon-color: var(--theme-red);
+  --theme-red: var(--color-primary);
+  --theme-accent-gold: var(--color-accent);
+  --menu-icon-color: var(--color-accent);
 }
 
 /* Hamburger button base styling - shared across breakpoints */
