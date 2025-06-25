@@ -19,16 +19,16 @@
   margin-bottom: 0.5rem;
   font-size: 0.85rem;
   color: #ffffff !important;
-  font-weight: 600;
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .countdown-date {
   margin: 0 0 0.75rem 0;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #ffffff !important;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0.25px;
 }
 
