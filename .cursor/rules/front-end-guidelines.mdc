@@ -26,6 +26,20 @@ alwaysApply: true
 - Minimal global namespace pollution
 - Clear separation of concerns
 
+### Architecture Patterns
+
+#### File Organization Principles
+- **One Component, One File**: Never mix multiple components
+- **Flat Directory Structure**: Avoid deep nesting (max 3 levels)
+- **Consistent Naming**: Use kebab-case for files, PascalCase for classes
+- **Logical Grouping**: Group by feature, not by file type
+
+#### Dependency Management
+- **Import Ordering**: External → Internal → Relative imports
+- **Circular Dependencies**: Strictly forbidden
+- **Dead Code Detection**: Regular audits using tools
+- **Tree Shaking**: Structure exports for optimal bundling
+
 ## CSS Best Practices
 
 ### Modular CSS Architecture
@@ -45,6 +59,12 @@ alwaysApply: true
 - Percentage-based positioning for responsive elements
 - Dynamic repositioning based on viewport dimensions
 - Container-relative positioning for accuracy
+
+### CSS Performance
+- **Selector Efficiency**: Avoid complex nested selectors
+- **Hardware Acceleration**: Use transform3d() for animations
+- **Critical Path**: Inline critical CSS, async load non-critical
+- **CSS Containment**: Use `contain` property for isolated components
 
 ## JavaScript Best Practices
 
@@ -66,6 +86,67 @@ alwaysApply: true
 - Efficient animation batching and queuing
 - Progressive enhancement approach
 
+### JavaScript Performance
+- **Event Delegation**: Use for multiple similar elements
+- **Debouncing/Throttling**: For scroll and resize events
+- **Memory Management**: Clean up event listeners and timers
+- **Animation**: Prefer CSS transforms over JavaScript manipulation
+
+## Code Cleanup & Maintenance
+
+### Zero-Tolerance Deprecated Code Policy
+- **Immediate Removal**: Delete deprecated code as soon as replacement is ready
+- **No Backwards Compatibility**: Clean breaks preferred over compatibility layers
+- **No Commented Code**: Delete unused code blocks immediately
+- **Aggressive Consolidation**: Merge duplicate functionality without delay
+
+### Regular Cleanup Schedule
+- **Weekly**: Review and remove unused CSS variables and classes
+- **Monthly**: Audit all imports and dependencies for usage
+- **Before Each Feature**: Aggressive cleanup of related areas
+
+### Cleanup Checklist
+- [ ] Remove commented-out code blocks
+- [ ] Consolidate duplicate functionality
+- [ ] Delete unused files and dependencies
+- [ ] Minimize CSS variable declarations
+- [ ] Streamline HTML element structure
+- [ ] Consolidate inline scripts
+
+### File Size Targets
+- CSS files: < 400 lines (split if larger)
+- JS components: < 500 lines (split if larger)  
+- HTML files: Minimize inline scripts
+- Total project: Aim for <10K lines of active code
+
+## Bundle Size Optimization
+
+### Asset Optimization
+- **CSS**: Use CSS shorthand properties aggressively
+- **JavaScript**: Prefer native APIs over libraries when possible
+- **Images**: Optimize with modern formats (WebP, AVIF)
+- **Fonts**: Load only required font weights and styles
+
+### Code Splitting Strategy
+- **Critical CSS**: Inline above-the-fold styles
+- **Component CSS**: Load component styles on-demand
+- **JavaScript**: Use dynamic imports for non-critical features
+- **Third-party Code**: Load asynchronously when possible
+
+## Performance Optimization
+
+### Core Web Vitals Focus
+- **LCP Target**: < 2.5 seconds
+- **FID Target**: < 100 milliseconds  
+- **CLS Target**: < 0.1
+- **INP Target**: < 200 milliseconds
+
+### Asset Optimization
+- Optimize images for web delivery
+- Minimize CSS and JavaScript bundle sizes
+- Use efficient loading strategies
+- Implement proper caching strategies
+
 ## Testing Requirements
 
 ### Test Coverage Standards
@@ -79,6 +160,54 @@ alwaysApply: true
 - Module mocking capabilities via Jest
 - Component-specific coverage goals
 - Statement, branch, function, and line coverage metrics
+
+## Code Quality Metrics
+
+### Complexity Metrics
+- **Cyclomatic Complexity**: Target < 10 per function
+- **File Size**: CSS < 400 lines, JS < 500 lines
+- **Function Length**: Target < 50 lines per function
+- **Class Size**: Target < 300 lines per class
+
+### Performance Metrics
+- **Bundle Size**: Track with each deploy
+- **Load Time**: Monitor real user metrics
+- **Test Coverage**: Maintain > 80% coverage
+- **Build Time**: Keep under 30 seconds for dev builds
+
+## Security & Code Safety
+
+### Input Validation & Sanitization
+- **User Input**: Always validate and sanitize
+- **URL Parameters**: Validate all query parameters
+- **Form Data**: Server-side validation required
+- **File Uploads**: Strict type and size validation
+
+### Safe Coding Practices
+- **No eval()**: Never use eval() or Function constructor
+- **CSP Headers**: Implement Content Security Policy
+- **XSS Prevention**: Escape all user-generated content
+- **Dependency Audits**: Regular npm audit runs
+
+### Code Safety
+- Avoid eval() and similar unsafe functions
+- Implement proper error handling
+- Use feature detection over browser detection
+- Handle async operations safely
+
+## Development Tooling
+
+### Required Tools
+- **Linting**: ESLint + Prettier for consistent formatting
+- **Testing**: Jest for unit tests + coverage reporting
+- **Bundling**: Track bundle size with each build
+- **Performance**: Lighthouse CI for performance regression detection
+
+### Automation Scripts
+- **Code Quality**: `npm run quality` - comprehensive check
+- **Cleanup**: `npm run cleanup` - identify unused code
+- **Analysis**: `npm run analyze` - bundle size analysis
+- **Performance**: `npm run perf` - performance benchmarking
 
 ## Accessibility Standards
 
@@ -114,11 +243,11 @@ alwaysApply: true
 - Code review process for all changes
 - Verify test coverage before merging
 - Check for best practices compliance
-- No backwards compatibility needed (never went to production)
+- **Zero backwards compatibility** - clean breaks only
 
 ### Clean Code Principles
-- Aggressive cleanup of deprecated code
-- Remove unused dependencies and functions
+- **Immediate removal** of deprecated code
+- Remove unused dependencies and functions immediately
 - Clear, descriptive variable and function names
 - Consistent code formatting and structure
 
@@ -137,34 +266,6 @@ alwaysApply: true
 - State-based animation triggers
 - Clean animation cleanup and memory management
 
-## Performance Guidelines
-
-### Core Web Vitals Focus
-- Optimize Largest Contentful Paint (LCP)
-- Minimize Cumulative Layout Shift (CLS)
-- Improve First Input Delay (FID)
-- Monitor and optimize Core Web Vitals metrics
-
-### Asset Optimization
-- Optimize images for web delivery
-- Minimize CSS and JavaScript bundle sizes
-- Use efficient loading strategies
-- Implement proper caching strategies
-
-## Security Considerations
-
-### Input Validation
-- Sanitize all user inputs
-- Validate data on both client and server
-- Prevent XSS vulnerabilities
-- Use Content Security Policy headers
-
-### Code Safety
-- Avoid eval() and similar unsafe functions
-- Implement proper error handling
-- Use feature detection over browser detection
-- Handle async operations safely
-
 ## Documentation Standards
 
 ### Code Documentation
@@ -180,9 +281,9 @@ alwaysApply: true
 - Update deployment procedures
 
 
-
 ---
 
 *This document should be updated as the project evolves and new best practices are established.*
+
 
 
