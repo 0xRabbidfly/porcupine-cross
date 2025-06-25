@@ -63,13 +63,13 @@
   }
 }
 
-/* Orbiting Ace Icons */
-.hero-bottom-section {
+/* Orbiting Ace Icons around "kick off..." copy */
+.hero-copy-side {
   position: relative;
 }
 
-.hero-bottom-section::before,
-.hero-bottom-section::after {
+.hero-copy-side::before,
+.hero-copy-side::after {
   content: '♠';
   position: absolute;
   font-size: 2rem;
@@ -81,12 +81,12 @@
   transition: opacity 0.5s ease;
 }
 
-.hero.loaded .hero-bottom-section::before {
+.hero.loaded .hero-copy-side::before {
   opacity: 0.7;
   animation: orbit-ace-1 8s linear infinite;
 }
 
-.hero.loaded .hero-bottom-section::after {
+.hero.loaded .hero-copy-side::after {
   content: '♥';
   color: var(--theme-red);
   opacity: 0.6;
@@ -197,8 +197,8 @@
     gap: 12px;
   }
 
-  .hero-bottom-section::before,
-  .hero-bottom-section::after {
+  .hero-copy-side::before,
+  .hero-copy-side::after {
     font-size: 1.5rem;
   }
 
@@ -357,31 +357,7 @@
   }
 }
 
-/* Suit symbols for each letter */
-.flip-letter:nth-child(1) .letter-back::after {
-  content: '♠';
-}
-.flip-letter:nth-child(2) .letter-back::after {
-  content: '♥';
-}
-.flip-letter:nth-child(3) .letter-back::after {
-  content: '♦';
-}
-.flip-letter:nth-child(4) .letter-back::after {
-  content: '♣';
-}
-.flip-letter:nth-child(5) .letter-back::after {
-  content: '♠';
-}
-.flip-letter:nth-child(6) .letter-back::after {
-  content: '♥';
-}
-.flip-letter:nth-child(7) .letter-back::after {
-  content: '♦';
-}
-.flip-letter:nth-child(8) .letter-back::after {
-  content: '♣';
-}
+/* Suit symbols are now added via JavaScript with random colors */
 
 .hero h2 {
   font-size: clamp(1.1rem, 2.8vw, 1.6rem);

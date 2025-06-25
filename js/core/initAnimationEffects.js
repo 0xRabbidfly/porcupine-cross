@@ -73,12 +73,23 @@ function initFlippingTitle() {
   console.log('Found title text:', titleText);
   titleElement.innerHTML = '';
 
+  // Available suits and their colors
+  const suits = [
+    { symbol: '♠', color: '#000000' }, // Spade - black
+    { symbol: '♣', color: '#000000' }, // Club - black
+    { symbol: '♥', color: '#e73e3a' }, // Heart - red
+    { symbol: '♦', color: '#e73e3a' }, // Diamond - red
+  ];
+
   // Create flipping letter structure
   titleText.split('').forEach((letter, index) => {
     if (letter === ' ') {
       titleElement.appendChild(document.createTextNode(' '));
       return;
     }
+
+    // Pick a random suit for this letter
+    const randomSuit = suits[Math.floor(Math.random() * suits.length)];
 
     const letterContainer = document.createElement('span');
     letterContainer.className = 'flip-letter';
@@ -89,14 +100,15 @@ function initFlippingTitle() {
 
     const letterBack = document.createElement('span');
     letterBack.className = 'letter-back';
-    // The suit symbol will be added via CSS ::after
+    letterBack.textContent = randomSuit.symbol;
+    letterBack.style.color = randomSuit.color;
 
     letterContainer.appendChild(letterFront);
     letterContainer.appendChild(letterBack);
     titleElement.appendChild(letterContainer);
   });
 
-  console.log('Flipping letters initialized');
+  console.log('Flipping letters initialized with random suits and colors');
 }
 
 function createClickRipple(e) {
