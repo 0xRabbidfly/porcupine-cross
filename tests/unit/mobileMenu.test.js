@@ -67,7 +67,7 @@ describe('Mobile Menu Functionality', () => {
           <a href="#home">Home</a>
           <a href="#schedule">Schedule</a>
           <a href="#course">Course</a>
-          <a href="tech-guide.pdf" target="_blank">Tech Guide</a>
+          <a href="docs/Prologue Cross Technical Guide.pdf" target="_blank">Tech Guide</a>
           <a href="#" id="sound-toggle" class="sound-control" aria-label="Toggle Sound">
             <i id="sound-icon" class="fa fa-volume-up"></i>
           </a>
