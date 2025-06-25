@@ -1,5 +1,186 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# Frontend Guidelines & Best Practices
+
+## Code Organization & Architecture
+
+### Component-Based Architecture
+- Each UI component should be self-contained with isolated state
+- Clear public API for component interaction
+- Event-based communication via eventBus pattern
+- Modular CSS files for each component
+
+### File Structure Standards
+- `/js/components/` - UI components (CountdownTimer, AudioManager, etc.)
+- `/js/core/` - Core services (eventBus, AnimationSystem, App)
+- `/js/utils/` - Utility functions (domUtils, audioUtils)
+- `/css/components/` - Component-specific styles
+- `/tests/unit/` - Unit tests for all components
+
+### Module System
+- Use ES6+ modules with import/export
+- Implement module bridge pattern for compatibility
+- Minimal global namespace pollution
+- Clear separation of concerns
+
+## CSS Best Practices
+
+### Modular CSS Architecture
+- Component-based CSS with scoped class names
+- Use CSS variables for theming and animation timing
+- Separate files for each component's styles
+- Clear hierarchy: theme.css → component CSS → specific overrides
+
+### Animation Standards
+- Use CSS transitions for smooth animations
+- Transform and opacity for performance (hardware acceleration)
+- Unified AnimationSystem API for complex animations
+- Hardware-accelerated animations where appropriate
+
+### Responsive Design
+- Mobile-first responsive design approach
+- Percentage-based positioning for responsive elements
+- Dynamic repositioning based on viewport dimensions
+- Container-relative positioning for accuracy
+
+## JavaScript Best Practices
+
+### Event Management
+- Use event delegation for efficient handling
+- EventBus pattern for component communication
+- Publish-subscribe pattern for decoupled components
+- Throttled event handlers for performance
+
+### State Management
+- State machine pattern for UI components
+- Clear state transitions preventing invalid changes
+- Singleton pattern for core services (AnimationSystem, AudioManager)
+- Track animation states properly
+
+### Performance Optimization
+- Minimal DOM manipulation
+- CSS transitions over JavaScript animations
+- Efficient animation batching and queuing
+- Progressive enhancement approach
+
+## Testing Requirements
+
+### Test Coverage Standards
+- Unit tests for all components and utilities
+- Jest as main test runner and assertion library
+- @testing-library/dom for DOM testing utilities
+- High test coverage for critical code paths
+
+### Testing Patterns
+- Test-driven development for core components
+- Module mocking capabilities via Jest
+- Component-specific coverage goals
+- Statement, branch, function, and line coverage metrics
+
+## Accessibility Standards
+
+### ARIA Implementation
+- Proper ARIA attributes for interactive elements
+- Focus management for modals and menus
+- Keyboard navigation support
+- Screen reader compatibility
+
+### Progressive Enhancement
+- Core functionality works without JavaScript
+- Enhanced experiences with JavaScript enabled
+- Feature detection for advanced APIs
+- Mobile-first approach
+
+## Browser Compatibility
+
+### Modern Browser Focus
+- ES6+ features with graceful degradation
+- Feature detection for advanced APIs
+- CSS variables with fallbacks
+- Touch-friendly interactions for mobile
+
+### Mobile Support Requirements
+- Touch gesture support
+- Viewport-specific animations
+- Responsive layout for all screen sizes
+- Performance optimization for mobile devices
+
+## Code Quality Standards
+
+### Development Workflow
+- Code review process for all changes
+- Verify test coverage before merging
+- Check for best practices compliance
+- No backwards compatibility needed (never went to production)
+
+### Clean Code Principles
+- Aggressive cleanup of deprecated code
+- Remove unused dependencies and functions
+- Clear, descriptive variable and function names
+- Consistent code formatting and structure
+
+## Interactive Elements Guidelines
+
+### Map System Standards
+- Percentage-based hotspot positioning
+- Dynamic container adjustment for screen sizes
+- Automatic centering and alignment with images
+- Responsive info panels with edge detection
+- Event-based communication between elements
+
+### Animation System
+- Unified animation API across components
+- Mud splatter effects for interactive elements
+- State-based animation triggers
+- Clean animation cleanup and memory management
+
+## Performance Guidelines
+
+### Core Web Vitals Focus
+- Optimize Largest Contentful Paint (LCP)
+- Minimize Cumulative Layout Shift (CLS)
+- Improve First Input Delay (FID)
+- Monitor and optimize Core Web Vitals metrics
+
+### Asset Optimization
+- Optimize images for web delivery
+- Minimize CSS and JavaScript bundle sizes
+- Use efficient loading strategies
+- Implement proper caching strategies
+
+## Security Considerations
+
+### Input Validation
+- Sanitize all user inputs
+- Validate data on both client and server
+- Prevent XSS vulnerabilities
+- Use Content Security Policy headers
+
+### Code Safety
+- Avoid eval() and similar unsafe functions
+- Implement proper error handling
+- Use feature detection over browser detection
+- Handle async operations safely
+
+## Documentation Standards
+
+### Code Documentation
+- JSDoc comments for all public APIs
+- Clear inline comments for complex logic
+- Component usage examples
+- API documentation for all methods
+
+### Project Documentation
+- Keep technical stack documentation updated
+- Document architectural decisions
+- Maintain testing guidelines
+- Update deployment procedures
+
+
+---
+
+*This document should be updated as the project evolves and new best practices are established.*
+

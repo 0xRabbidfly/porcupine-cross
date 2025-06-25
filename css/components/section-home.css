@@ -81,7 +81,12 @@
   font-weight: bold;
   bottom: -30px;
   left: 0;
-  width: 100%;
+  right: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero.loaded .hero-copy-side::after {
@@ -91,13 +96,13 @@
 
 @keyframes back-and-forth {
   0% {
-    transform: translateX(0px);
+    transform: translateX(0);
   }
   50% {
-    transform: translateX(150px);
+    transform: translateX(calc(100% - 1.5rem));
   }
   100% {
-    transform: translateX(0px);
+    transform: translateX(0);
   }
 }
 
@@ -106,116 +111,26 @@
   .hero-copy-side::after {
     font-size: 1.2rem;
     bottom: -25px;
+    width: 1.2rem;
+    height: 1.2rem;
   }
 
   @keyframes back-and-forth {
     0% {
-      transform: translateX(0px);
+      transform: translateX(0);
     }
     50% {
-      transform: translateX(80px);
+      transform: translateX(calc(100% - 1.2rem));
     }
     100% {
-      transform: translateX(0px);
+      transform: translateX(0);
     }
   }
 }
 
-/* Orbiting Ace Icons */
-.hero-content-side {
-  flex: 1 1 50%;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 5vw;
-  gap: 15px;
-  z-index: 2;
-}
+/* DEPRECATED ORBITING ACE ICONS CODE REMOVED - NOT USED IN CURRENT LAYOUT */
 
-@keyframes orbit-ace-1 {
-  0% {
-    transform: rotate(0deg) translateX(120px) rotate(0deg);
-    opacity: 0.7;
-  }
-  25% {
-    opacity: 1;
-  }
-  50% {
-    transform: rotate(180deg) translateX(120px) rotate(-180deg);
-    opacity: 0.7;
-  }
-  75% {
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(360deg) translateX(120px) rotate(-360deg);
-    opacity: 0.7;
-  }
-}
-
-@keyframes orbit-ace-2 {
-  0% {
-    transform: rotate(0deg) translateX(100px) rotate(0deg);
-    opacity: 0.6;
-  }
-  25% {
-    opacity: 0.9;
-  }
-  50% {
-    transform: rotate(180deg) translateX(100px) rotate(-180deg);
-    opacity: 0.6;
-  }
-  75% {
-    opacity: 0.9;
-  }
-  100% {
-    transform: rotate(360deg) translateX(100px) rotate(-360deg);
-    opacity: 0.6;
-  }
-}
-
-@media (max-width: 900px) {
-  .hero-content-side {
-    padding: 25px 5vw;
-    flex-basis: auto;
-    gap: 12px;
-  }
-
-  @keyframes orbit-ace-1 {
-    0% {
-      transform: rotate(0deg) translateX(80px) rotate(0deg);
-    }
-    50% {
-      transform: rotate(180deg) translateX(80px) rotate(-180deg);
-    }
-    100% {
-      transform: rotate(360deg) translateX(80px) rotate(-360deg);
-    }
-  }
-
-  @keyframes orbit-ace-2 {
-    0% {
-      transform: rotate(0deg) translateX(60px) rotate(0deg);
-    }
-    50% {
-      transform: rotate(180deg) translateX(60px) rotate(-180deg);
-    }
-    100% {
-      transform: rotate(360deg) translateX(60px) rotate(-360deg);
-    }
-  }
-}
-
-/* Hide hero pseudo-elements */
-.hero::before,
-.hero::after {
-  content: none;
-  display: none;
-  opacity: 0;
-  background-image: none;
-}
+/* DEPRECATED: Hiding hero pseudo-elements not needed */
 
 /* Hero Content Animation */
 .hero h1,

@@ -212,6 +212,7 @@ section > h2 {
   gap: 3vw;
   width: 100%;
   max-width: 1200px;
+  padding: 0 2rem;
 }
 
 .hero-card-side {
@@ -330,6 +331,7 @@ section > h2 {
     flex-direction: row;
     gap: 1rem;
     align-items: flex-start;
+    padding: 0 1rem;
   }
 
   .hero-card-side {
