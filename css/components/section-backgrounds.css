@@ -57,6 +57,16 @@
   ) !important;
 }
 
+/* Register section - Red theme */
+#register {
+  background: var(--color-red-light) !important;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(214, 45, 32, 0.02) 0 12px,
+    transparent 12px 24px
+  ) !important;
+}
+
 /* Section text colors for better contrast */
 .hero h1,
 .hero h2,
@@ -97,6 +107,13 @@
 }
 
 #course p {
+  color: var(--color-dark) !important;
+}
+
+/* Register section text colors for red background */
+#register h2,
+#register h3,
+#register p {
   color: var(--color-dark) !important;
 }
 
