@@ -17,7 +17,7 @@
 
 .countdown-title {
   margin-bottom: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #ffffff !important;
   font-weight: 600;
   text-transform: uppercase;
@@ -26,7 +26,7 @@
 
 .countdown-date {
   margin: 0 0 0.75rem 0;
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #ffffff !important;
   font-weight: 400;
   letter-spacing: 0.25px;
