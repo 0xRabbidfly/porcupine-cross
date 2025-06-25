@@ -221,9 +221,11 @@ alwaysApply: true
 - **Project Documentation**: Keep technical stack updated, document architectural decisions, maintain testing and deployment guidelines
 
 
+
 ---
 
 *This document should be updated as the project evolves and new best practices are established.*
+
 
 
 
