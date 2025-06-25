@@ -16,6 +16,7 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         Promise: 'readonly',
+        ResizeObserver: 'readonly',
       },
     },
     rules: {
@@ -48,4 +49,4 @@ export default [
     },
   },
   prettier,
-]; 
+];

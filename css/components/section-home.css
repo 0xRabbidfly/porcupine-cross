@@ -81,12 +81,8 @@
   font-weight: bold;
   bottom: -30px;
   left: 0;
-  right: 0;
   width: 1.5rem;
   height: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .hero.loaded .hero-copy-side::after {
@@ -99,7 +95,7 @@
     transform: translateX(0);
   }
   50% {
-    transform: translateX(calc(100% - 1.5rem));
+    transform: translateX(var(--text-animation-width, 200px));
   }
   100% {
     transform: translateX(0);
@@ -120,7 +116,7 @@
       transform: translateX(0);
     }
     50% {
-      transform: translateX(calc(100% - 1.2rem));
+      transform: translateX(var(--text-animation-width, 120px));
     }
     100% {
       transform: translateX(0);

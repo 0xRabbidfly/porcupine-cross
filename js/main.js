@@ -181,7 +181,7 @@ class App {
         const heroSection = document.querySelector('.hero');
         if (heroSection) {
           heroSection.classList.add('loaded');
-          console.log('Hero section marked as loaded for animations');
+          console.info('Hero section marked as loaded for animations');
         }
       }, 500);
     } catch (error) {
@@ -507,7 +507,7 @@ class App {
     ];
 
     // Create flipping letter structure
-    titleText.split('').forEach((letter, index) => {
+    titleText.split('').forEach((letter, _index) => {
       if (letter === ' ') {
         titleElement.appendChild(document.createTextNode(' '));
         return;
@@ -544,7 +544,7 @@ class App {
     const heroCopySide = document.querySelector('.hero-copy-side');
 
     if (!heroSection || !heroCopySide) {
-      console.log('Hero section or copy side not found for back-and-forth icon');
+      console.info('Hero section or copy side not found for back-and-forth icon');
       return;
     }
 
@@ -563,7 +563,53 @@ class App {
     heroCopySide.style.setProperty('--back-forth-suit', `"${randomSuit.symbol}"`);
     heroCopySide.style.setProperty('--back-forth-color', randomSuit.color);
 
-    console.log('Back-and-forth icon initialized with random suit:', randomSuit.symbol);
+    // Calculate the dynamic text width for the animation
+    this.calculateTextAnimationWidth();
+
+    // Set up resize observer to recalculate on window resize
+    if (window.ResizeObserver) {
+      const resizeObserver = new ResizeObserver(() => {
+        this.calculateTextAnimationWidth();
+      });
+      resizeObserver.observe(heroCopySide);
+    } else {
+      // Fallback for older browsers
+      window.addEventListener('resize', () => {
+        this.calculateTextAnimationWidth();
+      });
+    }
+
+    console.info('Back-and-forth icon initialized with random suit:', randomSuit.symbol);
+  }
+
+  /**
+   * Calculate the dynamic text width for the back-and-forth animation
+   */
+  calculateTextAnimationWidth() {
+    const heroCopySide = document.querySelector('.hero-copy-side');
+    const textContent = heroCopySide.querySelector('p');
+
+    if (!heroCopySide || !textContent) {
+      console.info('Hero copy side or text content not found for width calculation');
+      return;
+    }
+
+    // Get the actual text content width
+    const textWidth = textContent.getBoundingClientRect().width;
+
+    // Determine icon width based on screen size (mobile vs desktop)
+    const isMobile = window.innerWidth <= 768;
+    const iconWidth = isMobile ? 19.2 : 24; // 1.2rem (mobile) or 1.5rem (desktop) in pixels
+
+    // Calculate the maximum travel distance (text width minus icon width)
+    const maxTravel = Math.max(0, textWidth - iconWidth);
+
+    // Set the calculated width as a CSS custom property
+    heroCopySide.style.setProperty('--text-animation-width', `${maxTravel}px`);
+
+    console.info(
+      `Text animation width calculated: ${textWidth}px text, ${maxTravel}px travel (${isMobile ? 'mobile' : 'desktop'})`
+    );
   }
 }
 
