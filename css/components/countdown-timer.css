@@ -7,21 +7,29 @@
 .countdown-container {
   margin: 1.5rem auto;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--color-secondary);
   border-radius: 8px;
   padding: 0.75rem;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(220, 220, 220, 0.9);
+  box-shadow: 0 5px 15px rgba(30, 58, 138, 0.25);
+  border: 1px solid var(--color-secondary);
   max-width: 320px;
 }
 
 .countdown-title {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
-  color: var(--theme-primary, #e44d4d);
+  color: #ffffff !important;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.countdown-date {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
+  color: #ffffff !important;
+  font-weight: 400;
+  letter-spacing: 0.25px;
 }
 
 .countdown-timer {
