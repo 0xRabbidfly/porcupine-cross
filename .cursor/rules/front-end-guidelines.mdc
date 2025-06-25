@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 # Frontend Guidelines & Best Practices
 
@@ -180,7 +180,9 @@ alwaysApply: false
 - Update deployment procedures
 
 
+
 ---
 
 *This document should be updated as the project evolves and new best practices are established.*
+
 
