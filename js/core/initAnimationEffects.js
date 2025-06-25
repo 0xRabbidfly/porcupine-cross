@@ -62,6 +62,40 @@ export function initAnimationEffects(app) {
   }
 }
 
+function initOrbitingIcons() {
+  const heroSection = document.querySelector('.hero');
+  const heroCopySide = document.querySelector('.hero-copy-side');
+
+  if (!heroSection || !heroCopySide) {
+    console.log('Hero section or copy side not found for orbiting icons');
+    return;
+  }
+
+  // Available suits and their colors
+  const suits = [
+    { symbol: '♠', color: '#000000' }, // Spade - black
+    { symbol: '♣', color: '#000000' }, // Club - black
+    { symbol: '♥', color: '#e73e3a' }, // Heart - red
+    { symbol: '♦', color: '#e73e3a' }, // Diamond - red
+  ];
+
+  // Set random suits and colors for the orbiting icons
+  const randomSuit1 = suits[Math.floor(Math.random() * suits.length)];
+  const randomSuit2 = suits[Math.floor(Math.random() * suits.length)];
+
+  // Apply the random suits via CSS custom properties
+  heroCopySide.style.setProperty('--orbit-suit-1', `"${randomSuit1.symbol}"`);
+  heroCopySide.style.setProperty('--orbit-color-1', randomSuit1.color);
+  heroCopySide.style.setProperty('--orbit-suit-2', `"${randomSuit2.symbol}"`);
+  heroCopySide.style.setProperty('--orbit-color-2', randomSuit2.color);
+
+  console.log(
+    'Orbiting icons initialized with random suits:',
+    randomSuit1.symbol,
+    randomSuit2.symbol
+  );
+}
+
 function initFlippingTitle() {
   const titleElement = document.querySelector('.prologue-card-title');
   if (!titleElement) {
