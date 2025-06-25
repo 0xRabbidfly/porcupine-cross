@@ -3,17 +3,13 @@
 /* Global Variables & Theme Colors */
 :root {
   --theme-red: #e73e3a;
-  --theme-light-purple: #f8e6f8;
-  --theme-dark-grey: #333; /* Unified dark grey */
-  --theme-medium-grey: #555; /* Unified medium grey */
-  --theme-light-grey-text: #777; /* For less prominent text */
-  --theme-accent-gold: #ffc107; /* Subtle gold accent - W3C Yellow */
+  --theme-dark-grey: #333;
+  --theme-accent-gold: #ffc107;
 
-  /* Cyclocross-inspired palette */
+  /* Essential color palette */
   --mud-brown: #8b4513;
   --forest-green: #2e4f2e;
   --cream: #f5f0e6;
-  --sky-blue: #e8f1f2;
   --autumn-orange: #d35400;
   --moss-green: #4a6b4a;
   --sand: #e6d5ac;

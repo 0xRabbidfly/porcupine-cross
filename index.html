@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prologue</title>
-    <!-- Base styles -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/components/section-home.css">
-    <!-- Component CSS with menu styling -->
     <link rel="stylesheet" href="css/components/index.css">
     <link rel="stylesheet" href="css/components/sponsors.css">
     <link rel="stylesheet" href="css/components/section-backgrounds.css">
@@ -36,10 +34,6 @@
             <a href="#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
             <a href="#register"><i class="fas fa-user-plus menu-icon"></i>Register</a>
             <a href="tech-guide.html"><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a>
-            <!-- Sound toggle button removed, but keep hidden elements for sound functionality -->
-            <span id="sound-toggle" class="sound-control hidden" style="display: none;" aria-hidden="true">
-                <i id="sound-icon" class="fa fa-volume-mute"></i>
-            </span>
         </nav>
         <div class="audio-promo-container compact">
             <button class="audio-play-btn" aria-label="Play Race Outline" tabindex="0">
@@ -287,7 +281,7 @@
     </audio>
     
     <!-- Load the non-module fallback first -->
-    <!-- <script src="js/directAnimations.js"></script> -->
+    
     
     <!-- Load our animation bridge to expose functions -->
     <script type="module" src="js/animationBridge.js"></script>
@@ -298,42 +292,33 @@
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>
 
-    <!-- Loading Spinner -->
     <div id="main-loading-spinner" class="loading-spinner" aria-live="polite" aria-busy="true">
         <div class="spinner"></div>
         <span class="sr-only">Loading content…</span>
     </div>
 
     <script>
-        // Hide spinner when main content is loaded
-        window.addEventListener('DOMContentLoaded', function() {
+        // Consolidated inline scripts
+        window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('main-loading-spinner').style.display = 'none';
         });
 
-        // Handle Instagram app deep linking
+        // Instagram deep linking
         function openInstagram(event) {
             event.preventDefault();
-            
-            // Try to open Instagram app first (mobile)
             const instagramApp = 'instagram://user?username=PrologueCross';
             const instagramWeb = 'https://www.instagram.com/PrologueCross/';
-            
-            // Check if we're on mobile
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (isMobile) {
-                // Try to open Instagram app, fallback to web if app not installed
                 const startTime = Date.now();
                 window.location.href = instagramApp;
-                
-                // If app doesn't open within 2 seconds, open web version
-                setTimeout(function() {
+                setTimeout(() => {
                     if (Date.now() - startTime < 2100) {
                         window.open(instagramWeb, '_blank', 'noopener');
                     }
                 }, 2000);
             } else {
-                // Desktop: open web version
                 window.open(instagramWeb, '_blank', 'noopener');
             }
         }

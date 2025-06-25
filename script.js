@@ -1,55 +1,36 @@
-// This file remains for backwards compatibility only
-// See js/main.js for the current modular implementation
-// This simplified version delegates to the modern components whenever possible
+// Minimal legacy fallback for browsers without module support
+// Modern functionality is in js/main.js
 
-// Legacy smooth scrolling for older browsers without the modular system
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    // Let the modern system handle it if available
-    if (window.app && window.app.components) {
-      return;
-    }
-
-    // Legacy fallback otherwise
-    e.preventDefault();
-    const targetElement = document.querySelector(this.getAttribute('href'));
-    if (targetElement) {
-      const headerOffset = 100;
-      const elementPosition = targetElement.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
-  });
-});
-
-// DOMContentLoaded event with minimal legacy fallbacks
 document.addEventListener('DOMContentLoaded', () => {
-  // Only run legacy functionality if modern system is not available
-  if (!window.app || !window.app.components) {
-    // Mobile menu toggle (minimal legacy implementation)
-    const menuToggle = document.getElementById('menu-toggle');
-    const mainNav = document.getElementById('main-nav');
+  // Only run if modern system is not available
+  if (window.app?.components) return;
 
-    if (menuToggle && mainNav) {
-      let isMenuOpen = false;
-      menuToggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        isMenuOpen = !isMenuOpen;
+  // Essential mobile menu fallback
+  const menuToggle = document.getElementById('menu-toggle');
+  const mainNav = document.getElementById('main-nav');
 
-        if (isMenuOpen) {
-          mainNav.classList.add('open');
-          menuToggle.classList.add('open');
-        } else {
-          mainNav.classList.remove('open');
-          menuToggle.classList.remove('open');
-        }
-
-        menuToggle.setAttribute('aria-expanded', isMenuOpen ? 'true' : 'false');
-      });
-    }
+  if (menuToggle && mainNav) {
+    let isMenuOpen = false;
+    menuToggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      isMenuOpen = !isMenuOpen;
+      mainNav.classList.toggle('open', isMenuOpen);
+      menuToggle.classList.toggle('open', isMenuOpen);
+      menuToggle.setAttribute('aria-expanded', isMenuOpen ? 'true' : 'false');
+    });
   }
+
+  // Essential smooth scrolling fallback
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetElement = document.querySelector(this.getAttribute('href'));
+      if (targetElement) {
+        e.preventDefault();
+        const headerOffset = 100;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    });
+  });
 });
