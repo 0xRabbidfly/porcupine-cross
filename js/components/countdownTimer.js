@@ -28,7 +28,7 @@ export function calculateTimeRemaining(targetDate, currentDate) {
  */
 export class CountdownTimer {
   /**
-   * @param {string} targetDateString - Target date string (e.g. 'September 14, 2025 08:00:00')
+   * @param {string} targetDateString - Target date string (e.g. 'September 21, 2025 08:00:00')
    * @param {Object} elements - DOM elements for displaying the countdown
    * @param {Object} options - Configuration options
    */

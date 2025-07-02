@@ -398,7 +398,7 @@ class App {
     };
 
     if (elements.days && elements.hours && elements.minutes && elements.seconds) {
-      this.components.countdownTimer = new CountdownTimer('September 14, 2025 08:00:00', elements, {
+      this.components.countdownTimer = new CountdownTimer('September 21, 2025 08:00:00', elements, {
         animationClasses: {
           pulse: 'pulse',
           tick: 'tick',
