@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.prologuecross.ca/sitemap.xml
+
+# Crawl delay (be nice to servers)
+Crawl-delay: 1
+
+# Allow all important pages
+Allow: /index.html
+Allow: /tech-guide.html
+Allow: /css/
+Allow: /js/
+Allow: /images/
+
+# Block any admin or private areas (if they exist later)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+
+# Allow social media crawlers
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
