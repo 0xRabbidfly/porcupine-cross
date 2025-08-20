@@ -122,6 +122,16 @@
       transform: translateX(0);
     }
   }
+
+  .hero-register-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    margin: 0.75rem 0;
+  }
+
+  .hero-register-button i {
+    font-size: 1.1rem;
+  }
 }
 
 /* DEPRECATED ORBITING ACE ICONS CODE REMOVED - NOT USED IN CURRENT LAYOUT */
@@ -309,4 +319,64 @@
 /* .cta-button .icon is not used in hero, but included for completeness */
 .cta-button .icon {
   font-size: 1em;
+}
+
+/* Hero Registration CTA */
+.hero-register-cta {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.hero-register-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, var(--theme-red), #d62d20);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(214, 45, 32, 0.3);
+  border: 2px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hero-register-button:hover {
+  background: linear-gradient(135deg, #d62d20, var(--theme-red));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(214, 45, 32, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.hero-register-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(214, 45, 32, 0.3);
+}
+
+.hero-register-button i {
+  font-size: 1.2rem;
+}
+
+.hero .hero-register-note,
+.hero-register-cta .hero-register-note,
+.hero-bottom-section .hero-register-note,
+.hero .hero-register-cta .hero-register-note {
+  font-size: 0.85rem;
+  color: white !important;
+  margin-top: 0.75rem;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Force override for body color inheritance */
+.hero .hero-register-cta .hero-register-note {
+  color: white !important;
 }
