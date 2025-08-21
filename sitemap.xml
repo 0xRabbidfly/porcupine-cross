@@ -20,12 +20,4 @@
         <priority>0.8</priority>
     </url>
 
-    <!-- 404 Page - Low Priority -->
-    <url>
-        <loc>https://www.prologuecross.ca/404.html</loc>
-        <lastmod>2025-01-27</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.1</priority>
-    </url>
-
 </urlset>
