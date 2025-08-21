@@ -535,6 +535,51 @@
                 window.open(instagramWeb, '_blank', 'noopener');
             }
         }
+
+        // Track all register button clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerButtons = document.querySelectorAll('a[href*="register"], button:contains("register"), .register-btn');
+            
+            registerButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    // Send to Google Analytics 4
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'button_click', {
+                            'button_name': 'register',
+                            'button_location': this.closest('section')?.className || 'unknown',
+                            'page_location': window.location.pathname
+                        });
+                    }
+                    
+                    // Also log to console for testing
+                    console.log('Register button clicked!', {
+                        location: this.closest('section')?.className || 'unknown',
+                        page: window.location.pathname
+                    });
+                });
+            });
+
+            // Track audio button clicks
+            const audioButton = document.querySelector('.audio-play-btn');
+            if (audioButton) {
+                audioButton.addEventListener('click', function() {
+                    // Send to Google Analytics 4
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'button_click', {
+                            'button_name': 'audio_play',
+                            'button_location': 'header',
+                            'page_location': window.location.pathname
+                        });
+                    }
+                    
+                    // Also log to console for testing
+                    console.log('Audio button clicked!', {
+                        location: 'header',
+                        page: window.location.pathname
+                    });
+                });
+            }
+        });
     </script>
 </body>
 </html> 
