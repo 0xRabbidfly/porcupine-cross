@@ -1,6 +1,7 @@
-/* eslint-env jest */
-
-// Mock the splat sound module and menu
+/**
+ * Splat Sound Tests
+ * Tests the audio feedback system for menu interactions
+ */
 let playSplatSound;
 let menuLink;
 

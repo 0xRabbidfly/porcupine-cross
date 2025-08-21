@@ -1,5 +1,6 @@
-/* eslint-disable no-undef */
-/* eslint-env jest */
+/**
+ * App Integration Tests
+ */
 import app from '../../js/main.js';
 import eventBus from '../../js/core/eventBus.js';
 
