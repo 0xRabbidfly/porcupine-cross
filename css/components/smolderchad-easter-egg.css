@@ -1,0 +1,194 @@
+/**
+ * SMOLDERCHAD Easter Egg Styles
+ */
+
+.smolderchad-easter-egg {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  text-align: center;
+  pointer-events: none;
+}
+
+.smolderchad-easter-egg .image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.smolderchad-easter-egg img {
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 6px rgba(231, 62, 58, 0.4),
+    0 0 30px rgba(231, 62, 58, 0.7);
+  transition: all 0.5s ease-out;
+  display: block;
+}
+
+.smolderchad-easter-egg img:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.7),
+    0 0 0 8px rgba(231, 62, 58, 0.6),
+    0 0 40px rgba(231, 62, 58, 0.9);
+}
+
+.smolderchad-easter-egg .credit-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid rgba(231, 62, 58, 0.8);
+  border-radius: 15px;
+  padding: 12px 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  max-width: 90%;
+  min-width: 280px;
+  box-sizing: border-box;
+}
+
+.smolderchad-easter-egg .credit {
+  color: #ffffff;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  text-align: center;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Heartbeat animation - subtle and elegant */
+.smolderchad-easter-egg.heartbeat {
+  animation: heartbeat-pulse 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes heartbeat-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1) saturate(1);
+  }
+  15% {
+    transform: translate(-50%, -50%) scale(1.02);
+    filter: brightness(1.1) saturate(1.1);
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(0.98);
+    filter: brightness(0.95) saturate(0.95);
+  }
+  45% {
+    transform: translate(-50%, -50%) scale(1.01);
+    filter: brightness(1.05) saturate(1.05);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(0.99);
+    filter: brightness(0.98) saturate(0.98);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.005);
+    filter: brightness(1.02) saturate(1.02);
+  }
+}
+
+/* Explosion effect */
+.explosion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.explosion-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #ff6b6b, #e73e3a);
+  border-radius: 50%;
+  animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(var(--angle));
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(calc(var(--angle) + 180deg));
+    opacity: 0;
+  }
+}
+
+.explosion-particle:nth-child(1) {
+  animation-delay: 0s;
+}
+.explosion-particle:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.explosion-particle:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.explosion-particle:nth-child(4) {
+  animation-delay: 0.3s;
+}
+.explosion-particle:nth-child(5) {
+  animation-delay: 0.4s;
+}
+.explosion-particle:nth-child(6) {
+  animation-delay: 0.5s;
+}
+.explosion-particle:nth-child(7) {
+  animation-delay: 0.6s;
+}
+.explosion-particle:nth-child(8) {
+  animation-delay: 0.7s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .smolderchad-easter-egg img {
+    width: 300px;
+    height: 300px;
+  }
+
+  .smolderchad-easter-egg .credit-panel {
+    bottom: 15px;
+    padding: 10px 16px;
+    max-width: 95%;
+    min-width: 260px;
+  }
+
+  .smolderchad-easter-egg .credit {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .smolderchad-easter-egg img {
+    width: 250px;
+    height: 250px;
+  }
+
+  .smolderchad-easter-egg .credit-panel {
+    bottom: 12px;
+    padding: 8px 14px;
+    max-width: 98%;
+    min-width: 240px;
+  }
+
+  .smolderchad-easter-egg .credit {
+    font-size: 12px;
+  }
+}

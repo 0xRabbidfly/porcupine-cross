@@ -3,8 +3,6 @@
  * Handles the race countdown functionality
  */
 
-/* global setInterval, clearInterval */
-
 /**
  * Calculate time remaining between target date and current date
  * @param {number} targetDate - Target date timestamp

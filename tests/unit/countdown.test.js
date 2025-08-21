@@ -1,4 +1,3 @@
-/* global global, setInterval, clearInterval */
 /**
  * Unit tests for countdown timer functionality
  */

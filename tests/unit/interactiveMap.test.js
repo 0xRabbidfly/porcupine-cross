@@ -1,4 +1,3 @@
-/* global Event */
 /**
  * Interactive Map Unit Tests
  */

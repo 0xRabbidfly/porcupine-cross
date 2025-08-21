@@ -1,4 +1,3 @@
-/* global Node, Element */
 /**
  * Animation System Tests
  */

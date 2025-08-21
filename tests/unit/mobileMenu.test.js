@@ -1,4 +1,3 @@
-/* global global, MouseEvent */
 /**
  * Mobile Menu Tests
  */

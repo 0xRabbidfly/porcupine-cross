@@ -1,4 +1,3 @@
-/* global HTMLElement, NodeList */
 /**
  * DOM Utilities
  * Helper functions for common DOM operations

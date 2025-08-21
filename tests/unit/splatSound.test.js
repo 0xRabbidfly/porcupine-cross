@@ -3,7 +3,6 @@
 // Mock the splat sound module and menu
 let playSplatSound;
 let menuLink;
-let addEventListenerSpy;
 
 beforeEach(() => {
   jest.useFakeTimers();

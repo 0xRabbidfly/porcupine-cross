@@ -3,12 +3,11 @@
  * Orchestrates all components and handles initialization
  */
 
-/* global IntersectionObserver */
-
 import AudioManager from './components/audioManager.js';
 import { CountdownTimer } from './components/countdownTimer.js';
 import InteractiveMap from './components/interactiveMap.js';
 import MobileMenu from './components/mobileMenu.js';
+import SmolderchadEasterEgg from './components/smolderchadEasterEgg.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
 import AnimationSystem from './core/animationSystem.js';
@@ -63,6 +62,9 @@ class App {
 
       // Initialize Hero Animation
       this.initHeroAnimation();
+
+      // Initialize SMOLDERCHAD Easter Egg
+      this.initSmolderchadEasterEgg();
 
       this.initialized = true;
       eventBus.emit('app:initialized');
@@ -497,17 +499,28 @@ class App {
   }
 
   /**
+   * Initialize SMOLDERCHAD Easter Egg
+   */
+  initSmolderchadEasterEgg() {
+    try {
+      this.components.smolderchadEasterEgg = new SmolderchadEasterEgg();
+    } catch (error) {
+      console.error('Error setting up SMOLDERCHAD Easter Egg:', error);
+    }
+  }
+
+  /**
    * Initialize flipping title animation for PROLOGUE
    */
   initFlippingTitle() {
     const titleElement = document.querySelector('.prologue-card-title');
     if (!titleElement) {
-      console.log('Prologue title element not found');
+      console.info('Prologue title element not found');
       return;
     }
 
     const titleText = titleElement.textContent.trim();
-    console.log('Found title text:', titleText);
+    console.info('Found title text:', titleText);
     titleElement.innerHTML = '';
 
     // Available suits and their colors
@@ -545,7 +558,7 @@ class App {
       titleElement.appendChild(letterContainer);
     });
 
-    console.log('Flipping letters initialized with random suits and colors');
+    console.info('Flipping letters initialized with random suits and colors');
   }
 
   /**

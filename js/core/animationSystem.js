@@ -1,4 +1,3 @@
-/* global HTMLElement */
 /**
  * Animation System
  *
