@@ -17,7 +17,8 @@
     "deploy": "node scripts/deploy.js",
     "deploy:production": "node scripts/deploy.js production",
     "deploy:test": "node scripts/deploy.js production --test",
-    "quality": "node scripts/code-quality.js"
+    "quality": "node scripts/code-quality.js",
+    "test-pre-commit": "node scripts/test-pre-commit.js"
   },
   "lint-staged": {
     "*.js": [
