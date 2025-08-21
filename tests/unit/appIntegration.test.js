@@ -18,7 +18,8 @@ describe('App Integration', () => {
     document.body.innerHTML = `
       <button id="sound-toggle"><span id="sound-icon"></span></button>
       <audio id="click-sound"></audio>
-      <div id="countdown-timer">
+      <audio id="crosstoberfest-sound"></audio>
+      <div class="countdown-timer">
         <span id="countdown-days">00</span>:
         <span id="countdown-hours">00</span>:
         <span id="countdown-minutes">00</span>:
@@ -34,8 +35,12 @@ describe('App Integration', () => {
           <div class="info-content" id="start-finish">Start/Finish Info</div>
         </div>
       </div>
-      <nav id="main-nav"></nav>
-      <button id="menu-toggle"></button>
+      <nav id="main-nav">
+        <a href="#home">Home</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#course">Course</a>
+      </nav>
+      <button id="menu-toggle" aria-label="Toggle mobile menu"></button>
     `;
     // Reset app state if needed
     if (window.app) {
