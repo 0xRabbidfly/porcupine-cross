@@ -13,7 +13,6 @@ import { execSync } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 
 const testFile = 'package.json';
-const testMarker = '  // Test commit hook\n';
 
 console.info('🧪 Testing pre-commit hook...\n');
 
@@ -21,10 +20,10 @@ try {
   // Read current content
   const originalContent = readFileSync(testFile, 'utf8');
 
-  // Add a harmless comment to trigger the hook
+  // Add a harmless JSON property to trigger the hook
   const modifiedContent = originalContent.replace(
     '  "keywords": [],',
-    `${testMarker}  "keywords": [],`
+    '  "keywords": [],\n  "test-pre-commit": true,'
   );
 
   // Write the test change
@@ -52,8 +51,9 @@ try {
 
   // Try to revert the change
   try {
-    const originalContent = readFileSync(testFile, 'utf8').replace(testMarker, '');
-    writeFileSync(testFile, originalContent);
+    const currentContent = readFileSync(testFile, 'utf8');
+    const revertedContent = currentContent.replace(/\n {2}"test-pre-commit": true,/, '');
+    writeFileSync(testFile, revertedContent);
     execSync('git add package.json', { stdio: 'inherit' });
     console.info('✅ Reverted test change');
   } catch (revertError) {
