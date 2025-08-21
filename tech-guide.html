@@ -100,53 +100,8 @@
     <script src="script.js"></script>
 
     <script>
-        // Track all register button clicks
+        // Track audio button clicks
         document.addEventListener('DOMContentLoaded', function() {
-            // Find register buttons using multiple methods
-            const registerButtons = [];
-            
-            // Method 1: Links with "register" in href
-            const registerLinks = document.querySelectorAll('a[href*="register"]');
-            registerButtons.push(...registerLinks);
-            
-            // Method 2: Buttons with "register" text content
-            const allButtons = document.querySelectorAll('button');
-            allButtons.forEach(button => {
-                if (button.textContent.toLowerCase().includes('register')) {
-                    registerButtons.push(button);
-                }
-            });
-            
-            // Method 3: Elements with register-btn class
-            const registerBtnClass = document.querySelectorAll('.register-btn');
-            registerButtons.push(...registerBtnClass);
-            
-            // Remove duplicates
-            const uniqueButtons = [...new Set(registerButtons)];
-            
-            uniqueButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    // Send to Google Analytics 4
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'button_click', {
-                            'button_name': 'register',
-                            'button_location': this.closest('section')?.className || 'unknown',
-                            'page_location': window.location.pathname
-                        });
-                    }
-                    
-                    // Also log to console for testing
-                    console.log('Register button clicked!', {
-                        location: this.closest('section')?.className || 'unknown',
-                        page: window.location.pathname
-                    });
-                });
-            });
-            
-            console.log('Found', uniqueButtons.length, 'register buttons to track');
-        });
-
-            // Track audio button clicks
             const audioButton = document.querySelector('.audio-play-btn');
             if (audioButton) {
                 audioButton.addEventListener('click', function() {

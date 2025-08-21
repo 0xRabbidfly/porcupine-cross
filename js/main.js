@@ -389,6 +389,12 @@ class App {
    * Initialize CountdownTimer component
    */
   initCountdownTimer() {
+    // Only initialize if countdown elements exist
+    const countdownContainer = document.querySelector('.countdown-container, .countdown-timer');
+    if (!countdownContainer) {
+      return; // Exit early if no countdown container found
+    }
+
     const elements = {
       days: getElement('countdown-days'),
       hours: getElement('countdown-hours'),
@@ -416,7 +422,11 @@ class App {
    */
   initInteractiveMap() {
     try {
-      this.components.interactiveMap = InteractiveMap.createFromSelectors();
+      // Only initialize if the required map elements exist
+      const mapContainer = document.querySelector('.interactive-map-container');
+      if (mapContainer) {
+        this.components.interactiveMap = InteractiveMap.createFromSelectors();
+      }
     } catch (error) {
       console.error('Error creating InteractiveMap:', error);
     }
@@ -470,15 +480,17 @@ class App {
    */
   initHeroAnimation() {
     try {
+      // Only initialize if hero section exists
       const heroSection = getElement('home');
-
-      if (heroSection) {
-        // Use AnimationSystem to fade in the hero section
-        AnimationSystem.animate(heroSection, 'fade-in', {
-          duration: 500,
-          variables: { '--hero-opacity': '1' },
-        });
+      if (!heroSection) {
+        return; // Exit early if no hero section found
       }
+
+      // Use AnimationSystem to fade in the hero section
+      AnimationSystem.animate(heroSection, 'fade-in', {
+        duration: 500,
+        variables: { '--hero-opacity': '1' },
+      });
     } catch (error) {
       console.error('Error setting up hero animation:', error);
     }

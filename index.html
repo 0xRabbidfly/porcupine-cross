@@ -538,30 +538,25 @@
 
         // Track all register button clicks and audio button clicks
         document.addEventListener('DOMContentLoaded', function() {
-            // Find register buttons using multiple methods
-            const registerButtons = [];
+            // Find register buttons using specific classes only (the 3 we know exist)
+            const heroRegisterBtn = document.querySelector('.hero-register-button');
+            const registerIconLink = document.querySelector('.register-icon-link');
+            const registerBtn = document.querySelector('.register-button');
             
-            // Method 1: Links with "register" in href
-            const registerLinks = document.querySelectorAll('a[href*="register"]');
-            registerButtons.push(...registerLinks);
+            const registerButtons = [heroRegisterBtn, registerIconLink, registerBtn].filter(Boolean);
             
-            // Method 2: Buttons with "register" text content
-            const allButtons = document.querySelectorAll('button');
-            allButtons.forEach(button => {
-                if (button.textContent.toLowerCase().includes('register')) {
-                    registerButtons.push(button);
-                }
+            // Debug: Log what we found
+            console.log('Register buttons found:', {
+                hero: heroRegisterBtn ? 'Found' : 'Missing',
+                icon: registerIconLink ? 'Found' : 'Missing',
+                cta: registerBtn ? 'Found' : 'Missing'
             });
             
-            // Method 3: Elements with register-btn class
-            const registerBtnClass = document.querySelectorAll('.register-btn');
-            registerButtons.push(...registerBtnClass);
+            // Debug: Log how many buttons were found
+            console.log(`Found ${registerButtons.length} register buttons to track`);
             
-            // Remove duplicates
-            const uniqueButtons = [...new Set(registerButtons)];
-            
-            uniqueButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
+            registerButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
                     // Send to Google Analytics 4
                     if (typeof gtag !== 'undefined') {
                         gtag('event', 'button_click', {
@@ -570,16 +565,8 @@
                             'page_location': window.location.pathname
                         });
                     }
-                    
-                    // Also log to console for testing
-                    console.log('Register button clicked!', {
-                        location: this.closest('section')?.className || 'unknown',
-                        page: window.location.pathname
-                    });
                 });
             });
-            
-            console.log('Found', uniqueButtons.length, 'register buttons to track');
             
             // Track audio button clicks
             const audioButton = document.querySelector('.audio-play-btn');
@@ -593,14 +580,34 @@
                             'page_location': window.location.pathname
                         });
                     }
-                    
-                    // Also log to console for testing
-                    console.log('Audio button clicked!', {
-                        location: 'header',
-                        page: window.location.pathname
-                    });
                 });
             }
+            
+            // Track social media and Strava link clicks
+            const socialLinks = document.querySelectorAll('a[href*="instagram.com"], a[href*="facebook.com"], a[href*="strava.com"]');
+            socialLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    // Send to Google Analytics 4
+                    if (typeof gtag !== 'undefined') {
+                        let linkType = 'social_link';
+                        let linkName = 'unknown';
+                        
+                        if (this.href.includes('instagram.com')) {
+                            linkName = 'instagram_follow';
+                        } else if (this.href.includes('facebook.com')) {
+                            linkName = 'facebook_follow';
+                        } else if (this.href.includes('strava.com')) {
+                            linkName = 'strava_route';
+                        }
+                        
+                        gtag('event', 'link_click', {
+                            'link_name': linkName,
+                            'link_location': 'contact',
+                            'page_location': window.location.pathname
+                        });
+                    }
+                });
+            });
         });
     </script>
 </body>
