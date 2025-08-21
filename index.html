@@ -536,7 +536,7 @@
             }
         }
 
-        // Track all register button clicks
+        // Track all register button clicks and audio button clicks
         document.addEventListener('DOMContentLoaded', function() {
             // Find register buttons using multiple methods
             const registerButtons = [];
@@ -580,8 +580,7 @@
             });
             
             console.log('Found', uniqueButtons.length, 'register buttons to track');
-        });
-
+            
             // Track audio button clicks
             const audioButton = document.querySelector('.audio-play-btn');
             if (audioButton) {
