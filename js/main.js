@@ -136,16 +136,6 @@ class App {
       // Set up mobile menu toggle
       this.initMobileMenu();
 
-      // Add mud splatter to CTA buttons
-      const ctaButtons = getElements('.cta-button');
-
-      addEventListeners(ctaButtons, 'click', event => {
-        AnimationSystem.createMudSplat(event.currentTarget);
-        if (this.components.audioManager) {
-          this.components.audioManager.playClickSound();
-        }
-      });
-
       // Add mud splatter to desktop nav links
       const desktopNavLinks = getElements('nav#main-nav a');
 
@@ -171,6 +161,46 @@ class App {
         // Tactile feedback if available
         if (window.navigator && window.navigator.vibrate) {
           window.navigator.vibrate([10, 30, 10]);
+        }
+      });
+
+      // Add mud splatter to registration buttons
+      const heroRegisterButton = getElements('.hero-register-button');
+      const registerButton = getElements('.register-button');
+      const registerButtons = [...heroRegisterButton, ...registerButton].filter(Boolean);
+
+      addEventListeners(registerButtons, 'click', event => {
+        AnimationSystem.createMudSplat(event.currentTarget);
+        if (this.components.audioManager) {
+          this.components.audioManager.playClickSound();
+        }
+
+        // Track registration button clicks in GA4
+        if (window.gtag) {
+          window.gtag('event', 'click', {
+            event_category: 'engagement',
+            event_label: 'registration_button',
+            value: 1,
+          });
+        }
+      });
+
+      // Add mud splatter to contact section links
+      const contactLinks = getElements('#contact a');
+
+      addEventListeners(contactLinks, 'click', event => {
+        AnimationSystem.createMudSplat(event.currentTarget);
+        if (this.components.audioManager) {
+          this.components.audioManager.playClickSound();
+        }
+
+        // Track contact link clicks in GA4
+        if (window.gtag) {
+          window.gtag('event', 'click', {
+            event_category: 'engagement',
+            event_label: 'contact_link',
+            value: 1,
+          });
         }
       });
 
