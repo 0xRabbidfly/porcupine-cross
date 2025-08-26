@@ -66,6 +66,50 @@ class App {
       // Initialize SMOLDERCHAD Easter Egg
       this.initSmolderchadEasterEgg();
 
+      // Track easter egg interactions in GA4
+      if (window.gtag) {
+        // Track spade logo clicks
+        const spadeLogo = document.querySelector('.surface-logo');
+        if (spadeLogo) {
+          spadeLogo.addEventListener('click', () => {
+            window.gtag('event', 'EasterEgg', {
+              event_category: 'engagement',
+              event_label: 'spade_logo_click',
+              value: 1,
+            });
+          });
+        }
+
+        // Track "WTF" typing
+        document.addEventListener('keydown', event => {
+          if (event.key === 't' || event.key === 'T') {
+            // Simple "WTF" detection - you might want to enhance this
+            const currentText = document.activeElement?.value || '';
+            if (currentText.toLowerCase().includes('wtf')) {
+              window.gtag('event', 'EasterEgg', {
+                event_category: 'engagement',
+                event_label: 'wtf_typed',
+                value: 1,
+              });
+            }
+          }
+        });
+      }
+
+      // Track audio file clicks in GA4
+      if (window.gtag) {
+        const audioFile = document.querySelector('audio[src*="crosstoberfest.mp3"]');
+        if (audioFile) {
+          audioFile.addEventListener('play', () => {
+            window.gtag('event', 'RaceOutline', {
+              event_category: 'engagement',
+              event_label: 'audio_played',
+              value: 1,
+            });
+          });
+        }
+      }
+
       this.initialized = true;
       eventBus.emit('app:initialized');
     } catch (error) {
@@ -177,9 +221,9 @@ class App {
 
         // Track registration button clicks in GA4
         if (window.gtag) {
-          window.gtag('event', 'click', {
+          window.gtag('event', 'register_button_click', {
             event_category: 'engagement',
-            event_label: 'registration_button',
+            event_label: 'registration',
             value: 1,
           });
         }
@@ -194,11 +238,27 @@ class App {
           this.components.audioManager.playClickSound();
         }
 
-        // Track contact link clicks in GA4
+        // Track contact link clicks in GA4 with descriptive names
         if (window.gtag) {
-          window.gtag('event', 'click', {
+          const linkText = event.currentTarget.textContent.toLowerCase();
+          let eventName = 'contact_link_click';
+
+          // Use more specific event names based on link content
+          if (linkText.includes('instagram')) {
+            eventName = 'instagram_click';
+          } else if (linkText.includes('facebook')) {
+            eventName = 'facebook_click';
+          } else if (linkText.includes('strava')) {
+            eventName = 'strava_click';
+          } else if (linkText.includes('email') || linkText.includes('@')) {
+            eventName = 'email_click';
+          } else if (linkText.includes('map') || linkText.includes('location')) {
+            eventName = 'location_click';
+          }
+
+          window.gtag('event', eventName, {
             event_category: 'engagement',
-            event_label: 'contact_link',
+            event_label: 'contact',
             value: 1,
           });
         }
