@@ -70,13 +70,13 @@
 
 /* Hotspot positioning classes by sections */
 .hotspot[data-section='start-finish'] {
-  left: 65%;
-  top: 52%;
+  left: 82%;
+  top: 55%;
 }
 
 .hotspot[data-section='sand-pit'] {
-  left: 88%;
-  top: 40%;
+  left: 92%;
+  top: 55%;
 }
 
 .hotspot[data-section='run-up'] {
@@ -85,8 +85,8 @@
 }
 
 .hotspot[data-section='technical'] {
-  left: 50%;
-  top: 40%;
+  left: 55%;
+  top: 25%;
 }
 
 .hotspot:hover,
