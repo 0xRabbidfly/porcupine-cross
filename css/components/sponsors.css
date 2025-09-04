@@ -27,7 +27,7 @@
 
 .sponsor-logos {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: repeat(2, 1fr);
   justify-items: center;
   align-items: center;
@@ -39,6 +39,84 @@
   min-height: 200px;
 }
 
+/* Stylized "Our Sponsors!" title in top left */
+.sponsors-title {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.sponsors-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--color-secondary) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-shadow:
+    2px 2px 0px var(--theme-accent-gold),
+    4px 4px 8px rgba(0, 0, 0, 0.3);
+  animation: sponsorsPulse 3s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes sponsorsPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    text-shadow:
+      2px 2px 0px var(--theme-accent-gold),
+      4px 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    text-shadow:
+      3px 3px 0px var(--theme-accent-gold),
+      6px 6px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* First row: 3 logos centered (skip first column) */
+.sponsor-logos > a:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.sponsor-logos > a:nth-child(3) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.sponsor-logos > a:nth-child(4) {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+/* Second row: 4 logos */
+.sponsor-logos > a:nth-child(5) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.sponsor-logos > a:nth-child(6) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.sponsor-logos > a:nth-child(7) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.sponsor-logos > a:nth-child(8) {
+  grid-column: 4;
+  grid-row: 2;
+}
+
 .sponsor-logos:last-child {
   margin-bottom: 0;
 }
@@ -47,10 +125,56 @@
 @media (max-width: 768px) {
   .sponsor-logos {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: auto repeat(4, 1fr);
     gap: 15px;
     padding: 15px;
     min-height: 400px;
+  }
+
+  .sponsors-title {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: 10px;
+  }
+
+  .sponsors-text {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  /* Mobile sponsor positioning - 2 per row */
+  .sponsor-logos > a:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .sponsor-logos > a:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .sponsor-logos > a:nth-child(4) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .sponsor-logos > a:nth-child(5) {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .sponsor-logos > a:nth-child(6) {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .sponsor-logos > a:nth-child(7) {
+    grid-column: 2;
+    grid-row: 4;
+  }
+
+  .sponsor-logos > a:nth-child(8) {
+    grid-column: 1;
+    grid-row: 5;
   }
 
   .sponsor-logo {
@@ -64,15 +188,15 @@
   }
 }
 
-/* Bike Sports Image Styling */
+/* Bike Sports Image Styling - Made smaller */
 .bike-sports {
-  max-height: 80px !important;
+  max-height: 40px !important;
   max-width: 100% !important;
   width: auto !important;
   height: auto !important;
   object-fit: contain;
   background-color: #333;
-  padding: 15px;
+  padding: 6px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -89,8 +213,8 @@
 
 /* Winspace specific sizing - make it bigger */
 img[src*='Winspace'] {
-  max-height: 100px !important;
-  padding: 15px;
+  max-height: 120px !important;
+  padding: 18px;
 }
 
 /* Placeholder for empty grid cell */
@@ -130,8 +254,8 @@ img[src*='Winspace'] {
   }
 
   .bike-sports {
-    max-height: 100px !important;
-    padding: 20px;
+    max-height: 50px !important;
+    padding: 10px;
   }
 
   .sponsor-placeholder {
