@@ -1,6 +1,6 @@
 /* section-home.css - Styles for the #home section (hero area) */
 
-/* Hero Section Styling */
+/* ===== HERO SECTION BASE ===== */
 .hero {
   display: flex;
   flex-direction: column;
@@ -19,7 +19,7 @@
   );
 }
 
-/* Desktop Layout */
+/* ===== DESKTOP LAYOUT ===== */
 .hero-desktop-layout {
   display: grid;
   grid-template-columns: 300px 1fr 300px;
@@ -66,19 +66,9 @@
 }
 
 .hero-title-section h2.cyclocross-subtitle {
+  margin-top: 1.5rem;
   text-align: center;
   margin-left: 0;
-  margin-top: 0.5rem;
-}
-
-/* General cyclocross subtitle spacing */
-h2.cyclocross-subtitle {
-  margin-top: 0.5rem;
-}
-
-/* Mobile layout cyclocross subtitle spacing */
-.hero-mobile-title h2.cyclocross-subtitle {
-  margin-top: 0.5rem;
 }
 
 .hero-title-section p.location {
@@ -86,12 +76,19 @@ h2.cyclocross-subtitle {
   margin-left: 0;
 }
 
-/* Mobile Layout - Hidden on desktop */
+/* ===== MOBILE LAYOUT ===== */
 .hero-mobile-layout {
   display: none;
 }
 
-/* Countdown Section */
+/* ===== TYPOGRAPHY ===== */
+h2.cyclocross-subtitle {
+  margin-top: 1.5rem;
+  text-align: center;
+  margin-left: 0;
+}
+
+/* ===== COUNTDOWN SECTION ===== */
 .hero-countdown-section {
   width: 100%;
   max-width: 1200px;
@@ -99,16 +96,13 @@ h2.cyclocross-subtitle {
   padding: 0 20px;
 }
 
-/* Desktop countdown styling */
-.hero-desktop-layout .countdown-container {
+/* Base countdown container styles */
+.countdown-container {
   background: linear-gradient(135deg, var(--color-secondary), #1e40af, var(--color-secondary));
   background-size: 200% 200%;
   color: white;
-  padding: 8px;
-  border-radius: 8px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-top: 0;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -116,7 +110,7 @@ h2.cyclocross-subtitle {
   align-items: center;
 }
 
-.hero-desktop-layout .countdown-date {
+.countdown-date {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 4px;
@@ -124,7 +118,7 @@ h2.cyclocross-subtitle {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.hero-desktop-layout .countdown-title {
+.countdown-title {
   font-size: 0.75rem;
   margin-bottom: 6px;
   color: white !important;
@@ -132,37 +126,44 @@ h2.cyclocross-subtitle {
   letter-spacing: 0.5px;
 }
 
-.hero-desktop-layout .countdown-timer {
+.countdown-timer {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   margin-bottom: 8px;
 }
 
-.hero-desktop-layout .countdown-item {
+.countdown-item {
   background: rgba(255, 255, 255, 0.2);
   padding: 4px 3px;
   border-radius: 4px;
   text-align: center;
 }
 
-.hero-desktop-layout .countdown-number {
+.countdown-number {
   display: block;
   font-size: 1rem;
   font-weight: bold;
   color: white !important;
 }
 
-.hero-desktop-layout .countdown-timer span {
+.countdown-timer span {
   color: white !important;
 }
 
-.hero-desktop-layout .countdown-label {
+.countdown-label {
   display: block;
   font-size: 0.6rem;
   color: white !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* Desktop countdown specific styles */
+.hero-desktop-layout .countdown-container {
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 0;
 }
 
 .hero-desktop-layout .hero-register-button {
@@ -177,7 +178,9 @@ h2.cyclocross-subtitle {
   margin-top: 6px;
 }
 
-/* Responsive: Hero Section (max-width: 900px) */
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Tablet adjustments (max-width: 900px) */
 @media (max-width: 900px) {
   .hero-desktop-layout {
     grid-template-columns: 250px 1fr 200px;
@@ -197,25 +200,20 @@ h2.cyclocross-subtitle {
     text-align: center;
   }
 
-  .hero-desktop-layout .countdown-timer {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-  }
-
-  .hero-desktop-layout .countdown-item {
+  .countdown-item {
     padding: 4px 2px;
   }
 
-  .hero-desktop-layout .countdown-number {
+  .countdown-number {
     font-size: 0.9rem;
   }
 
-  .hero-desktop-layout .countdown-label {
+  .countdown-label {
     font-size: 0.5rem;
   }
 }
 
-/* Responsive: Hero Section (max-width: 768px) */
+/* Mobile layout (max-width: 768px) */
 @media (max-width: 768px) {
   .hero {
     padding: 25px 0;
@@ -252,7 +250,7 @@ h2.cyclocross-subtitle {
   }
 
   .hero-mobile-title h2.cyclocross-subtitle {
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
   }
 
   .hero-mobile-copy {
@@ -264,68 +262,10 @@ h2.cyclocross-subtitle {
     padding: 0 10px;
   }
 
+  /* Mobile countdown specific styles */
   .hero-mobile-countdown .countdown-container {
-    background: linear-gradient(135deg, var(--color-secondary), #1e40af, var(--color-secondary));
-    background-size: 200% 200%;
-    color: white;
     padding: 10px;
     border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .hero-mobile-countdown .countdown-date {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: white !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .hero-mobile-countdown .countdown-title {
-    font-size: 0.75rem;
-    margin-bottom: 6px;
-    color: white !important;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .hero-mobile-countdown .countdown-timer {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-
-  .hero-mobile-countdown .countdown-item {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 4px 3px;
-    border-radius: 4px;
-    text-align: center;
-  }
-
-  .hero-mobile-countdown .countdown-number {
-    display: block;
-    font-size: 1rem;
-    font-weight: bold;
-    color: white !important;
-  }
-
-  .hero-mobile-countdown .countdown-timer span {
-    color: white !important;
-  }
-
-  .hero-mobile-countdown .countdown-label {
-    display: block;
-    font-size: 0.6rem;
-    color: white !important;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
   }
 
   .hero-mobile-countdown .hero-register-button {
@@ -341,6 +281,7 @@ h2.cyclocross-subtitle {
   }
 }
 
+/* ===== BACKGROUND ELEMENTS ===== */
 .hero-bg-side {
   flex: 1 1 50%;
   min-width: 0;
@@ -351,6 +292,7 @@ h2.cyclocross-subtitle {
   align-self: stretch;
   margin-left: 20px;
 }
+
 @media (max-width: 900px) {
   .hero-bg-side {
     min-height: 180px;
@@ -359,7 +301,7 @@ h2.cyclocross-subtitle {
   }
 }
 
-/* Single back-and-forth suit icon under "season heats up" */
+/* ===== ANIMATIONS ===== */
 .hero-copy-side {
   position: relative;
 }
@@ -418,23 +360,9 @@ h2.cyclocross-subtitle {
       transform: translateX(0);
     }
   }
-
-  .hero-register-button {
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
-    margin: 0.75rem 0;
-  }
-
-  .hero-register-button i {
-    font-size: 1.1rem;
-  }
 }
 
-/* DEPRECATED ORBITING ACE ICONS CODE REMOVED - NOT USED IN CURRENT LAYOUT */
-
-/* DEPRECATED: Hiding hero pseudo-elements not needed */
-
-/* Hero Content Animation */
+/* ===== HERO CONTENT ANIMATIONS ===== */
 .hero h1,
 .hero h2,
 .hero p.location,
@@ -448,28 +376,32 @@ h2.cyclocross-subtitle {
   position: relative;
   z-index: 3;
 }
+
 .hero.loaded h1 {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.1s;
 }
+
 .hero.loaded h2 {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.25s;
 }
+
 .hero.loaded p.location {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.4s;
 }
+
 .hero.loaded .cta-button {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 0.55s;
 }
 
-/* Hero Headings and Location */
+/* ===== HERO TYPOGRAPHY ===== */
 .hero h1 {
   font-family: 'Cinzel', serif, 'Montserrat', 'Arial', sans-serif !important;
   font-size: clamp(2.8rem, 6.5vw, 4.2rem);
@@ -481,7 +413,7 @@ h2.cyclocross-subtitle {
   perspective: 1000px;
 }
 
-/* Flipping Letters Animation for PROLOGUE */
+/* Letter flip animation for PROLOGUE */
 .hero h1.prologue-card-title {
   display: inline-block;
   letter-spacing: 0.1em;
@@ -516,7 +448,7 @@ h2.cyclocross-subtitle {
   font-size: 1.2em;
 }
 
-/* Stagger the animation for each letter */
+/* Stagger animation delays for each letter */
 .flip-letter:nth-child(1) {
   animation-delay: 0s;
 }
@@ -555,8 +487,6 @@ h2.cyclocross-subtitle {
   }
 }
 
-/* Suit symbols are now added via JavaScript with random colors */
-
 .hero h2 {
   font-size: clamp(1.1rem, 2.8vw, 1.6rem);
   color: var(--theme-dark-grey);
@@ -568,6 +498,7 @@ h2.cyclocross-subtitle {
   margin-bottom: 5px;
   line-height: 1.3;
 }
+
 .hero p.location {
   font-size: clamp(0.95rem, 2.3vw, 1.25rem);
   color: var(--theme-red);
@@ -576,7 +507,7 @@ h2.cyclocross-subtitle {
   line-height: 1.4;
 }
 
-/* CTA Button (used in hero) */
+/* ===== BUTTON STYLES ===== */
 .cta-button {
   display: inline-flex;
   align-items: center;
@@ -597,6 +528,7 @@ h2.cyclocross-subtitle {
   box-shadow: 0 4px 16px rgba(211, 84, 0, 0.13);
   letter-spacing: 1.2px;
 }
+
 .cta-button:hover,
 .cta-button:focus {
   background: var(--autumn-orange);
@@ -605,6 +537,7 @@ h2.cyclocross-subtitle {
   transform: translateY(-3px);
   box-shadow: 0 6px 24px rgba(211, 84, 0, 0.22);
 }
+
 .cta-button:active {
   transform: translateY(0px) scale(0.96);
   box-shadow:
@@ -612,7 +545,7 @@ h2.cyclocross-subtitle {
     0 3px 8px rgba(0, 0, 0, 0.2);
   background-color: var(--theme-dark-grey);
 }
-/* .cta-button .icon is not used in hero, but included for completeness */
+
 .cta-button .icon {
   font-size: 1em;
 }
@@ -627,22 +560,25 @@ h2.cyclocross-subtitle {
 }
 
 .hero-register-button {
-  display: inline-flex;
+  display: flex !important;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  flex-direction: row !important;
   background: linear-gradient(135deg, var(--theme-red), #d62d20);
   color: white;
-  padding: 1rem 2rem;
+  padding: 8px 12px !important;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
-  margin: 1rem 0;
+  margin: 1rem auto;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(214, 45, 32, 0.3);
   border: 2px solid transparent;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  width: fit-content;
+  justify-content: center;
 }
 
 .hero-register-button:hover {
@@ -655,52 +591,6 @@ h2.cyclocross-subtitle {
 .hero-register-button:active {
   transform: translateY(0);
   box-shadow: 0 2px 10px rgba(214, 45, 32, 0.3);
-}
-
-.hero-register-button i {
-  font-size: 1.2rem;
-}
-
-.hero .hero-register-note,
-.hero-register-cta .hero-register-note,
-.hero-bottom-section .hero-register-note,
-.hero .hero-register-cta .hero-register-note {
-  font-size: 0.85rem;
-  color: white !important;
-  margin-top: 0.75rem;
-  font-style: italic;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-/* Force override for body color inheritance */
-.hero .hero-register-cta .hero-register-note {
-  color: white !important;
-}
-
-/* Register deadline text styling */
-.register-deadline {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: normal;
-  margin-top: 1px;
-  opacity: 0.9;
-  text-align: center;
-  line-height: 1;
-}
-
-/* Hero register button layout - icon left, text right */
-.hero-register-button {
-  display: flex !important;
-  align-items: center;
-  gap: 0.5rem;
-  flex-direction: row !important;
-  padding: 8px 12px !important;
-  width: fit-content;
-  margin: 0 auto;
-  justify-content: center;
 }
 
 .hero-register-button .register-text {
@@ -716,7 +606,32 @@ h2.cyclocross-subtitle {
   font-size: 1rem;
 }
 
-/* Hero Lead Text - Match about section styling exactly */
+/* Registration note styling */
+.hero .hero-register-note,
+.hero-register-cta .hero-register-note,
+.hero-bottom-section .hero-register-note,
+.hero .hero-register-cta .hero-register-note {
+  font-size: 0.85rem;
+  color: white !important;
+  margin-top: 0.75rem;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.register-deadline {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: normal;
+  margin-top: 1px;
+  opacity: 0.9;
+  text-align: center;
+  line-height: 1;
+}
+
+/* ===== HERO LEAD TEXT ===== */
 .hero-lead p {
   color: var(--color-dark) !important;
   text-align: justify;
@@ -724,18 +639,12 @@ h2.cyclocross-subtitle {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 1.2em;
-  font-family: var(--font-main) !important; /* Use same font as about section */
-  font-size: 1rem; /* Match about section font size */
-  line-height: 1.6; /* Match about section line height */
-  font-weight: normal; /* Normal weight for body text */
+  font-family: var(--font-main) !important;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: normal;
 }
 
-/* Ensure all countdown timer spans are white */
-.countdown-timer span {
-  color: white !important;
-}
-
-/* Desktop hero copy alignment */
 .hero-content-side .hero-lead p {
   text-align: left;
   margin-left: 0;
