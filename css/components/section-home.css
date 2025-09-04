@@ -2,8 +2,8 @@
 
 /* Hero Section Styling */
 .hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -19,21 +19,205 @@
   );
 }
 
+/* Desktop Layout */
+.hero-desktop-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr 300px;
+  align-items: start;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero-card-side {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+}
+
+.hero-card-side .hero-card-logo {
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.hero-content-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+  padding-left: 10px;
+  justify-content: flex-start;
+}
+
+.hero-countdown-side {
+  display: flex;
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+.hero-title-section {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.hero-title-section h2.cyclocross-subtitle {
+  text-align: center;
+  margin-left: 0;
+  margin-top: 0.5rem;
+}
+
+/* General cyclocross subtitle spacing */
+h2.cyclocross-subtitle {
+  margin-top: 0.5rem;
+}
+
+/* Mobile layout cyclocross subtitle spacing */
+.hero-mobile-title h2.cyclocross-subtitle {
+  margin-top: 0.5rem;
+}
+
+.hero-title-section p.location {
+  text-align: center;
+  margin-left: 0;
+}
+
+/* Mobile Layout - Hidden on desktop */
+.hero-mobile-layout {
+  display: none;
+}
+
+/* Countdown Section */
+.hero-countdown-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto 0;
+  padding: 0 20px;
+}
+
+/* Desktop countdown styling */
+.hero-desktop-layout .countdown-container {
+  background: linear-gradient(135deg, var(--color-secondary), #1e40af, var(--color-secondary));
+  background-size: 200% 200%;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-desktop-layout .countdown-date {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hero-desktop-layout .countdown-title {
+  font-size: 0.75rem;
+  margin-bottom: 6px;
+  color: white !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hero-desktop-layout .countdown-timer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.hero-desktop-layout .countdown-item {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 3px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.hero-desktop-layout .countdown-number {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white !important;
+}
+
+.hero-desktop-layout .countdown-timer span {
+  color: white !important;
+}
+
+.hero-desktop-layout .countdown-label {
+  display: block;
+  font-size: 0.6rem;
+  color: white !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hero-desktop-layout .hero-register-button {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  margin: 8px 0;
+  border-radius: 20px;
+}
+
+.hero-desktop-layout .hero-register-note {
+  font-size: 0.7rem;
+  margin-top: 6px;
+}
+
 /* Responsive: Hero Section (max-width: 900px) */
 @media (max-width: 900px) {
-  .hero {
-    display: flex;
-    flex-direction: column;
+  .hero-desktop-layout {
+    grid-template-columns: 250px 1fr 200px;
+    gap: 15px;
+    max-width: 1000px;
+  }
+
+  .hero-card-side .hero-card-logo {
+    max-width: 230px;
+  }
+
+  .hero-content-side {
+    text-align: left;
+  }
+
+  .hero-title-section {
     text-align: center;
-    padding: 25px 0;
+  }
+
+  .hero-desktop-layout .countdown-timer {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+
+  .hero-desktop-layout .countdown-item {
+    padding: 4px 2px;
+  }
+
+  .hero-desktop-layout .countdown-number {
+    font-size: 0.9rem;
+  }
+
+  .hero-desktop-layout .countdown-label {
+    font-size: 0.5rem;
   }
 }
 
 /* Responsive: Hero Section (max-width: 768px) */
 @media (max-width: 768px) {
   .hero {
-    flex-direction: column;
-    text-align: center;
     padding: 25px 0;
     min-height: auto;
     margin-left: 3vw !important;
@@ -42,6 +226,118 @@
     max-width: none !important;
     box-sizing: border-box !important;
     overflow: visible !important;
+  }
+
+  /* Hide desktop layout on mobile */
+  .hero-desktop-layout {
+    display: none;
+  }
+
+  /* Show mobile layout */
+  .hero-mobile-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    width: 100%;
+  }
+
+  .hero-mobile-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-mobile-title {
+    text-align: center;
+  }
+
+  .hero-mobile-title h2.cyclocross-subtitle {
+    margin-top: 0.5rem;
+  }
+
+  .hero-mobile-copy {
+    text-align: center;
+  }
+
+  .hero-mobile-countdown {
+    margin-top: 20px;
+    padding: 0 10px;
+  }
+
+  .hero-mobile-countdown .countdown-container {
+    background: linear-gradient(135deg, var(--color-secondary), #1e40af, var(--color-secondary));
+    background-size: 200% 200%;
+    color: white;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-mobile-countdown .countdown-date {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-mobile-countdown .countdown-title {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+    color: white !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-mobile-countdown .countdown-timer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .hero-mobile-countdown .countdown-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 3px;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .hero-mobile-countdown .countdown-number {
+    display: block;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white !important;
+  }
+
+  .hero-mobile-countdown .countdown-timer span {
+    color: white !important;
+  }
+
+  .hero-mobile-countdown .countdown-label {
+    display: block;
+    font-size: 0.6rem;
+    color: white !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-mobile-countdown .hero-register-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin: 8px 0;
+    border-radius: 25px;
+  }
+
+  .hero-mobile-countdown .hero-register-note {
+    font-size: 0.8rem;
+    margin-top: 6px;
   }
 }
 
@@ -323,8 +619,11 @@
 
 /* Hero Registration CTA */
 .hero-register-cta {
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-register-button {
@@ -379,4 +678,79 @@
 /* Force override for body color inheritance */
 .hero .hero-register-cta .hero-register-note {
   color: white !important;
+}
+
+/* Register deadline text styling */
+.register-deadline {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: normal;
+  margin-top: 1px;
+  opacity: 0.9;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Hero register button layout - icon left, text right */
+.hero-register-button {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  flex-direction: row !important;
+  padding: 8px 12px !important;
+  width: fit-content;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.hero-register-button .register-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.hero-register-button i {
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+/* Hero Lead Text - Match about section styling exactly */
+.hero-lead p {
+  color: var(--color-dark) !important;
+  text-align: justify;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.2em;
+  font-family: var(--font-main) !important; /* Use same font as about section */
+  font-size: 1rem; /* Match about section font size */
+  line-height: 1.6; /* Match about section line height */
+  font-weight: normal; /* Normal weight for body text */
+}
+
+/* Ensure all countdown timer spans are white */
+.countdown-timer span {
+  color: white !important;
+}
+
+/* Desktop hero copy alignment */
+.hero-content-side .hero-lead p {
+  text-align: left;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Mobile responsive text alignment for hero lead */
+@media (max-width: 768px) {
+  .hero-lead p {
+    text-align: left;
+    padding: 0 4%;
+  }
+
+  .hero-mobile-copy .hero-lead p {
+    text-align: center;
+    padding: 0 2%;
+  }
 }

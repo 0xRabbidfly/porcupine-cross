@@ -4,7 +4,6 @@
  */
 
 import AudioManager from './components/audioManager.js';
-import { CountdownTimer } from './components/countdownTimer.js';
 import InteractiveMap from './components/interactiveMap.js';
 import MobileMenu from './components/mobileMenu.js';
 import SmolderchadEasterEgg from './components/smolderchadEasterEgg.js';
@@ -487,21 +486,65 @@ class App {
       return; // Exit early if no countdown container found
     }
 
-    const elements = {
-      days: getElement('countdown-days'),
-      hours: getElement('countdown-hours'),
-      minutes: getElement('countdown-minutes'),
-      seconds: getElement('countdown-seconds'),
-      secondsParent: getElement('countdown-seconds')?.parentElement,
-    };
+    // Get all countdown elements (both desktop and mobile)
+    const allDaysElements = document.querySelectorAll('#countdown-days');
+    const allHoursElements = document.querySelectorAll('#countdown-hours');
+    const allMinutesElements = document.querySelectorAll('#countdown-minutes');
+    const allSecondsElements = document.querySelectorAll('#countdown-seconds');
 
-    if (elements.days && elements.hours && elements.minutes && elements.seconds) {
-      this.components.countdownTimer = new CountdownTimer('September 21, 2025 08:00:00', elements, {
-        animationClasses: {
-          pulse: 'pulse',
-          tick: 'tick',
+    if (
+      allDaysElements.length > 0 &&
+      allHoursElements.length > 0 &&
+      allMinutesElements.length > 0 &&
+      allSecondsElements.length > 0
+    ) {
+      // Create a custom update function that updates all elements
+      const customUpdate = () => {
+        const now = new Date().getTime();
+        const targetDate = new Date('September 21, 2025 08:00:00').getTime();
+        const distance = targetDate - now;
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Update all day elements
+        allDaysElements.forEach(element => {
+          element.textContent = days.toString().padStart(2, '0');
+        });
+
+        // Update all hour elements
+        allHoursElements.forEach(element => {
+          element.textContent = hours.toString().padStart(2, '0');
+        });
+
+        // Update all minute elements
+        allMinutesElements.forEach(element => {
+          element.textContent = minutes.toString().padStart(2, '0');
+        });
+
+        // Update all second elements
+        allSecondsElements.forEach(element => {
+          element.textContent = seconds.toString().padStart(2, '0');
+        });
+
+        return { days, hours, minutes, seconds, distance };
+      };
+
+      // Start the countdown with custom update function
+      this.components.countdownTimer = {
+        start: () => {
+          customUpdate(); // Initial update
+          this.countdownInterval = setInterval(customUpdate, 1000);
         },
-      });
+        stop: () => {
+          if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+          }
+        },
+      };
 
       this.components.countdownTimer.start();
     } else {
@@ -603,52 +646,59 @@ class App {
    * Initialize flipping title animation for PROLOGUE
    */
   initFlippingTitle() {
-    const titleElement = document.querySelector('.prologue-card-title');
-    if (!titleElement) {
-      console.info('Prologue title element not found');
+    const titleElements = document.querySelectorAll('.prologue-card-title');
+    if (titleElements.length === 0) {
+      console.info('Prologue title elements not found');
       return;
     }
 
-    const titleText = titleElement.textContent.trim();
-    console.info('Found title text:', titleText);
-    titleElement.innerHTML = '';
+    // Process all title elements (desktop and mobile)
+    titleElements.forEach((titleElement, index) => {
+      console.info(`Processing title element ${index + 1}:`, titleElement);
 
-    // Available suits and their colors
-    const suits = [
-      { symbol: '♠', color: '#000000' }, // Spade - black
-      { symbol: '♣', color: '#000000' }, // Club - black
-      { symbol: '♥', color: '#e73e3a' }, // Heart - red
-      { symbol: '♦', color: '#e73e3a' }, // Diamond - red
-    ];
+      const titleText = titleElement.textContent.trim();
+      console.info('Found title text:', titleText);
+      titleElement.innerHTML = '';
 
-    // Create flipping letter structure
-    titleText.split('').forEach((letter, _index) => {
-      if (letter === ' ') {
-        titleElement.appendChild(document.createTextNode(' '));
-        return;
-      }
+      // Available suits and their colors
+      const suits = [
+        { symbol: '♠', color: '#000000' }, // Spade - black
+        { symbol: '♣', color: '#000000' }, // Club - black
+        { symbol: '♥', color: '#e73e3a' }, // Heart - red
+        { symbol: '♦', color: '#e73e3a' }, // Diamond - red
+      ];
 
-      // Pick a random suit for this letter
-      const randomSuit = suits[Math.floor(Math.random() * suits.length)];
+      // Create flipping letter structure
+      titleText.split('').forEach((letter, _index) => {
+        if (letter === ' ') {
+          titleElement.appendChild(document.createTextNode(' '));
+          return;
+        }
 
-      const letterContainer = document.createElement('span');
-      letterContainer.className = 'flip-letter';
+        // Pick a random suit for this letter
+        const randomSuit = suits[Math.floor(Math.random() * suits.length)];
 
-      const letterFront = document.createElement('span');
-      letterFront.className = 'letter-front';
-      letterFront.textContent = letter;
+        const letterContainer = document.createElement('span');
+        letterContainer.className = 'flip-letter';
 
-      const letterBack = document.createElement('span');
-      letterBack.className = 'letter-back';
-      letterBack.textContent = randomSuit.symbol;
-      letterBack.style.color = randomSuit.color;
+        const letterFront = document.createElement('span');
+        letterFront.className = 'letter-front';
+        letterFront.textContent = letter;
 
-      letterContainer.appendChild(letterFront);
-      letterContainer.appendChild(letterBack);
-      titleElement.appendChild(letterContainer);
+        const letterBack = document.createElement('span');
+        letterBack.className = 'letter-back';
+        letterBack.textContent = randomSuit.symbol;
+        letterBack.style.color = randomSuit.color;
+
+        letterContainer.appendChild(letterFront);
+        letterContainer.appendChild(letterBack);
+        titleElement.appendChild(letterContainer);
+      });
+
+      console.info(
+        `Flipping letters initialized for element ${index + 1} with random suits and colors`
+      );
     });
-
-    console.info('Flipping letters initialized with random suits and colors');
   }
 
   /**

@@ -43,7 +43,7 @@
     <!-- EVENT STRUCTURED DATA PREVIEW -->
     <meta name="event:start_date" content="2025-09-21T09:00:00-04:00">
     <meta name="event:end_date" content="2025-09-21T18:00:00-04:00">
-    <meta name="event:location" content="342 Durham Regional Road 8, Uxbridge, ON L9P 1R1">
+    <meta name="event:location" content="7210 Concession 4, Uxbridge, L9P 1R1">
     
     <!-- PERFORMANCE & CORE WEB VITALS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -114,86 +114,146 @@
 
     <main id="main" role="main">
         <section id="home" class="hero section-grid">
-            <!-- Top Row: Card + Copy -->
-            <div class="hero-top-row">
+            <!-- Desktop Layout: Card + Title + Copy + Countdown -->
+            <div class="hero-desktop-layout">
                 <div class="hero-card-side">
                     <img src="images/Prologue Cross Logo Red.jpeg" alt="Prologue Red Card Logo" class="hero-card-logo" loading="eager">
                 </div>
-                <div class="hero-copy-side">
+                <div class="hero-content-side">
+                    <!-- Interactive PROLOGUE Title -->
+                    <div class="hero-title-section">
+                        <h1 class="prologue-card-title">Prologue</h1>
+                        <h2 class="cyclocross-subtitle">Cyclocross</h2>
+                        <p class="location">Uxbridge</p>
+                    </div>
+                    
+                    <!-- Hero Copy -->
                     <div class="ace-theme-copy">
                         <div class="hero-lead">
-                            <p>Kick off your cyclocross season with a <span class="winning-hand">winning hand</span>!</p>
-                            <p>Just an hour from downtown Toronto.</p>
-                            <p>Prologue Cross deals up thrilling terrain, fast-paced fun, and the perfect challenge to sharpen your skills before the season heats up.</p>
+                            <p><b>KICK OFF YOUR CYCLOCROSS SEASON WITH A WINNING HAND — NO MATTER WHAT YOU RIDE!</b><br><br>
+                            Just an hour from downtown Toronto, Prologue Cross welcomes all bikes — gravel, MTB, or CX. From our beginner-friendly Try-a-CX event to OC sanctioned Cyclocross racing, the course deals up thrilling terrain, fast-paced fun, and the perfect challenge to sharpen your skills or give cyclocross a try for the very first time.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-countdown-side">
+                    <div class="countdown-container">
+                        <p class="countdown-date">September 21, 2025</p>
+                        <h3 class="countdown-title">Race Day Countdown</h3>
+                        <div class="countdown-timer">
+                            <div class="countdown-item">
+                                <span id="countdown-days">00</span>
+                                <span class="countdown-label">Days</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="countdown-hours">00</span>
+                                <span class="countdown-label">Hours</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="countdown-minutes">00</span>
+                                <span class="countdown-label">Minutes</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="countdown-seconds">00</span>
+                                <span class="countdown-label">Seconds</span>
+                            </div>
+                        </div>
+                        <div class="hero-register-cta">
+                            <a href="https://ccnbikes.com/#!/events/27978-prologue-cross" target="_blank" rel="noopener" class="hero-register-button">
+                                <i class="fas fa-user-plus"></i>
+                                <div class="register-text">
+                                    Register Now
+                                    <span class="register-deadline">deadline: Sept 18</span>
+                                </div>
+                            </a>
+                            <p class="hero-register-note" style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">Powered by CCN Bikes</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Bottom Section: Title + Countdown -->
-            <div class="hero-bottom-section">
-                <h1 class="prologue-card-title">Prologue</h1>
-                <h2 class="cyclocross-subtitle">Cyclocross</h2>
-                <p class="location">Uxbridge</p>
-                <div class="countdown-container">
-                    <p class="countdown-date">September 21, 2025</p>
-                    <h3 class="countdown-title">Race Day Countdown</h3>
-                    <div class="countdown-timer">
-                        <div class="countdown-item">
-                            <span id="countdown-days">00</span>
-                            <span class="countdown-label">Days</span>
-                        </div>
-                        <div class="countdown-item">
-                            <span id="countdown-hours">00</span>
-                            <span class="countdown-label">Hours</span>
-                        </div>
-                        <div class="countdown-item">
-                            <span id="countdown-minutes">00</span>
-                            <span class="countdown-label">Minutes</span>
-                        </div>
-                        <div class="countdown-item">
-                            <span id="countdown-seconds">00</span>
-                            <span class="countdown-label">Seconds</span>
+            <!-- Mobile Layout: Card on top, then title and copy full width -->
+            <div class="hero-mobile-layout">
+                <div class="hero-mobile-card">
+                    <img src="images/Prologue Cross Logo Red.jpeg" alt="Prologue Red Card Logo" class="hero-card-logo" loading="eager">
+                </div>
+                <div class="hero-mobile-title">
+                    <h1 class="prologue-card-title">Prologue</h1>
+                    <h2 class="cyclocross-subtitle">Cyclocross</h2>
+                    <p class="location">Uxbridge</p>
+                </div>
+                <div class="hero-mobile-copy">
+                    <div class="ace-theme-copy">
+                        <div class="hero-lead">
+                            <p><b>KICK OFF YOUR CYCLOCROSS SEASON WITH A WINNING HAND — NO MATTER WHAT YOU RIDE!</b><br><br>
+                            Just an hour from downtown Toronto, Prologue Cross welcomes all bikes — gravel, MTB, or CX. From our beginner-friendly Try-a-CX event to OC sanctioned Cyclocross racing, the course deals up thrilling terrain, fast-paced fun, and the perfect challenge to sharpen your skills or give cyclocross a try for the very first time.</p>
                         </div>
                     </div>
-                    <div class="hero-register-cta">
-                        <a href="https://ccnbikes.com/#!/events/27978-prologue-cross" target="_blank" rel="noopener" class="hero-register-button">
-                            <i class="fas fa-user-plus"></i>
-                            Register Now
-                        </a>
-                        <p class="hero-register-note" style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">Registration powered by CCN Bikes</p>
+                </div>
+                <div class="hero-mobile-countdown">
+                    <div class="countdown-container">
+                        <p class="countdown-date">September 21, 2025</p>
+                        <h3 class="countdown-title">Race Day Countdown</h3>
+                        <div class="countdown-timer">
+                            <div class="countdown-item">
+                                <span id="countdown-days">00</span>
+                                <span class="countdown-label">Days</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="countdown-hours">00</span>
+                                <span class="countdown-label">Hours</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="countdown-minutes">00</span>
+                                <span class="countdown-label">Minutes</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span id="countdown-seconds">00</span>
+                                <span class="countdown-label">Seconds</span>
+                            </div>
+                        </div>
+                        <div class="hero-register-cta">
+                            <a href="https://ccnbikes.com/#!/events/27978-prologue-cross" target="_blank" rel="noopener" class="hero-register-button">
+                                <i class="fas fa-user-plus"></i>
+                                <div class="register-text">
+                                    Register Now
+                                    <span class="register-deadline">deadline: Sept 18</span>
+                                </div>
+                            </a>
+                            <p class="hero-register-note" style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">Powered by CCN Bikes</p>
+                        </div>
                     </div>
                 </div>
             </div>
+            
         </section>
 
         <section id="about" class="about-section">
             <h2><span class="ace-icon">♠</span>The Prologue Experience</h2>
-            <p>Prologue Cross is your chance to kick off the cyclocross season with a winning strategy. Set just 10 minutes west of Uxbridge and an hour from downtown Toronto, this one-day event blends fast-paced racing with a welcoming, community vibe.</p>
+            <p><strong>Prologue Cross is your chance to kick off the cyclocross season with a winning strategy</strong>. Set just 10 minutes west of Uxbridge and an hour from downtown Toronto, this one-day event blends fast-paced racing with a welcoming, community vibe.</p>
             
-            <p>The course spans 80 acres of scenic forest and fields, designed by <strong>CX veteran Jeff Faulds</strong> to challenge and inspire. Riders will face a mix of terrain—climbs, run-ups, sand, off-camber turns, and barriers that require dismounting and shouldering. For those new to cyclocross, alternate lines provide a less technical but still exciting ride.</p>
+            <p>The course spans <strong>80 acres of scenic forest and fields</strong>, designed by <strong>CX veteran Jeff Faulds</strong> to challenge and inspire. Riders will face a mix of terrain—climbs, run-ups, sand, off-camber turns, and barriers that require dismounting and shouldering. For those new to cyclocross, alternate lines provide a less technical but still exciting ride.</p>
             
-            <p>Trying CX for the first time? We've got you covered. A limited number of rental cyclocross bikes will be available for first-timers, and we offer an untimed, beginner-friendly race for both adults and young kids. No pressure—just a chance to explore the sport, ride the course, and have fun.</p>
+            <p>Trying CX for the first time? We've got you covered. A limited number of rental cyclocross bikes will be available for first-timers, and we offer an <strong>untimed, beginner-friendly race for both adults and young kids</strong>. No pressure—just a chance to explore the sport, ride the course, and have fun.</p>
             
-            <p>Prologue Cross isn't just about racing—it's about the full experience. Expect high-energy vibes at the UCI-style start/finish line, complete with pumping music and cheering fans.</p>
+            <p>Prologue Cross isn't just about racing—it's about the full experience. Expect <strong>pumping music, local vendors serving fries, cider, and beer, physiotherapists on site, and sport drink for all riders</strong> — all anchored by a professional announcer keeping the energy high at the UCI-style start/finish line.</p>
             
-            <p>Whether you're a seasoned racer tuning up for the season or a curious newcomer looking to dip your toes into CX, this is the race where everyone gets to play their hand.</p>
+            <p>Whether you're a seasoned racer tuning up for the season or a curious newcomer looking to dip your toes into CX, this is the race <strong>where everyone gets to play their hand</strong>.</p>
             
-            <p>Affiliated with both the Peterborough Cycling Club and the local Uxbridge Cycling Club.</p>
+            <p>Affiliated with both the <strong>Peterborough Cycling Club</strong> and the local <strong>Uxbridge Cycling Club</strong>.</p>
             
-            <p><strong>Ante up and join us for a day of thrilling cyclocross action and fun!</strong></p>
+            <p><strong>Ante up and join us for a day of thrilling cyclocross action and community fun!</strong></p>
         </section>
 
         <section class="sponsors">
-            <div class="sponsor-logos sponsor-row-1">
-                <a href="https://www.peterboroughcc.com/" target="_blank" rel="noopener"><img src="images/PCC_Logo-459w.webp" alt="PCC Logo" class="sponsor-logo left" loading="lazy"></a>
-                <a href="https://www.exodusgraphics.com/" target="_blank" rel="noopener"><div class="exodus-frame"><img src="images/exodus-logo.png" alt="Exodus Logo" class="sponsor-logo center" loading="lazy"></div></a>
-                <a href="https://www.uxbridgecycling.com/" target="_blank" rel="noopener"><img src="images/UCC-logo.png" alt="UCC Logo" class="sponsor-logo right" loading="lazy"></a>
-            </div>
-            <div class="sponsor-logos sponsor-row-2">
-                <a href="https://www.slabtowncider.com/" target="_blank" rel="noopener"><img src="images/Slabtown.webp" alt="Slabtown Cider Co." class="sponsor-logo row2-logo" loading="lazy"></a>
-                <a href="https://uxbridgephysiotherapy.com/" target="_blank" rel="noopener"><img src="images/Uxbridge Physiotherapy Logo.jpg" alt="Uxbridge Physiotherapy" class="sponsor-logo row2-logo" loading="lazy"></a>
-                <a href="https://www.winspace.cc/" target="_blank" rel="noopener"><img src="images/Winspace.png" alt="Winspace" class="sponsor-logo row2-logo" loading="lazy"></a>
+            <div class="sponsor-logos">
+                <a href="https://www.bikesports.ca/" target="_blank" rel="noopener"><img src="images/bike sports.png" alt="Bike Sports" class="sponsor-logo bike-sports" loading="lazy"></a>
+                <a href="https://www.peterboroughcc.com/" target="_blank" rel="noopener"><img src="images/PCC_Logo-459w.webp" alt="PCC Logo" class="sponsor-logo" loading="lazy"></a>
+                <a href="https://www.exodusgraphics.com/" target="_blank" rel="noopener"><img src="images/exodus-logo.png" alt="Exodus Logo" class="sponsor-logo" loading="lazy"></a>
+                <a href="https://www.uxbridgecycling.com/" target="_blank" rel="noopener"><img src="images/UCC-logo.png" alt="UCC Logo" class="sponsor-logo" loading="lazy"></a>
+                <a href="https://www.slabtowncider.com/" target="_blank" rel="noopener"><img src="images/Slabtown.webp" alt="Slabtown Cider Co." class="sponsor-logo" loading="lazy"></a>
+                <a href="https://uxbridgephysiotherapy.com/" target="_blank" rel="noopener"><img src="images/Uxbridge Physiotherapy Logo.jpg" alt="Uxbridge Physiotherapy" class="sponsor-logo" loading="lazy"></a>
+                <a href="https://www.winspace.cc/" target="_blank" rel="noopener"><img src="images/Winspace.png" alt="Winspace" class="sponsor-logo" loading="lazy"></a>
+                <div class="sponsor-placeholder"></div>
             </div>
         </section>
 
@@ -285,7 +345,7 @@
         </section>
 
         <section id="register">
-            <h2><span class="ace-icon">♠</span>Register</h2>
+            <h2><span class="ace-icon">♠</span>Deal Yourself In</h2>
             <div class="register-content">
                 <div class="register-hero">
                     <a href="https://ccnbikes.com/#!/events/27978-prologue-cross" target="_blank" rel="noopener" class="register-icon-link">
@@ -299,17 +359,23 @@
                             </span>
                         </div>
                     </a>
-                    <h3 class="register-tagline">Deal Yourself In</h3>
                 </div>
                 <div class="register-cta">
-                    <p class="register-description">Ready to join the action? Registration is now open!</p>
+                    <p class="register-description">
+                        Register now on CCN (it only takes a minute)<br>
+                        deadline is Sept 18 at midnight.
+                    </p>
                     <a href="https://ccnbikes.com/#!/events/27978-prologue-cross" target="_blank" rel="noopener" class="register-button">
                         <i class="fas fa-user-plus"></i>
-                        Register Now
+                        <div class="register-text">
+                            Register Now
+                            <span class="register-deadline">deadline: Sept 18</span>
+                        </div>
                     </a>
-                    <p class="register-note">Registration powered by CCN Bikes</p>
+                    <p class="register-note">Powered by CCN Bikes</p>
                 </div>
             </div>
+
         </section>
 
         <section id="contact">
@@ -334,7 +400,8 @@
                         </div>
                         <div class="contact-info">
                             <h3>Location:</h3>
-                            <a href="https://maps.google.com/?q=342+Durham+Regional+Road+8,+Uxbridge,+ON+L9P+1R1" target="_blank" rel="noopener">342 Durham Regional Road 8, Uxbridge, ON L9P 1R1</a>
+                            <a href="https://maps.google.com/?q=7210+Concession+4,+Uxbridge,+L9P+1R1" target="_blank" rel="noopener">7210 Concession 4, Uxbridge, L9P 1R1</a>
+                            <p class="location-note">"Please Drive Slow. Careful of horses."</p>
                         </div>
                     </div>
                     
@@ -422,7 +489,7 @@
                     "name": "Prologue Cross Course",
                     "address": {
                         "@type": "PostalAddress",
-                        "streetAddress": "342 Durham Regional Road 8",
+                        "streetAddress": "7210 Concession 4",
                         "addressLocality": "Uxbridge",
                         "addressRegion": "ON",
                         "postalCode": "L9P 1R1",

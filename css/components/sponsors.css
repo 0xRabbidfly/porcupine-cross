@@ -18,7 +18,7 @@
   text-align: center;
   padding: 25px 0;
   margin-bottom: 10px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
   border-top: none;
@@ -26,70 +26,78 @@
 }
 
 .sponsor-logos {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  justify-items: center;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
-  padding: 0 20px;
-  margin-bottom: var(--sponsor-row-gap);
+  padding: 20px;
+  min-height: 200px;
 }
 
 .sponsor-logos:last-child {
   margin-bottom: 0;
 }
 
-.exodus-frame {
-  flex: 1 1 0;
-  margin: 0;
-  padding: 8px;
-  background: transparent;
-  box-shadow: none;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  max-width: var(--sponsor-logo-max-width);
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  opacity: 1;
-  transition:
-    filter 0.25s ease-out,
-    transform 0.25s ease-out;
+/* Mobile responsive grid */
+@media (max-width: 768px) {
+  .sponsor-logos {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 15px;
+    padding: 15px;
+    min-height: 400px;
+  }
+
+  .sponsor-logo {
+    max-height: 60px !important;
+    padding: 8px;
+  }
+
+  .bike-sports {
+    max-height: 60px !important;
+    padding: 12px;
+  }
 }
 
-.exodus-frame img {
-  display: block;
-  margin: 0 auto;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  box-shadow: none;
-  border: none;
-}
-
-/* Special logo sizing for mobile */
-img[src*='exodus'] {
-  max-height: 20px !important;
-}
-img[src*='PCC_Logo'] {
-  max-height: 40px !important;
-}
-img[src*='UCC-logo'] {
-  max-height: 60px !important;
-}
-
-/* Second row sponsor logos - match first row scale */
-.row2-logo {
-  max-height: 50px !important;
+/* Bike Sports Image Styling */
+.bike-sports {
+  max-height: 80px !important;
+  max-width: 100% !important;
   width: auto !important;
+  height: auto !important;
   object-fit: contain;
+  background-color: #333;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* General sponsor logo styling */
+.sponsor-logo {
+  max-height: 80px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+  padding: 10px;
+}
+
+/* Winspace specific sizing - make it bigger */
+img[src*='Winspace'] {
+  max-height: 100px !important;
+  padding: 15px;
+}
+
+/* Placeholder for empty grid cell */
+.sponsor-placeholder {
+  width: 100%;
+  height: 80px;
+  background-color: transparent;
 }
 
 /* Responsive: Tablet and Up */
@@ -97,56 +105,42 @@ img[src*='UCC-logo'] {
   .sponsors {
     padding: 30px 0;
     margin-bottom: 10px;
-    max-width: 1000px;
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
   }
+
   .sponsor-logos {
-    justify-content: space-around;
-    gap: var(--sponsor-gap);
-    padding: 0 30px;
-    min-height: 75px;
+    gap: 25px;
+    padding: 30px;
+    min-height: 250px;
   }
+
   .sponsor-logo {
-    width: auto;
-    height: auto;
-    flex: 0 1 auto;
-    object-fit: contain;
-    opacity: 1;
-    margin: 0 8px;
+    max-height: 100px !important;
+    padding: 15px;
     transition:
       filter 0.25s ease-out,
       transform 0.25s ease-out;
   }
+
   .sponsor-logo:hover {
     filter: brightness(1.25);
-    transform: scale(1.08) rotate(2deg);
-  }
-  /* Special case for UCC logo */
-  .sponsor-logo[src$='UCC logo.webp'] {
-    max-height: calc(var(--sponsor-logo-max-height) * 1.5);
-    max-width: calc(var(--sponsor-logo-max-width) * 1.5);
-  }
-  .sponsors img {
-    vertical-align: middle;
-    filter: none;
-    opacity: 1;
+    transform: scale(1.05);
   }
 
-  img[src*='exodus'] {
-    max-height: 40px !important; /* Set your desired desktop height */
-  }
-  img[src*='PCC_Logo'] {
-    max-height: 80px !important; /* Set your desired desktop height */
-  }
-  img[src*='UCC-logo'] {
-    max-height: 120px !important; /* Set your desired desktop height */
+  .bike-sports {
+    max-height: 100px !important;
+    padding: 20px;
   }
 
-  /* Desktop sizing for second row sponsor logos */
-  .row2-logo {
-    max-height: 70px !important;
-    width: auto !important;
-    object-fit: contain;
+  .sponsor-placeholder {
+    height: 100px;
+  }
+
+  /* Desktop Winspace sizing */
+  img[src*='Winspace'] {
+    max-height: 120px !important;
+    padding: 20px;
   }
 }
