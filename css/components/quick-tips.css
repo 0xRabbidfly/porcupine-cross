@@ -1,0 +1,261 @@
+/* quick-tips.css - Styles for the Quick Tips section */
+
+/* ===== QUICK TIPS SECTION ===== */
+.quick-tips-section {
+  background: linear-gradient(135deg, var(--cream) 0%, #f8f6f0 100%);
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-tips-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(139, 69, 19, 0.03) 10px,
+    rgba(139, 69, 19, 0.03) 20px
+  );
+  pointer-events: none;
+}
+
+.quick-tips-section h2 {
+  color: var(--color-secondary) !important;
+  text-align: center !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1.2em !important;
+}
+
+.quick-tips-intro {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 50px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--theme-dark-grey);
+  font-weight: 500;
+}
+
+/* ===== TIP CARDS ===== */
+.quick-tips-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Step 3 spans full width on second row */
+.tip-card:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.tip-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 3px solid var(--theme-accent-gold);
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.tip-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(
+    90deg,
+    var(--theme-red),
+    var(--autumn-orange),
+    var(--theme-accent-gold)
+  );
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  border-color: var(--theme-red);
+}
+
+.tip-number {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--theme-red), #d62d20);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: 'Cinzel', serif;
+  box-shadow: 0 2px 8px rgba(214, 45, 32, 0.3);
+  border: 2px solid white;
+  z-index: 2;
+}
+
+.tip-content {
+  margin-top: 8px;
+}
+
+.tip-content h3 {
+  color: var(--theme-red);
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Cinzel', serif;
+}
+
+.tip-content p {
+  color: var(--theme-dark-grey);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.tip-content ul {
+  margin: 15px 0;
+  padding-left: 20px;
+  columns: 2;
+  column-gap: 20px;
+  break-inside: avoid;
+}
+
+.tip-content li {
+  color: var(--theme-dark-grey);
+  line-height: 1.4;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.tip-content li::marker {
+  color: var(--theme-red);
+  font-weight: bold;
+}
+
+.tip-content em {
+  color: var(--theme-red);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .quick-tips-section {
+    padding: 40px 15px;
+  }
+
+  .quick-tips-cards {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .tip-card:nth-child(3) {
+    grid-column: 1;
+  }
+
+  .tip-card {
+    padding: 20px;
+  }
+
+  .tip-content ul {
+    columns: 1;
+  }
+
+  .tip-number {
+    width: 35px;
+    height: 35px;
+    font-size: 1.1rem;
+    top: 12px;
+    right: 12px;
+  }
+
+  .tip-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .quick-tips-intro {
+    font-size: 1rem;
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tip-card {
+    padding: 18px;
+  }
+
+  .tip-number {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    top: 10px;
+    right: 10px;
+  }
+
+  .tip-content h3 {
+    font-size: 1.1rem;
+  }
+}
+
+/* ===== ANIMATION EFFECTS ===== */
+.tip-card {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideInUp 0.6s ease-out forwards;
+}
+
+.tip-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.tip-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.tip-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.tip-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.tip-card:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+.tip-card:focus-within {
+  outline: 3px solid var(--theme-accent-gold);
+  outline-offset: 2px;
+}
+
+.tip-card:focus-within .tip-number {
+  background: linear-gradient(135deg, var(--autumn-orange), var(--theme-red));
+}
