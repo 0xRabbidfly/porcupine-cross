@@ -1871,3 +1871,85 @@ nav#main-nav {
     font-size: 1.2em;
   }
 }
+
+/* Late Entries Link Styling */
+.late-entries-link {
+  display: inline-block;
+  background: linear-gradient(135deg, #d62d20, #b91c1c, #991b1b);
+  color: white !important;
+  text-decoration: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 10px 0;
+  box-shadow:
+    0 4px 15px rgba(214, 45, 32, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  animation: lateEntriesPulse 2s infinite;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  border: 2px solid #7f1d1d;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.late-entries-link:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 25px rgba(214, 45, 32, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: white !important;
+  background: linear-gradient(135deg, #e73e3a, #d62d20, #b91c1c);
+}
+
+.late-entries-link:active {
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 8px rgba(214, 45, 32, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.late-entries-link i {
+  margin-right: 8px;
+  animation: clockTick 1s infinite;
+  color: #fbbf24;
+  font-size: 1.1em;
+}
+
+@keyframes lateEntriesPulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 15px rgba(214, 45, 32, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 25px rgba(214, 45, 32, 0.7);
+  }
+}
+
+@keyframes clockTick {
+  0%,
+  50% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+}
+
+/* Late registration box styles moved to section-backgrounds.css */
+
+/* Mobile responsiveness for late entries */
+@media (max-width: 768px) {
+  .late-entries-link {
+    font-size: 0.8rem;
+    padding: 10px 16px;
+  }
+}

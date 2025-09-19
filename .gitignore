@@ -48,4 +48,7 @@ Desktop.ini
 debug.js
 
 # Ignore all .exe files
-*.exe 
+*.exe
+
+# Playwright MCP screenshots and temporary files
+.playwright-mcp/ 
