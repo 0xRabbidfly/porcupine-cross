@@ -7,18 +7,13 @@
 nav a[href='photos.html'] {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    var(--color-secondary),
-    #ff6b35,
-    var(--color-secondary)
-  ) !important;
-  background-size: 200% 100% !important;
+  background: linear-gradient(135deg, var(--color-secondary), #ff6b35, var(--color-secondary));
+  background-size: 200% 100%;
   animation: photoMenuPulse 3s ease-in-out infinite;
-  box-shadow: 0 0 20px rgba(255, 107, 53, 0.4) !important;
-  transform: scale(1.05) !important;
-  border: 2px solid rgba(255, 107, 53, 0.6) !important;
-  border-radius: 8px !important;
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+  transform: scale(1.05);
+  border: 2px solid rgba(255, 107, 53, 0.6);
+  border-radius: 8px;
 }
 
 /* Glint effect */
@@ -38,9 +33,9 @@ nav a[href='photos.html']:before {
 /* Hover state */
 nav a[href='photos.html']:hover {
   animation-play-state: paused;
-  background: linear-gradient(135deg, #ff6b35, var(--color-secondary), #ff6b35) !important;
-  box-shadow: 0 0 30px rgba(255, 107, 53, 0.7) !important;
-  transform: scale(1.08) !important;
+  background: linear-gradient(135deg, #ff6b35, var(--color-secondary), #ff6b35);
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.7);
+  transform: scale(1.08);
 }
 
 /* Sparkle effect */
@@ -104,11 +99,11 @@ nav a[href='photos.html'] > * {
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
   nav a[href='photos.html'] {
-    transform: scale(1.02) !important;
+    transform: scale(1.02);
   }
 
   nav a[href='photos.html']:hover {
-    transform: scale(1.05) !important;
+    transform: scale(1.05);
   }
 
   nav a[href='photos.html']:after {

@@ -54,4 +54,7 @@ debug.js
 /photos/
 
 # Playwright MCP screenshots and temporary files
-.playwright-mcp/ 
+.playwright-mcp/
+
+# Photo files (too large for git)
+/photos/ 
