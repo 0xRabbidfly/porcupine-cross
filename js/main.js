@@ -500,6 +500,30 @@ class App {
     ) {
       // Create a custom update function that updates all elements
       const customUpdate = () => {
+        // Check if date is TBA - if so, show bike emojis
+        const countdownDateElements = document.querySelectorAll('.countdown-date');
+        const isTBA =
+          countdownDateElements.length > 0 &&
+          countdownDateElements[0].textContent.trim() === 'Date TBA';
+
+        if (isTBA) {
+          // Show bike emojis for TBA
+          allDaysElements.forEach(element => {
+            element.textContent = '🚴';
+          });
+          allHoursElements.forEach(element => {
+            element.textContent = '🚴';
+          });
+          allMinutesElements.forEach(element => {
+            element.textContent = '🚴';
+          });
+          allSecondsElements.forEach(element => {
+            element.textContent = '🚴';
+          });
+          return { days: '🚴', hours: '🚴', minutes: '🚴', seconds: '🚴', distance: 0 };
+        }
+
+        // Normal countdown logic for when date is set
         const now = new Date().getTime();
         const targetDate = new Date('September 20, 2026 08:00:00').getTime();
         const distance = targetDate - now;
