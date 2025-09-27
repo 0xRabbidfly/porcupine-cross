@@ -1,0 +1,79 @@
+/* Special animation for Photos menu item */
+nav a[href='photos.html'] {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-secondary), #ff6b35, var(--color-secondary));
+  background-size: 200% 100%;
+  animation: photoMenuPulse 3s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+  transform: scale(1.05);
+  border: 2px solid rgba(255, 107, 53, 0.6);
+}
+
+nav a[href='photos.html']:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: photoMenuGlint 2s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+nav a[href='photos.html']:hover {
+  animation-play-state: paused;
+  background: linear-gradient(135deg, #ff6b35, var(--color-secondary), #ff6b35);
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.7);
+  transform: scale(1.08);
+}
+
+@keyframes photoMenuPulse {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 30px rgba(255, 107, 53, 0.8);
+  }
+}
+
+@keyframes photoMenuGlint {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Add sparkle effect */
+nav a[href='photos.html']:after {
+  content: '✨';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: sparkle 1.5s ease-in-out infinite;
+  font-size: 0.8rem;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(-50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+}

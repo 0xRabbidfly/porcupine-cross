@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PRIMARY SEO META TAGS -->
+    <title>Event Photos | Prologue Cross Cyclocross Race 2025 | Photo Gallery</title>
+    <meta name="description" content="Browse and download professional photos from Prologue Cross 2025. View and download high-resolution event photos from the cyclocross race.">
+    <meta name="keywords" content="prologue cross photos, cyclocross photos 2025, event photography, photo gallery, high resolution downloads">
+    <meta name="author" content="Prologue Cross">
+    <meta name="robots" content="index, follow">
+    
+    <!-- CANONICAL URL -->
+    <link rel="canonical" href="https://www.prologuecross.ca/photos.html">
+    
+    <!-- OPEN GRAPH / FACEBOOK -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Event Photos | Prologue Cross Cyclocross Race 2025">
+    <meta property="og:description" content="Browse and download professional photos from Prologue Cross 2025. Use AI facial recognition to find your photos instantly.">
+    <meta property="og:url" content="https://www.prologuecross.ca/photos.html">
+    <meta property="og:site_name" content="Prologue Cross">
+    <meta property="og:image" content="https://www.prologuecross.ca/images/Prologue Cross Logo Red.jpeg">
+    
+    <!-- TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Event Photos | Prologue Cross Cyclocross Race 2025">
+    <meta name="twitter:description" content="Browse and download professional photos from Prologue Cross 2025. Use AI facial recognition to find your photos instantly.">
+    <meta name="twitter:image" content="https://www.prologuecross.ca/images/Prologue Cross Logo Red.jpeg">
+    
+    <!-- GOOGLE ANALYTICS 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE06TRH4DK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-CE06TRH4DK', {
+            page_title: 'Event Photos - Prologue Cross 2025',
+            page_location: 'https://www.prologuecross.ca/photos.html'
+        });
+    </script>
+    
+    <!-- STYLESHEETS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/components/index.css">
+    <link rel="stylesheet" href="css/components/section-backgrounds.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Page-specific styling for photos page */
+        body {
+            padding-top: var(--header-height-desktop);
+            background: var(--color-red-light);
+            background-image: repeating-linear-gradient(
+                135deg,
+                rgba(214, 45, 32, 0.02) 0 12px,
+                transparent 12px 24px
+            );
+        }
+        
+        .photos-page-container {
+            width: 100%;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: calc(100vh - var(--header-height-desktop));
+        }
+        
+        .photos-page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .photos-page-header h1 {
+            color: var(--color-secondary);
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .photos-page-header .ace-icon {
+            color: var(--color-secondary);
+            font-size: 1.3em;
+            margin-right: 0.5em;
+            font-family: 'Stardos Stencil', 'Cinzel', serif;
+            display: inline-block;
+            transform: rotate(-10deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .photos-page-header:hover .ace-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        .photos-page-description {
+            color: var(--color-dark);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            line-height: 1.6;
+        }
+        
+        /* Photo Gallery Styles */
+        .gallery-stats {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            color: var(--color-secondary);
+        }
+        
+        .gallery-stats .separator {
+            margin: 0 10px;
+            opacity: 0.5;
+        }
+        
+        .face-finder {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--color-secondary);
+        }
+        
+        .face-finder summary {
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--color-secondary);
+            padding: 8px 0;
+            list-style: none;
+        }
+        
+        .face-finder summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        .upload-area {
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            background: var(--color-secondary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            background: var(--color-primary);
+        }
+        
+        .privacy-note {
+            font-size: 0.9rem;
+            color: var(--color-medium);
+            margin-top: 10px;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 30px 0;
+            padding: 0 10px;
+        }
+        
+        .photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-medium);
+        }
+        
+        .loading-spinner i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .scroll-sentinel {
+            visibility: hidden;
+        }
+        
+        /* Special animation for Photos menu item */
+        nav a[href="photos.html"] {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--color-secondary), #ff6b35, var(--color-secondary));
+            background-size: 200% 100%;
+            animation: photoMenuPulse 3s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+            transform: scale(1.05);
+            border: 2px solid rgba(255, 107, 53, 0.6);
+        }
+        
+        nav a[href="photos.html"]:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.8), 
+                transparent
+            );
+            animation: photoMenuGlint 2s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+        
+        nav a[href="photos.html"]:hover {
+            animation-play-state: paused;
+            background: linear-gradient(135deg, #ff6b35, var(--color-secondary), #ff6b35);
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.7);
+            transform: scale(1.08);
+        }
+        
+        @keyframes photoMenuPulse {
+            0%, 100% {
+                background-position: 0% 50%;
+                box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+            }
+            50% {
+                background-position: 100% 50%;
+                box-shadow: 0 0 30px rgba(255, 107, 53, 0.8);
+            }
+        }
+        
+        @keyframes photoMenuGlint {
+            0% {
+                left: -100%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                left: 100%;
+                opacity: 0;
+            }
+        }
+        
+        /* Add sparkle effect */
+        nav a[href="photos.html"]:after {
+            content: '✨';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: sparkle 1.5s ease-in-out infinite;
+            font-size: 0.8rem;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: translateY(-50%) scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1.2);
+            }
+        }
+        
+        /* Lightbox Styles */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        
+        #lightbox-image {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .lightbox-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .lightbox-nav-btn:hover {
+            background: rgba(255,255,255,0.4);
+        }
+        
+        #lightbox-prev {
+            left: -60px;
+        }
+        
+        #lightbox-next {
+            right: -60px;
+        }
+        
+        .lightbox-info {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        
+        .download-btn {
+            background: var(--color-secondary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: var(--color-primary);
+        }
+        
+        .back-to-home {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .back-to-home a {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--color-secondary), #1e3a8a);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .back-to-home a:hover {
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.4);
+        }
+        
+        /* Ultra-wide screens */
+        @media (min-width: 1600px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: var(--header-height-mobile);
+            }
+            
+            .photos-page-container {
+                padding: 20px 15px;
+                min-height: calc(100vh - var(--header-height-mobile));
+            }
+            
+            .photos-page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 8px;
+                padding: 0 5px;
+            }
+            
+            .face-finder {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo">
+        </div>
+        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false" aria-controls="main-nav">
+            <span class="hamburger"></span>
+        </a>
+        <nav id="main-nav" role="navigation" aria-label="Main navigation">
+            <a href="index.html#home"><i class="fas fa-home menu-icon"></i>Home</a>
+            <a href="index.html#about"><i class="fas fa-info-circle menu-icon"></i>About</a>
+            <a href="index.html#quick-tips"><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a>
+            <a href="index.html#schedule"><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a>
+            <a href="index.html#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
+            <a href="photos.html" aria-current="page"><i class="fas fa-camera menu-icon"></i>Photos</a>
+            <a href="index.html#register"><i class="fas fa-user-plus menu-icon"></i>Register</a>
+            <a href="tech-guide.html"><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a>
+        </nav>
+        <div class="audio-promo-container compact">
+            <button class="audio-play-btn" aria-label="Play Race Outline" tabindex="0">
+                <i class="fas fa-play"></i>
+            </button>
+            <span class="audio-text"><span class="listen-emoji" aria-label="Listen">🎧</span> Race Outline</span>
+            <audio id="race-day-audio" preload="none" style="display:none;">
+                <source src="sounds/crosstoberfest.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </header>
+    
+    <main>
+        <div class="photos-page-container">
+            <!-- Page Header -->
+            <div class="photos-page-header">
+                <h1><span class="ace-icon">♠</span>2025 Event Photos</h1>
+                <p class="photos-page-description">
+                    Browse and download professional photos from the Prologue Cyclocross 2025 event. 
+                    Click any photo to view and download the high-resolution version.
+                </p>
+            </div>
+            
+            <!-- Photo Gallery -->
+            <div id="photo-gallery-container">
+                <!-- Gallery Stats -->
+                <div class="gallery-stats">
+                    <span id="photo-count">Loading...</span>
+                    <span class="separator">•</span>
+                    <span id="loaded-count">0 loaded</span>
+                </div>
+                
+                <!-- AI Face Finder (Coming Soon) -->
+                <div class="face-finder" style="display: none;">
+                    <details>
+                        <summary>🔍 Find Your Photos with AI</summary>
+                        <div class="upload-area">
+                            <input type="file" id="face-upload" accept="image/*">
+                            <label for="face-upload" class="upload-btn">📤 Upload Your Photo</label>
+                            <p class="privacy-note">🔒 Processed privately in your browser - no photos sent to servers</p>
+                        </div>
+                        <div id="match-results"></div>
+                    </details>
+                </div>
+                
+                <!-- Photo Grid -->
+                <div id="photo-grid" class="photo-grid">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading photos...</p>
+                    </div>
+                </div>
+                
+                <!-- Infinite Scroll Sentinel -->
+                <div id="scroll-sentinel" class="scroll-sentinel" style="height: 20px; margin: 20px 0;">
+                    <div class="loading-more" style="display: none; text-align: center; padding: 20px;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p style="margin-top: 10px; color: var(--color-medium);">Loading more photos...</p>
+                    </div>
+                </div>
+                
+                <!-- Lightbox Modal -->
+                <div id="lightbox" class="lightbox" style="display: none;">
+                    <div class="lightbox-content">
+                        <span class="lightbox-close">&times;</span>
+                        <img id="lightbox-image" src="" alt="">
+                        <div class="lightbox-info">
+                            <h3 id="lightbox-title"></h3>
+                            <div class="lightbox-actions">
+                                <a id="lightbox-download" href="" download class="download-btn">
+                                    <i class="fas fa-download"></i> Download High-Res
+                                </a>
+                            </div>
+                        </div>
+                        <div class="lightbox-nav">
+                            <button id="lightbox-prev" class="lightbox-nav-btn">‹</button>
+                            <button id="lightbox-next" class="lightbox-nav-btn">›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Back to Home -->
+            <div class="back-to-home">
+                <a href="index.html">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="script.js"></script>
+    <script type="module" src="js/main.js"></script>
+    
+    <!-- Photo Gallery Script -->
+    <script>
+        class PhotoGallery {
+            constructor() {
+                this.photos = [];
+                this.currentPage = 0;
+                this.photosPerPage = 50;
+                this.currentPhotoIndex = 0;
+                this.basePath = '/photos/event-2025/';
+                this.isLoading = false;
+                this.hasMorePhotos = true;
+                this.intersectionObserver = null;
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    await this.loadPhotos();
+                    this.setupEventListeners();
+                    this.setupInfiniteScroll();
+                    this.renderPhotos();
+                } catch (error) {
+                    console.error('Failed to load photo gallery:', error);
+                    this.showError('Failed to load photos. Please check that photos are uploaded.');
+                }
+            }
+            
+            async loadPhotos() {
+                const response = await fetch(this.basePath + 'photos.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                this.photos = data.photos || [];
+                this.updateStats();
+            }
+            
+            updateStats() {
+                document.getElementById('photo-count').textContent = `${this.photos.length} Photos Available`;
+                document.getElementById('loaded-count').textContent = `${Math.min(this.photosPerPage, this.photos.length)} loaded`;
+            }
+            
+            renderPhotos() {
+                const grid = document.getElementById('photo-grid');
+                const startIndex = this.currentPage * this.photosPerPage;
+                const endIndex = startIndex + this.photosPerPage;
+                const photosToShow = this.photos.slice(0, endIndex);
+                
+                // Clear loading spinner on first load only
+                if (this.currentPage === 0) {
+                    grid.innerHTML = '';
+                }
+                
+                // Add new photos from the last rendered index
+                const lastRenderedIndex = grid.children.length;
+                const newPhotos = photosToShow.slice(lastRenderedIndex);
+                
+                newPhotos.forEach((photo, index) => {
+                    const photoIndex = lastRenderedIndex + index;
+                    const photoItem = document.createElement('div');
+                    photoItem.className = 'photo-item';
+                    photoItem.innerHTML = `
+                        <img src="${this.basePath}thumbnails/${photo.filename}" 
+                             alt="Event Photo ${photo.id}" 
+                             loading="lazy"
+                             onerror="this.style.display='none'">
+                    `;
+                    
+                    photoItem.addEventListener('click', () => this.openLightbox(photoIndex));
+                    grid.appendChild(photoItem);
+                });
+                
+                // Update loaded count
+                document.getElementById('loaded-count').textContent = `${photosToShow.length} loaded`;
+                
+                // Check if we have more photos to load
+                this.hasMorePhotos = endIndex < this.photos.length;
+                
+                // Hide loading indicator
+                this.hideLoadingIndicator();
+            }
+            
+            loadMorePhotos() {
+                if (this.isLoading || !this.hasMorePhotos) return;
+                
+                this.isLoading = true;
+                this.showLoadingIndicator();
+                this.currentPage++;
+                
+                // Simulate network delay for better UX
+                setTimeout(() => {
+                    this.renderPhotos();
+                    this.isLoading = false;
+                }, 300);
+            }
+            
+            setupInfiniteScroll() {
+                const sentinel = document.getElementById('scroll-sentinel');
+                
+                this.intersectionObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && this.hasMorePhotos && !this.isLoading) {
+                            this.loadMorePhotos();
+                        }
+                    });
+                }, {
+                    root: null,
+                    rootMargin: '100px', // Start loading 100px before the sentinel is visible
+                    threshold: 0.1
+                });
+                
+                this.intersectionObserver.observe(sentinel);
+            }
+            
+            showLoadingIndicator() {
+                const loadingMore = document.querySelector('.loading-more');
+                if (loadingMore) loadingMore.style.display = 'block';
+            }
+            
+            hideLoadingIndicator() {
+                const loadingMore = document.querySelector('.loading-more');
+                if (loadingMore) loadingMore.style.display = 'none';
+            }
+            
+            openLightbox(index) {
+                this.currentPhotoIndex = index;
+                const photo = this.photos[index];
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImage = document.getElementById('lightbox-image');
+                const lightboxTitle = document.getElementById('lightbox-title');
+                const lightboxDownload = document.getElementById('lightbox-download');
+                
+                lightboxImage.src = this.basePath + 'high-res/' + photo.filename;
+                lightboxTitle.textContent = `Photo ${photo.id}`;
+                lightboxDownload.href = this.basePath + 'high-res/' + photo.filename;
+                lightboxDownload.download = photo.filename;
+                
+                lightbox.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            closeLightbox() {
+                document.getElementById('lightbox').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            nextPhoto() {
+                if (this.currentPhotoIndex < this.photos.length - 1) {
+                    this.openLightbox(this.currentPhotoIndex + 1);
+                }
+            }
+            
+            prevPhoto() {
+                if (this.currentPhotoIndex > 0) {
+                    this.openLightbox(this.currentPhotoIndex - 1);
+                }
+            }
+            
+            setupEventListeners() {
+                // Lightbox controls
+                document.querySelector('.lightbox-close').addEventListener('click', () => {
+                    this.closeLightbox();
+                });
+                
+                document.getElementById('lightbox-next').addEventListener('click', () => {
+                    this.nextPhoto();
+                });
+                
+                document.getElementById('lightbox-prev').addEventListener('click', () => {
+                    this.prevPhoto();
+                });
+                
+                // Close lightbox on background click
+                document.getElementById('lightbox').addEventListener('click', (e) => {
+                    if (e.target.id === 'lightbox') {
+                        this.closeLightbox();
+                    }
+                });
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (document.getElementById('lightbox').style.display === 'flex') {
+                        switch(e.key) {
+                            case 'Escape':
+                                this.closeLightbox();
+                                break;
+                            case 'ArrowLeft':
+                                this.prevPhoto();
+                                break;
+                            case 'ArrowRight':
+                                this.nextPhoto();
+                                break;
+                        }
+                    }
+                });
+            }
+            
+            showError(message) {
+                const grid = document.getElementById('photo-grid');
+                grid.innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 40px; color: var(--color-medium);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px; color: #e74c3c;"></i>
+                        <p>${message}</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">
+                            Make sure photos.json and thumbnail images are uploaded to the server.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Initialize photo gallery when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new PhotoGallery();
+        });
+    </script>
+    
+</body>
+</html>

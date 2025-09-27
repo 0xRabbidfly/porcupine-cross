@@ -501,7 +501,7 @@ class App {
       // Create a custom update function that updates all elements
       const customUpdate = () => {
         const now = new Date().getTime();
-        const targetDate = new Date('September 21, 2025 08:00:00').getTime();
+        const targetDate = new Date('September 20, 2026 08:00:00').getTime();
         const distance = targetDate - now;
 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
