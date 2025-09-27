@@ -50,5 +50,8 @@ debug.js
 # Ignore all .exe files
 *.exe
 
+# Photo directories (large media files)
+/photos/
+
 # Playwright MCP screenshots and temporary files
 .playwright-mcp/ 

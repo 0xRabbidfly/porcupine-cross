@@ -1,0 +1,118 @@
+/**
+ * Special animation for Photos menu item
+ * Makes the Photos menu stand out with glint and pulse effects
+ */
+
+/* Main Photos menu styling */
+nav a[href='photos.html'] {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary),
+    #ff6b35,
+    var(--color-secondary)
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: photoMenuPulse 3s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.4) !important;
+  transform: scale(1.05) !important;
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  border-radius: 8px !important;
+}
+
+/* Glint effect */
+nav a[href='photos.html']:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: photoMenuGlint 2s ease-in-out infinite;
+  animation-delay: 0.5s;
+  z-index: 1;
+}
+
+/* Hover state */
+nav a[href='photos.html']:hover {
+  animation-play-state: paused;
+  background: linear-gradient(135deg, #ff6b35, var(--color-secondary), #ff6b35) !important;
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.7) !important;
+  transform: scale(1.08) !important;
+}
+
+/* Sparkle effect */
+nav a[href='photos.html']:after {
+  content: '✨';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: sparkle 1.5s ease-in-out infinite;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+/* Ensure text is above effects */
+nav a[href='photos.html'] .menu-icon,
+nav a[href='photos.html'] > * {
+  position: relative;
+  z-index: 3;
+}
+
+/* Animations */
+@keyframes photoMenuPulse {
+  0%,
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 30px rgba(255, 107, 53, 0.8);
+  }
+}
+
+@keyframes photoMenuGlint {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(-50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  nav a[href='photos.html'] {
+    transform: scale(1.02) !important;
+  }
+
+  nav a[href='photos.html']:hover {
+    transform: scale(1.05) !important;
+  }
+
+  nav a[href='photos.html']:after {
+    font-size: 0.7rem;
+    right: 6px;
+  }
+}
