@@ -246,17 +246,17 @@ header::after {
     justify-content: flex-end;
     align-items: flex-start;
     box-sizing: border-box;
-    width: 92px;
-    height: 66px;
-    margin: 0 -3px 0 0 !important;
-    padding: 7px 9px 9px !important;
+    width: 106px;
+    height: 76px;
+    margin: 0 -2px 0 0 !important;
+    padding: 8px 11px 10px !important;
     background: var(--pc-stock);
     color: var(--pc-ink) !important;
     border: 1px solid rgba(17, 24, 35, 0.45);
     border-radius: 6px;
     box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.9);
     font-family: var(--pc-data) !important;
-    font-size: 0.88rem !important;
+    font-size: 0.98rem !important;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -279,7 +279,7 @@ header::after {
     white-space: pre;
     font-family: var(--pc-display), var(--pc-suit);
     font-weight: 900;
-    font-size: 1.05rem;
+    font-size: 1.22rem;
     line-height: 0.84;
     letter-spacing: 0;
     color: var(--pc-index, var(--pc-ink));
@@ -331,6 +331,16 @@ header::after {
     --fan-drop: 7px;
   }
 
+  /* Clicking a link leaves it focused. Without this the legacy desktop menu's
+     :focus rule wins on specificity and washes the card face out to 10% white,
+     leaving the ink label sitting on the header's card back. */
+  nav#main-nav a:focus,
+  nav#main-nav a:active {
+    background: var(--pc-stock) !important;
+    color: var(--pc-ink) !important;
+    text-shadow: none !important;
+  }
+
   /* Pick a card: it squares up and lifts clear of the hand. */
   nav#main-nav a:hover,
   nav#main-nav a:focus-visible,
@@ -365,16 +375,16 @@ header::after {
   }
 }
 
-@media (min-width: 769px) and (max-width: 1240px) {
+@media (min-width: 769px) and (max-width: 1340px) {
   nav#main-nav a {
-    width: 80px;
-    height: 60px;
-    font-size: 0.78rem !important;
-    padding: 6px 7px 7px !important;
+    width: 92px;
+    height: 68px;
+    font-size: 0.86rem !important;
+    padding: 7px 9px 9px !important;
   }
 
   nav#main-nav a::before {
-    font-size: 0.92rem;
+    font-size: 1.05rem;
   }
 
   .audio-text {
@@ -382,11 +392,24 @@ header::after {
   }
 }
 
-@media (min-width: 769px) and (max-width: 1020px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   nav#main-nav a {
-    width: 68px;
+    width: 80px;
+    height: 60px;
+    font-size: 0.76rem !important;
+  }
+
+  nav#main-nav a::before {
+    font-size: 0.92rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 950px) {
+  nav#main-nav a {
+    width: 70px;
     height: 56px;
-    font-size: 0.68rem !important;
+    font-size: 0.66rem !important;
+    padding: 5px 6px 6px !important;
   }
 
   nav#main-nav a::before {
@@ -620,10 +643,10 @@ section[data-suit] > h2::before,
   content: var(--pc-glyph, '♠');
   display: block;
   font-family: var(--pc-suit);
-  font-size: 0.36em;
+  font-size: 0.62em;
   line-height: 1;
   color: var(--pc-index, var(--pc-ink));
-  margin-bottom: 0.9em;
+  margin-bottom: 0.5em;
 }
 
 /* A gilt rule under each heading, the width of a card's centre panel. */
@@ -746,13 +769,19 @@ section p {
 }
 
 /* --- The turn.
-       PROLOGUE is dealt face down and turned over letter by letter on load.
-       It runs once: a wordmark that spends its life half-replaced by suits is
-       a wordmark nobody can read. Hovering deals it again. --- */
+       PROLOGUE is dealt face down and turned over letter by letter on load,
+       then riffles again every sixteen seconds. Each letter occupies the same
+       width, so they read as a rack of cards rather than as set type. The flip
+       is a tenth of the cycle: often enough to catch, rare enough that the
+       wordmark is readable when you actually look at it. --- */
 .hero h1 .flip-letter {
   min-width: 0 !important;
+  width: 0.82em;
   margin: 0 !important;
-  animation: pc-turn 0.62s cubic-bezier(0.4, 0, 0.2, 1) both !important;
+  text-align: center;
+  animation:
+    pc-turn 0.62s cubic-bezier(0.4, 0, 0.2, 1) both,
+    pc-riffle 16s linear infinite !important;
 }
 
 .hero h1 .letter-front {
@@ -764,7 +793,7 @@ section p {
   position: absolute;
   inset: 0;
   font-family: var(--pc-suit) !important;
-  font-size: 0.58em !important;
+  font-size: 0.82em !important;
   align-items: center;
   justify-content: center;
 }
@@ -774,6 +803,19 @@ section p {
     transform: rotateY(180deg);
   }
   to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes pc-riffle {
+  0%,
+  90% {
+    transform: rotateY(0deg);
+  }
+  95% {
+    transform: rotateY(180deg);
+  }
+  100% {
     transform: rotateY(360deg);
   }
 }
@@ -792,28 +834,28 @@ section p {
 }
 
 .hero h1 .flip-letter:nth-child(1) {
-  animation-delay: 0.34s !important;
+  animation-delay: 0.34s, 3.2s !important;
 }
 .hero h1 .flip-letter:nth-child(2) {
-  animation-delay: 0.42s !important;
+  animation-delay: 0.42s, 3.28s !important;
 }
 .hero h1 .flip-letter:nth-child(3) {
-  animation-delay: 0.5s !important;
+  animation-delay: 0.5s, 3.36s !important;
 }
 .hero h1 .flip-letter:nth-child(4) {
-  animation-delay: 0.58s !important;
+  animation-delay: 0.58s, 3.44s !important;
 }
 .hero h1 .flip-letter:nth-child(5) {
-  animation-delay: 0.66s !important;
+  animation-delay: 0.66s, 3.52s !important;
 }
 .hero h1 .flip-letter:nth-child(6) {
-  animation-delay: 0.74s !important;
+  animation-delay: 0.74s, 3.6s !important;
 }
 .hero h1 .flip-letter:nth-child(7) {
-  animation-delay: 0.82s !important;
+  animation-delay: 0.82s, 3.68s !important;
 }
 .hero h1 .flip-letter:nth-child(8) {
-  animation-delay: 0.9s !important;
+  animation-delay: 0.9s, 3.76s !important;
 }
 
 /* A hairline above the lead, like a card's centre rule */
@@ -1536,10 +1578,10 @@ footer {
   content: var(--pc-glyph, '♠');
   display: block;
   font-family: var(--pc-suit);
-  font-size: 0.36em;
+  font-size: 0.62em;
   line-height: 1;
   color: var(--pc-index, var(--pc-ink));
-  margin-bottom: 0.9em;
+  margin-bottom: 0.5em;
 }
 
 .photos-page-header h1 {
