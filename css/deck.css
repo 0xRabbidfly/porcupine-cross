@@ -1886,6 +1886,7 @@ section.page-card:not(.visible) {
 }
 
 .deck-hand a {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
