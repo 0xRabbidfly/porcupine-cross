@@ -271,11 +271,11 @@ For technical issues with the photo system:
 
 ## 🔄 Version History
 
-- **2025**: Initial implementation with infinite scroll and lightbox
+- **2026**: Initial implementation with infinite scroll and lightbox
 - **2026**: Enhanced with AI face recognition (coming soon)
 - **Future**: Consider WebP support, advanced search, social sharing
 
 ---
 
 _Last updated: December 2024_
-_For next year's event, update all year references from 2025 to 2026_
+_For next year's event, update all year references from 2026 to 2027_

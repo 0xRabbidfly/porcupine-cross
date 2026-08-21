@@ -50,8 +50,8 @@ describe('Countdown Timer', () => {
 
   test('calculateTimeRemaining returns correct time values', () => {
     // Set specific dates for testing
-    const targetDate = new Date('2025-09-14T08:00:00Z').getTime();
-    const currentDate = new Date('2025-09-13T08:00:00Z').getTime(); // 24 hours before
+    const targetDate = new Date('2026-09-14T08:00:00Z').getTime();
+    const currentDate = new Date('2026-09-13T08:00:00Z').getTime(); // 24 hours before
 
     const result = calculateTimeRemaining(targetDate, currentDate);
 
@@ -62,8 +62,8 @@ describe('Countdown Timer', () => {
   });
 
   test('calculateTimeRemaining handles partial time units correctly', () => {
-    const targetDate = new Date('2025-09-14T08:00:00Z').getTime();
-    const currentDate = new Date('2025-09-13T07:30:45Z').getTime();
+    const targetDate = new Date('2026-09-14T08:00:00Z').getTime();
+    const currentDate = new Date('2026-09-13T07:30:45Z').getTime();
 
     const result = calculateTimeRemaining(targetDate, currentDate);
 
@@ -74,8 +74,8 @@ describe('Countdown Timer', () => {
   });
 
   test('calculateTimeRemaining returns negative values when target date is past', () => {
-    const targetDate = new Date('2025-09-14T08:00:00Z').getTime();
-    const currentDate = new Date('2025-09-15T08:00:00Z').getTime(); // 24 hours after
+    const targetDate = new Date('2026-09-14T08:00:00Z').getTime();
+    const currentDate = new Date('2026-09-15T08:00:00Z').getTime(); // 24 hours after
 
     const result = calculateTimeRemaining(targetDate, currentDate);
 
@@ -97,7 +97,7 @@ describe('Countdown Timer', () => {
     });
 
     // Create timer with mocked time function
-    const timer = new CountdownTimer('2025-09-14T00:00:00Z', elements, {
+    const timer = new CountdownTimer('2026-09-14T00:00:00Z', elements, {
       calculateTimeRemaining: mockCalculateTimeRemaining,
     });
 
@@ -127,7 +127,7 @@ describe('Countdown Timer', () => {
     }));
 
     // Create timer with our mocked function
-    const timer = new CountdownTimer('2025-09-14T00:00:00Z', elements, {
+    const timer = new CountdownTimer('2026-09-14T00:00:00Z', elements, {
       calculateTimeRemaining: mockCalculateTimeRemaining,
     });
 
@@ -161,7 +161,7 @@ describe('Countdown Timer', () => {
     jest.spyOn(global, 'setInterval');
 
     // Spy on the update method
-    const timer = new CountdownTimer('2025-09-14T00:00:00Z', elements);
+    const timer = new CountdownTimer('2026-09-14T00:00:00Z', elements);
     const updateSpy = jest.spyOn(timer, 'update');
 
     // Start the timer
@@ -187,7 +187,7 @@ describe('Countdown Timer', () => {
     jest.spyOn(global, 'clearInterval');
 
     // Create and start the timer
-    const timer = new CountdownTimer('2025-09-14T00:00:00Z', elements);
+    const timer = new CountdownTimer('2026-09-14T00:00:00Z', elements);
     timer.start();
 
     // Store the interval ID
