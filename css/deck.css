@@ -475,12 +475,9 @@ section,
 }
 
 /* The old gloss strip across the top of every section. */
-/* The old gloss strip. Scoped away from anything carrying an index, because
-   #schedule and #course out-specify the index rule and were losing a corner. */
-section:not([data-rank])::before,
-#schedule:not([data-rank])::before,
-#course:not([data-rank])::before,
-.hero:not([data-rank])::before {
+/* Belt and braces: a section with no index gets no ::before at all. The gloss
+   strip that used to sit here was deleted from style.css. */
+section:not([data-rank])::before {
   content: none;
 }
 
@@ -695,13 +692,16 @@ section p {
   max-width: 100%;
 }
 
+/* The wordmark reads at a distance, so it takes the slab as well. A didone at
+   this size is all hairline and thorn: handsome, hard to read. */
 .hero h1,
 .hero h1.prologue-card-title {
-  font-family: var(--pc-display) !important;
-  font-size: clamp(3rem, 8.4vw, 6rem) !important;
-  font-weight: 900 !important;
-  line-height: 0.86 !important;
-  letter-spacing: 0.005em !important;
+  font-family: var(--pc-heading) !important;
+  font-size: clamp(2.6rem, 7.4vw, 5.2rem) !important;
+  font-weight: 800 !important;
+  text-rendering: optimizeLegibility;
+  line-height: 0.94 !important;
+  letter-spacing: 0.012em !important;
   color: var(--pc-ink) !important;
   text-transform: uppercase;
   margin: 0 !important;
