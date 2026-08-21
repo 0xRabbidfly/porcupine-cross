@@ -29,8 +29,10 @@
 
 :root {
   /* Ink and suits. Two suit colours, one structural blue, stock, gilt, mud. */
-  --pc-ink: #111823; /* printer's blue-black: the table and all dark type */
-  --pc-ink-deep: #0a0f17; /* header and footer, a shade below the table */
+  --pc-ink: #111823; /* printer's blue-black: all dark type */
+  --pc-ink-deep: #0a0f17; /* the deck's own black */
+  --pc-felt: #14392c; /* card-table felt: the surface everything is dealt on */
+  --pc-felt-deep: #0b2119; /* the dealer's edge, a shade below the table */
   --pc-ink-soft: #46536a; /* secondary type */
   --pc-blood: #c4161c; /* the red suit ink */
   --pc-blood-deep: #8f0f14;
@@ -42,7 +44,11 @@
   --pc-mud: #6b4a2b; /* October ground */
 
   /* Type */
+  /* Bodoni is the card-index letterform, so it sets indices, the wordmark and
+     race times. Section headings are read, not glanced at, so they take a slab
+     with far more weight in the thin strokes. */
   --pc-display: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  --pc-heading: 'Bitter', 'Bodoni Moda', Georgia, serif;
   --pc-body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --pc-data: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
   --pc-suit: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols 2', sans-serif;
@@ -71,7 +77,7 @@
   --color-white-light: var(--pc-stock);
   --color-red-medium: var(--pc-blood);
   --color-blue-medium: var(--pc-royal);
-  --color-background: var(--pc-ink);
+  --color-background: var(--pc-felt);
   --color-surface: var(--pc-stock);
   --color-mud: var(--pc-mud);
   --color-sand: var(--pc-stock-shade);
@@ -102,9 +108,9 @@
 /* ===================================================================== */
 
 body {
-  background-color: var(--pc-ink) !important;
-  background-image: url('../images/card-back.svg') !important;
-  background-size: 160px 160px !important;
+  background-color: var(--pc-felt) !important;
+  background-image: url('../images/felt.svg') !important;
+  background-size: 220px 220px !important;
   background-repeat: repeat !important;
   background-position: center top !important;
   background-attachment: fixed !important;
@@ -115,23 +121,30 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* The pattern is loud at full strength; a wash of ink knocks it back so the
-   cards stay the brightest thing on the page. */
+/* A table is lit from above and falls away at the edges. The vignette also
+   keeps the felt from competing with the cards laid on it. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(
-    ellipse at 50% 0%,
-    rgba(17, 24, 35, 0.72) 0%,
-    rgba(10, 15, 23, 0.9) 55%,
-    rgba(6, 10, 16, 0.96) 100%
-  );
+  background:
+    radial-gradient(
+      ellipse 90% 60% at 50% 0%,
+      rgba(34, 88, 67, 0.5) 0%,
+      rgba(15, 47, 36, 0.18) 45%,
+      rgba(4, 16, 12, 0.58) 100%
+    ),
+    linear-gradient(rgba(6, 22, 17, 0.22), rgba(4, 14, 11, 0.5));
   pointer-events: none;
   z-index: 0;
 }
 
-body > * {
+/* Lift the page off the vignette. Scoped to these elements: a blanket
+   `body > *` also overrode the header's position: fixed and unpinned it. */
+main,
+footer,
+.footer-card-logo-container,
+.photos-page-container {
   position: relative;
   z-index: 1;
 }
@@ -142,8 +155,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--pc-display) !important;
-  font-weight: 900 !important;
+  font-family: var(--pc-heading) !important;
+  font-weight: 800 !important;
   color: var(--pc-ink);
   letter-spacing: -0.015em;
   line-height: 1.05;
@@ -177,20 +190,27 @@ a:visited {
 /* 3. THE DEALER'S EDGE — header and the fan of cards                    */
 /* ===================================================================== */
 
+/* The dealer's edge: the deck's own card back, held down by a gilt rail. It is
+   several stops darker and bluer than the felt, so where the table ends and
+   the edge begins reads at a glance. */
 header {
   background: var(--pc-ink-deep) !important;
   background-image:
-    linear-gradient(rgba(10, 15, 23, 0.82), rgba(10, 15, 23, 0.94)), url('../images/card-back.svg') !important;
+    linear-gradient(rgba(8, 12, 20, 0.68), rgba(8, 12, 20, 0.84)), url('../images/card-back.svg') !important;
   background-size:
     100% 100%,
-    120px 120px !important;
+    130px 130px !important;
   background-repeat: no-repeat, repeat !important;
-  border-bottom: 2px solid var(--pc-gilt) !important;
+  border-bottom: 3px solid var(--pc-gilt) !important;
   border-radius: 0 !important;
-  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.8) !important;
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.06) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.6) inset,
+    0 18px 44px -6px rgba(0, 0, 0, 0.9) !important;
   outline: none !important;
   padding: 0 clamp(14px, 3vw, 40px) !important;
   gap: 16px;
+  position: fixed;
   z-index: 1000;
 }
 
@@ -225,19 +245,20 @@ header::after {
     flex-direction: column;
     justify-content: flex-end;
     align-items: flex-start;
-    width: 74px;
-    height: 56px;
-    margin: 0 -7px 0 0 !important;
-    padding: 5px 7px 6px !important;
+    box-sizing: border-box;
+    width: 92px;
+    height: 66px;
+    margin: 0 -3px 0 0 !important;
+    padding: 7px 9px 9px !important;
     background: var(--pc-stock);
     color: var(--pc-ink) !important;
-    border: 1px solid rgba(17, 24, 35, 0.4);
+    border: 1px solid rgba(17, 24, 35, 0.45);
     border-radius: 6px;
-    box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.9);
     font-family: var(--pc-data) !important;
-    font-size: 0.74rem !important;
+    font-size: 0.88rem !important;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     text-shadow: none !important;
     text-decoration: none;
@@ -258,7 +279,7 @@ header::after {
     white-space: pre;
     font-family: var(--pc-display), var(--pc-suit);
     font-weight: 900;
-    font-size: 0.86rem;
+    font-size: 1.05rem;
     line-height: 0.84;
     letter-spacing: 0;
     color: var(--pc-index, var(--pc-ink));
@@ -310,53 +331,66 @@ header::after {
     --fan-drop: 7px;
   }
 
-  /* Pick a card: it squares up and lifts out of the hand. */
+  /* Pick a card: it squares up and lifts clear of the hand. */
   nav#main-nav a:hover,
   nav#main-nav a:focus-visible,
-  nav#main-nav a.active,
-  nav#main-nav a[aria-current='page'] {
+  nav#main-nav a.active {
     background: var(--pc-stock) !important;
     color: var(--pc-ink) !important;
-    transform: rotate(0deg) translateY(-10px);
+    transform: rotate(0deg) translateY(-12px);
     box-shadow:
-      0 16px 26px -10px rgba(0, 0, 0, 0.95),
+      0 20px 30px -10px rgba(0, 0, 0, 0.95),
       0 0 0 2px var(--pc-gilt);
     z-index: 5;
     text-shadow: none !important;
   }
 
+  /* The card you are on is the one held forward: a gilt face against the dark
+     edge, with the index forced to ink. The first attempt kept the index in its
+     suit colour, which put red on gold and lost it. */
   nav#main-nav a[aria-current='page'] {
     background: var(--pc-gilt) !important;
+    color: var(--pc-ink) !important;
+    border-color: var(--pc-ink);
+    transform: rotate(0deg) translateY(-12px);
+    box-shadow:
+      0 20px 30px -10px rgba(0, 0, 0, 0.95),
+      0 0 0 2px var(--pc-gilt);
+    z-index: 6;
+    text-shadow: none !important;
+  }
+
+  nav#main-nav a[aria-current='page']::before {
+    color: var(--pc-ink) !important;
   }
 }
 
-@media (min-width: 769px) and (max-width: 1180px) {
+@media (min-width: 769px) and (max-width: 1240px) {
   nav#main-nav a {
-    width: 62px;
-    height: 50px;
-    font-size: 0.66rem !important;
-    letter-spacing: 0.02em;
+    width: 80px;
+    height: 60px;
+    font-size: 0.78rem !important;
+    padding: 6px 7px 7px !important;
   }
 
   nav#main-nav a::before {
-    font-size: 0.74rem;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 980px) {
-  nav#main-nav a {
-    width: 52px;
-    height: 46px;
-    font-size: 0.56rem !important;
-    padding: 4px 5px 5px !important;
-  }
-
-  nav#main-nav a::before {
-    font-size: 0.66rem;
+    font-size: 0.92rem;
   }
 
   .audio-text {
     display: none;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1020px) {
+  nav#main-nav a {
+    width: 68px;
+    height: 56px;
+    font-size: 0.68rem !important;
+  }
+
+  nav#main-nav a::before {
+    font-size: 0.82rem;
   }
 }
 
@@ -441,10 +475,12 @@ section,
 }
 
 /* The old gloss strip across the top of every section. */
-section::before,
-#schedule::before,
-#course::before,
-.hero::before {
+/* The old gloss strip. Scoped away from anything carrying an index, because
+   #schedule and #course out-specify the index rule and were losing a corner. */
+section:not([data-rank])::before,
+#schedule:not([data-rank])::before,
+#course:not([data-rank])::before,
+.hero:not([data-rank])::before {
   content: none;
 }
 
@@ -479,8 +515,8 @@ section[data-rank]::after,
   white-space: pre;
   font-family: var(--pc-display), var(--pc-suit);
   font-weight: 900;
-  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
-  line-height: 0.86;
+  font-size: clamp(1.5rem, 2.1vw, 2rem);
+  line-height: 0.82;
   letter-spacing: 0;
   text-align: center;
   color: var(--pc-index);
@@ -493,8 +529,8 @@ section[data-rank]::after,
 
 .photos-page-container[data-rank]::before,
 section[data-rank]::before {
-  top: 20px;
-  left: 22px;
+  top: 22px;
+  left: 26px;
   right: auto;
   bottom: auto;
   width: auto;
@@ -502,8 +538,8 @@ section[data-rank]::before {
 
 .photos-page-container[data-rank]::after,
 section[data-rank]::after {
-  bottom: 20px;
-  right: 22px;
+  bottom: 22px;
+  right: 26px;
   top: auto;
   left: auto;
   width: auto;
@@ -564,11 +600,11 @@ section.visible:focus-within {
 section > h2,
 .quick-tips-section h2,
 #register [data-phase] > h2 {
-  font-family: var(--pc-display) !important;
-  font-size: clamp(2rem, 4.6vw, 3.1rem) !important;
-  font-weight: 900 !important;
-  line-height: 0.98 !important;
-  letter-spacing: -0.02em !important;
+  font-family: var(--pc-heading) !important;
+  font-size: clamp(1.75rem, 3.8vw, 2.55rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.015em !important;
   color: var(--pc-ink) !important;
   text-align: center !important;
   text-transform: none !important;
@@ -1031,19 +1067,17 @@ section p {
   min-height: 0 !important;
 }
 
+/* Sponsors show in their own colours. Multiply only drops the white boxes some
+   of the source files carry, so the logos sit on the card stock rather than on
+   little white rectangles. */
 .sponsor-logo {
-  filter: grayscale(1) contrast(1.05);
-  opacity: 0.72;
-  transition:
-    filter 0.3s ease,
-    opacity 0.3s ease;
   mix-blend-mode: multiply;
+  transition: transform 0.25s ease;
 }
 
 .sponsor-logos a:hover .sponsor-logo,
 .sponsor-logos a:focus-visible .sponsor-logo {
-  filter: none;
-  opacity: 1;
+  transform: scale(1.05);
 }
 
 /* ===================================================================== */
@@ -1509,9 +1543,9 @@ footer {
 }
 
 .photos-page-header h1 {
-  font-family: var(--pc-display) !important;
-  font-size: clamp(2rem, 4.6vw, 3.1rem) !important;
-  font-weight: 900 !important;
+  font-family: var(--pc-heading) !important;
+  font-size: clamp(1.75rem, 3.8vw, 2.55rem) !important;
+  font-weight: 800 !important;
   text-align: center;
   color: var(--pc-ink) !important;
   margin: 0 0 0.4em;
@@ -1737,7 +1771,12 @@ footer {
 
   /* Leave the corner index room before the wordmark starts. */
   .hero-marquee {
-    margin-top: 22px;
+    margin-top: 34px;
+  }
+
+  section[data-rank]::before,
+  section[data-rank]::after {
+    font-size: 1.3rem;
   }
 
   section[data-rank]::before {
@@ -1953,4 +1992,24 @@ section[data-rank='JOKER']::after {
     height: 108px;
     font-size: 0.68rem;
   }
+}
+
+/* ===================================================================== */
+/* 21. PRE-RIDE                                                          */
+/* ===================================================================== */
+
+/* One session and one thing to do before it: the slot first, the instruction
+   under it. No warning banner, no step number for a list of one. */
+.pre-ride-steps .steps-list {
+  max-width: 34rem;
+  margin: 18px auto 0;
+}
+
+.pre-ride-steps .step-item {
+  gap: 0 !important;
+  padding: 14px 18px !important;
+}
+
+.pre-ride-steps .step-content p {
+  text-align: center;
 }
