@@ -1,6 +1,6 @@
 /**
  * Desktop Menu Styles
- * 
+ *
  * Desktop-specific menu styling and enhancements
  * Applies only at desktop breakpoints
  */
@@ -156,11 +156,5 @@
 
   nav#main-nav a:active .menu-icon {
     transform: scale(0.9);
-  }
-
-  /* Prevent mud splat hover animation on nav links inside .interactive-map-container */
-  .interactive-map-container nav#main-nav a:hover .menu-icon::after,
-  .interactive-map-container nav#main-nav a:focus .menu-icon::after {
-    transform: translate(-50%, -50%) scale(0) !important;
   }
 }

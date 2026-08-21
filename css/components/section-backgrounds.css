@@ -1,6 +1,6 @@
 /**
  * Section Background Colors
- * 
+ *
  * Implements alternating red/blue theme for sections
  * Using light variations for better readability
  */
@@ -116,12 +116,31 @@
   margin-bottom: 1.2em;
 }
 
+/* Text-wrapped photo inside the about section */
+.about-figure {
+  float: right;
+  width: 300px;
+  max-width: 45%;
+  height: auto;
+  margin: 0 0 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
 /* Mobile responsive text alignment for about section */
 @media (max-width: 768px) {
   #about p,
   .about-section p {
     text-align: left;
     padding: 0 4%;
+  }
+
+  .about-figure {
+    float: none;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 1rem;
   }
 }
 
@@ -247,66 +266,16 @@
   text-shadow: none;
 }
 
-/* CLEAN LATE REGISTRATION BOX STYLES */
-.late-registration-box {
-  background: linear-gradient(135deg, #d62d20, #b91c1c, #991b1b);
-  color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(214, 45, 32, 0.3);
-  border: 3px solid #7f1d1d;
-  margin: 2rem 0;
-  text-align: center;
-}
-
-.late-registration-box h3 {
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-}
-
-.late-registration-box p {
-  color: white;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-}
-
-.late-registration-box strong {
-  color: #fbbf24;
-  font-weight: 700;
-}
-
-/* Mobile responsiveness for late registration box */
-@media (max-width: 768px) {
-  .late-registration-box {
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-  }
-
-  .late-registration-box h3 {
-    font-size: 1.2rem;
-  }
-
-  .late-registration-box p {
-    font-size: 0.9rem;
-  }
+#register .register-details {
+  color: var(--color-dark) !important;
+  text-shadow: none;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
 }
 
 #contact h2 {
   color: var(--color-secondary) !important;
-}
-
-/* Location note styling */
-.location-note {
-  font-style: italic;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  color: var(--color-dark) !important;
-  opacity: 0.8;
 }
 
 /* Sponsors section text colors for white background */
@@ -359,31 +328,9 @@ section:hover .ace-icon {
 }
 
 /* Course map container styling for blue background */
-.interactive-map-container {
+.course-map-container {
   background: rgba(255, 255, 255, 0.3) !important;
   border-radius: 12px !important;
   padding: 20px !important;
   margin: 20px 0 !important;
-}
-
-/* Hotspot styling adjustments for blue background */
-.hotspot .hotspot-dot {
-  background: var(--color-primary) !important;
-  border: 2px solid var(--color-accent) !important;
-}
-
-.hotspot:hover .hotspot-dot {
-  background: var(--color-red-medium) !important;
-  transform: scale(1.2) !important;
-}
-
-/* Info panel styling */
-.map-info-panel {
-  background: var(--color-accent) !important;
-  border: 2px solid var(--color-secondary) !important;
-  color: var(--color-dark) !important;
-}
-
-.map-info-panel h4 {
-  color: var(--color-primary) !important;
 }

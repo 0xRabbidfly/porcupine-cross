@@ -26,15 +26,8 @@ describe('App Integration', () => {
         <span id="countdown-minutes">00</span>:
         <span id="countdown-seconds">00</span>
       </div>
-      <div class="interactive-map-container">
-        <img src="images/prologue-course-map.png" alt="Prologue Course Map" class="course-map">
-        <div class="map-hotspots">
-          <button class="hotspot" data-section="start-finish" aria-label="Show info for Start/Finish Line"><span class="hotspot-dot"></span></button>
-        </div>
-        <div class="map-info-panel">
-          <button class="info-close" aria-label="Close info panel">×</button>
-          <div class="info-content" id="start-finish">Start/Finish Info</div>
-        </div>
+      <div class="course-map-container">
+        <img src="images/prologue-course-map-2026.png" alt="Prologue Course Map" class="course-map">
       </div>
       <nav id="main-nav">
         <a href="#home">Home</a>
@@ -63,7 +56,7 @@ describe('App Integration', () => {
     app.initComponents();
     expect(app.components.audioManager).toBeDefined();
     expect(app.components.countdownTimer).toBeDefined();
-    expect(app.components.interactiveMap).toBeDefined();
+    expect(app.components.heroCardRotators).toBeDefined();
     // Section observer and hero animation are optional DOM-dependent
   });
 

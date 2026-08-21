@@ -1,11 +1,11 @@
 /**
  * Component CSS Index
- * 
+ *
  * Imports all component CSS files for better organization
  */
 
 /* Core component styles */
-@import 'map-hotspots.css';
+@import 'course-map.css';
 @import 'countdown-timer.css';
 @import 'animations.css';
 

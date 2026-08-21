@@ -1,0 +1,31 @@
+/* hero-card-rotator.css - Cross-fading hero card artwork and event photos */
+
+.hero-card-rotator {
+  position: relative;
+  width: 100%;
+  /* Matches the playing-card artwork so the card renders uncropped */
+  aspect-ratio: 441 / 670;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.hero-card-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 900ms ease-in-out;
+  will-change: opacity;
+}
+
+.hero-card-slide.is-active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card-slide {
+    transition: none;
+  }
+}

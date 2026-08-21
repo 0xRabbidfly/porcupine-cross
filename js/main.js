@@ -4,8 +4,9 @@
  */
 
 import AudioManager from './components/audioManager.js';
-import InteractiveMap from './components/interactiveMap.js';
+import HeroCardRotator from './components/heroCardRotator.js';
 import MobileMenu from './components/mobileMenu.js';
+import RegisterPhase from './components/registerPhase.js';
 import SmolderchadEasterEgg from './components/smolderchadEasterEgg.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
@@ -56,8 +57,11 @@ class App {
       // Initialize CountdownTimer
       this.initCountdownTimer();
 
-      // Initialize InteractiveMap
-      this.initInteractiveMap();
+      // Initialize hero card rotation
+      this.components.heroCardRotators = HeroCardRotator.createAll();
+
+      // Initialize register phase switch
+      this.components.registerPhase = RegisterPhase.create();
 
       // Initialize Hero Animation
       this.initHeroAnimation();
@@ -247,8 +251,6 @@ class App {
             eventName = 'instagram_click';
           } else if (linkText.includes('facebook')) {
             eventName = 'facebook_click';
-          } else if (linkText.includes('strava')) {
-            eventName = 'strava_click';
           } else if (linkText.includes('email') || linkText.includes('@')) {
             eventName = 'email_click';
           } else if (linkText.includes('map') || linkText.includes('location')) {
@@ -500,32 +502,8 @@ class App {
     ) {
       // Create a custom update function that updates all elements
       const customUpdate = () => {
-        // Check if date is TBA - if so, show bike emojis
-        const countdownDateElements = document.querySelectorAll('.countdown-date');
-        const isTBA =
-          countdownDateElements.length > 0 &&
-          countdownDateElements[0].textContent.trim() === 'Date TBA';
-
-        if (isTBA) {
-          // Show bike emojis for TBA
-          allDaysElements.forEach(element => {
-            element.textContent = '🚴';
-          });
-          allHoursElements.forEach(element => {
-            element.textContent = '🚴';
-          });
-          allMinutesElements.forEach(element => {
-            element.textContent = '🚴';
-          });
-          allSecondsElements.forEach(element => {
-            element.textContent = '🚴';
-          });
-          return { days: '🚴', hours: '🚴', minutes: '🚴', seconds: '🚴', distance: 0 };
-        }
-
-        // Normal countdown logic for when date is set
         const now = new Date().getTime();
-        const targetDate = new Date('September 20, 2026 08:00:00').getTime();
+        const targetDate = new Date('October 18, 2026 09:00:00').getTime();
         const distance = targetDate - now;
 
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -573,21 +551,6 @@ class App {
       this.components.countdownTimer.start();
     } else {
       console.warn('CountdownTimer elements not found');
-    }
-  }
-
-  /**
-   * Initialize InteractiveMap component
-   */
-  initInteractiveMap() {
-    try {
-      // Only initialize if the required map elements exist
-      const mapContainer = document.querySelector('.interactive-map-container');
-      if (mapContainer) {
-        this.components.interactiveMap = InteractiveMap.createFromSelectors();
-      }
-    } catch (error) {
-      console.error('Error creating InteractiveMap:', error);
     }
   }
 

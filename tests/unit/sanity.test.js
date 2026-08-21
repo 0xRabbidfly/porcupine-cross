@@ -6,4 +6,4 @@ describe('Sanity check', () => {
   test('Jest is working', () => {
     expect(true).toBe(true);
   });
-}); 
+});

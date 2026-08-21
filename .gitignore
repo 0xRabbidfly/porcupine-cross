@@ -62,4 +62,7 @@ debug.js
 .playwright-mcp/
 
 # Photo files (too large for git)
-/photos/ 
+/photos/
+
+# Source material for the 2026 content update (large, not deployed)
+/docs/2026 changes/

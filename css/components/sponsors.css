@@ -28,7 +28,7 @@
 .sponsor-logos {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
   justify-items: center;
   align-items: center;
   gap: 20px;
@@ -118,7 +118,7 @@
 }
 
 .sponsor-logos > a:nth-child(9) {
-  grid-column: 1;
+  grid-column: 2 / 4;
   grid-row: 3;
 }
 
@@ -221,12 +221,6 @@
   padding: 10px;
 }
 
-/* Winspace specific sizing - make it bigger */
-img[src*='Winspace'] {
-  max-height: 120px !important;
-  padding: 18px;
-}
-
 /* Placeholder for empty grid cell */
 .sponsor-placeholder {
   width: 100%;
@@ -270,11 +264,5 @@ img[src*='Winspace'] {
 
   .sponsor-placeholder {
     height: 100px;
-  }
-
-  /* Desktop Winspace sizing */
-  img[src*='Winspace'] {
-    max-height: 120px !important;
-    padding: 20px;
   }
 }

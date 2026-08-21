@@ -19,9 +19,9 @@ class EventBus {
     if (!this.events[event]) {
       this.events[event] = [];
     }
-    
+
     this.events[event].push(callback);
-    
+
     // Return unsubscribe function
     return () => this.off(event, callback);
   }
@@ -37,7 +37,7 @@ class EventBus {
       this.off(event, wrappedCallback);
       callback(...args);
     };
-    
+
     this.onceCallbacks.add(wrappedCallback);
     return this.on(event, wrappedCallback);
   }
@@ -49,10 +49,10 @@ class EventBus {
    */
   off(event, callback) {
     if (!this.events[event]) return;
-    
+
     this.events[event] = this.events[event].filter(cb => cb !== callback);
     this.onceCallbacks.delete(callback);
-    
+
     // Clean up if no callbacks left
     if (this.events[event].length === 0) {
       delete this.events[event];
@@ -66,7 +66,7 @@ class EventBus {
    */
   emit(event, ...args) {
     if (!this.events[event]) return;
-    
+
     this.events[event].forEach(callback => {
       try {
         callback(...args);
@@ -93,4 +93,4 @@ class EventBus {
 // Create a singleton instance
 const eventBus = new EventBus();
 
-export default eventBus; 
+export default eventBus;
