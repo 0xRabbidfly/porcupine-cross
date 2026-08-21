@@ -41,8 +41,8 @@ foreach ($highResFile in $highResFiles) {
         $photo = @{
             id = "photo_" + $photoId.ToString("000")
             filename = $highResFile.Name
-            thumbnail_url = "/photos/event-2026/thumbnails/" + $thumbnailFile.Name
-            highres_url = "/photos/event-2026/high-res/" + $highResFile.Name
+            thumbnail_url = "/photos/event-2025/thumbnails/" + $thumbnailFile.Name
+            highres_url = "/photos/event-2025/high-res/" + $highResFile.Name
             size_bytes = $highResFile.Length
             date_taken = $highResFile.CreationTime.ToString("yyyy-MM-ddTHH:mm:ssZ")
         }
@@ -77,8 +77,8 @@ Write-Host "Generated metadata for $($photos.Count) photos"
 Write-Host "Saved to: $outputJsonPath"
 Write-Host ""
 Write-Host "Next steps:"
-Write-Host "1. Upload your high-res photos to: /photos/event-2026/high-res/"
-Write-Host "2. Upload your thumbnails to: /photos/event-2026/thumbnails/"
-Write-Host "3. Upload photos.json to: /photos/event-2026/photos.json"
+Write-Host "1. Upload your high-res photos to: /photos/event-2025/high-res/"
+Write-Host "2. Upload your thumbnails to: /photos/event-2025/thumbnails/"
+Write-Host "3. Upload photos.json to: /photos/event-2025/photos.json"
 Write-Host ""
 Write-Host "Then your photo gallery will be ready!"
