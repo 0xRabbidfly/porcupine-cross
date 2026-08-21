@@ -1,252 +1,442 @@
-/* quick-tips.css - Styles for the Quick Tips section */
+/**
+ * quick-tips.css — "What you really need to know"
+ *
+ * The section is built as a course, not a card grid: four stages run start to
+ * finish, and between stage 1 and stage 3 the route splits into an A line
+ * (enter the sanctioned race) and a B line (ride the Try-a-CX session), the way
+ * a real cyclocross course offers a technical line and a ride-around. The split
+ * is structural, not decorative — those two options genuinely are a branch, and
+ * they rejoin at race day.
+ */
 
-/* ===== QUICK TIPS SECTION ===== */
 .quick-tips-section {
-  background: linear-gradient(135deg, var(--cream) 0%, #f8f6f0 100%);
-  padding: 60px 20px;
+  /* Palette — brand tokens, re-weighted for a printed race-flyer feel */
+  --qt-ink: #14202f; /* deep navy-black: body text and panel rules */
+  --qt-navy: #1e3a8a; /* brand navy: the route line and stage markers */
+  --qt-red: #d62d20; /* deep brand red: A line, solid fills */
+  --qt-red-bright: #e73e3a; /* brand red: edges and accents only */
+  --qt-gold: #ffc107; /* brand gold: B line */
+  --qt-paper: #f6f2e8; /* warm paper: section ground */
+  --qt-panel: #fffdf8; /* panel surface, a shade warmer than white */
+
+  --qt-stencil: 'Stardos Stencil', 'Impact', sans-serif;
+
+  background: var(--qt-paper);
+  padding: 0 0 64px;
   position: relative;
   overflow: hidden;
 }
 
-.quick-tips-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    45deg,
-    transparent,
-    transparent 10px,
-    rgba(139, 69, 19, 0.03) 10px,
-    rgba(139, 69, 19, 0.03) 20px
-  );
-  pointer-events: none;
+/* Start line: course tape across the top edge of the section. */
+.qt-tape {
+  height: 10px;
+  border-bottom: 2px solid var(--qt-ink);
+  background: repeating-linear-gradient(115deg, var(--qt-red) 0 14px, var(--qt-panel) 14px 28px);
+}
+
+.qt-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 56px 20px 0;
 }
 
 .quick-tips-section h2 {
-  color: var(--color-secondary) !important;
+  color: var(--qt-ink) !important;
   text-align: center !important;
-  font-size: 2rem !important;
+  font-size: clamp(1.6rem, 4vw, 2.2rem) !important;
   font-weight: 700 !important;
-  margin-bottom: 1.2em !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 0 0.55em !important;
 }
 
 .quick-tips-intro {
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 36px;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: var(--theme-dark-grey);
-  font-weight: 500;
-}
-
-/* ===== TIP CARDS ===== */
-.quick-tips-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  align-items: start;
-  gap: 24px;
-  max-width: 1200px;
+  max-width: 46rem;
   margin: 0 auto;
-  position: relative;
-  z-index: 1;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--qt-ink);
+  opacity: 0.82;
 }
 
-.tip-card {
-  background: white;
-  border-radius: 15px;
-  padding: 22px 24px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border: 3px solid var(--theme-accent-gold);
-  position: relative;
-  transition: all 0.3s ease;
-  overflow: hidden;
-}
+/* ===== ROUTE TERMINI ===== */
 
-.tip-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(
-    90deg,
-    var(--theme-red),
-    var(--autumn-orange),
-    var(--theme-accent-gold)
-  );
-}
-
-.tip-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-  border-color: var(--theme-red);
-}
-
-.tip-number {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--theme-red), #d62d20);
-  color: white;
-  border-radius: 50%;
+.qt-terminus {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  font-family: 'Cinzel', serif;
-  box-shadow: 0 2px 8px rgba(214, 45, 32, 0.3);
-  border: 2px solid white;
-  z-index: 2;
+  gap: 10px;
 }
 
-.tip-content {
-  margin-top: 4px;
-}
-
-.tip-content h3 {
-  color: var(--theme-red);
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  padding-right: 48px;
-  font-weight: 700;
+.qt-terminus span {
+  font-family: var(--qt-stencil);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-family: 'Cinzel', serif;
+  color: var(--qt-navy);
 }
 
-.tip-content p {
-  color: var(--theme-dark-grey);
-  line-height: 1.55;
-  margin-bottom: 10px;
+/* The stub of route line leaving the start / arriving at the finish. */
+.qt-terminus::after {
+  content: '';
+  width: 3px;
+  height: 26px;
+  background: var(--qt-navy);
+}
+
+.qt-terminus--start {
+  flex-direction: column;
+  margin: 36px 0 0;
+}
+
+.qt-terminus--finish {
+  flex-direction: column-reverse;
+  margin: 0 0 8px;
+}
+
+/* ===== THE ROUTE ===== */
+
+.qt-route {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== STRAIGHT STAGES (1, 3, 4) ===== */
+
+.qt-stage--band {
+  position: relative;
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  background: var(--qt-panel);
+  border: 2px solid var(--qt-ink);
+}
+
+/* Connector between consecutive straight stages. Positioned out of flow so it
+   never lands in the grid as a third column. */
+.qt-stage--band + .qt-stage--band {
+  margin-top: 28px;
+}
+
+.qt-stage--band + .qt-stage--band::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 3px;
+  height: 28px;
+  margin-left: -1.5px;
+  background: var(--qt-navy);
+}
+
+/* The numbered stake at the head of each stage. */
+.qt-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--qt-navy);
+  color: var(--qt-paper);
+  font-family: var(--qt-stencil);
+  font-size: 2.4rem;
+  line-height: 1;
+  border-right: 2px solid var(--qt-ink);
+}
+
+.qt-stage-body {
+  padding: 22px 26px;
+}
+
+.quick-tips-section .qt-stage h3,
+.quick-tips-section .qt-line h3 {
+  font-family: 'Montserrat', Arial, sans-serif !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 1.02rem;
+  color: var(--qt-ink);
+  margin: 0 0 8px;
+}
+
+.qt-stage-body p,
+.qt-line > p {
+  margin: 0;
+  max-width: 64ch;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--qt-ink);
+}
+
+/* ===== THE SPLIT ===== */
+
+.qt-diagram {
+  display: block;
+  width: 100%;
+  height: 52px;
+}
+
+.qt-diagram path {
+  fill: none;
+  stroke: var(--qt-navy);
+  stroke-width: 3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Route line arriving at the split. */
+.qt-stage--fork::before {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 28px;
+  margin: 0 auto 16px;
+  background: var(--qt-navy);
+}
+
+.qt-fork-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 4px;
+  text-align: center;
   font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--qt-ink);
 }
 
-.tip-content > :last-child {
-  margin-bottom: 0;
+.qt-marker--inline {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  font-size: 1.15rem;
+  border: 2px solid var(--qt-ink);
 }
 
-.tip-content ul {
-  margin: 10px 0;
-  padding-left: 20px;
+.qt-lines {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
 }
 
-.tip-content li {
-  color: var(--theme-dark-grey);
-  line-height: 1.45;
-  margin-bottom: 6px;
+.qt-line {
+  display: flex;
+  flex-direction: column;
+  background: var(--qt-panel);
+  border: 2px solid var(--qt-ink);
+  border-top-width: 6px;
+  padding: 20px 24px 24px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.qt-line--b {
+  border-top-color: var(--qt-gold);
+}
+
+.qt-line--a {
+  border-top-color: var(--qt-red-bright);
+}
+
+.qt-line:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 rgba(20, 32, 47, 0.12);
+}
+
+.qt-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 5px 11px;
+  font-family: var(--qt-stencil);
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.qt-badge span {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  opacity: 0.75;
+}
+
+.qt-badge--b {
+  background: var(--qt-gold);
+  color: var(--qt-ink);
+}
+
+.qt-badge--a {
+  background: var(--qt-red);
+  color: #fff;
+}
+
+/* ===== FACT LISTS ===== */
+
+.qt-facts {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) 1fr;
+  gap: 0 18px;
+  margin: 16px 0 0;
+}
+
+.qt-facts dt {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--qt-navy);
+  padding: 10px 0 9px;
+  border-top: 1px dotted rgba(20, 32, 47, 0.3);
+}
+
+/* Keeps a gap above the foot-anchored caveat when the panel is short. */
+.qt-line--a .qt-facts {
+  margin-bottom: 20px;
+}
+
+.qt-facts dd {
+  margin: 0;
   font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--qt-ink);
+  padding: 8px 0;
+  border-top: 1px dotted rgba(20, 32, 47, 0.3);
 }
 
-.tip-content li:last-child {
-  margin-bottom: 0;
+/* The caveat sits at the foot of its panel, like a footnote on a race flyer. */
+.qt-aside {
+  margin: auto 0 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--qt-red-bright);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--qt-ink);
+  opacity: 0.85;
 }
 
-.tip-content li::marker {
-  color: var(--theme-red);
-  font-weight: bold;
-}
+/* ===== RESPONSIVE ===== */
 
-.tip-content em {
-  color: var(--theme-red);
-  font-style: italic;
-  font-weight: 500;
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-  .quick-tips-section {
-    padding: 40px 15px;
+@media (max-width: 860px) {
+  /* No room for two lanes side by side: the fork collapses to a straight run,
+     and the A/B badges carry the distinction on their own. */
+  .qt-diagram {
+    display: none;
   }
 
-  .quick-tips-cards {
+  /* With the split diagram gone, the route leaves the fork as a plain line. */
+  .qt-stage--fork::after {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 28px;
+    margin: 20px auto 0;
+    background: var(--qt-navy);
+  }
+
+  .qt-fork-note {
+    margin-bottom: 18px;
+  }
+
+  /* The two lines are alternatives, not steps: stacked, they sit side by side
+     in reading order with no connector implying one leads to the other. */
+  .qt-lines {
     grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .tip-card {
-    padding: 20px;
-  }
-
-  .tip-number {
-    width: 35px;
-    height: 35px;
-    font-size: 1.1rem;
-    top: 12px;
-    right: 12px;
-  }
-
-  .tip-content h3 {
-    font-size: 1.2rem;
-  }
-
-  .quick-tips-intro {
-    font-size: 1rem;
-    margin-bottom: 40px;
+    gap: 18px;
   }
 }
 
-@media (max-width: 480px) {
-  .tip-card {
+@media (max-width: 600px) {
+  .quick-tips-section {
+    padding-bottom: 48px;
+  }
+
+  .qt-inner {
+    padding: 40px 16px 0;
+  }
+
+  .qt-stage--band {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .qt-marker {
+    font-size: 1.8rem;
+  }
+
+  .qt-stage-body {
     padding: 18px;
   }
 
-  .tip-number {
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
-    top: 10px;
-    right: 10px;
+  .qt-line {
+    padding: 18px 18px 20px;
   }
 
-  .tip-content h3 {
-    font-size: 1.1rem;
+  /* Narrow, fixed label column keeps the spec list two-up on a phone rather
+     than doubling its height by stacking. */
+  .qt-facts {
+    grid-template-columns: minmax(0, 7rem) 1fr;
+    gap: 0 14px;
+  }
+
+  .qt-fork-note {
+    font-size: 0.9rem;
   }
 }
 
-/* ===== ANIMATION EFFECTS ===== */
-.tip-card {
+/* ===== REVEAL ===== */
+
+.quick-tips-section .qt-stage {
   opacity: 0;
-  transform: translateY(30px);
-  animation: slideInUp 0.6s ease-out forwards;
+  transform: translateY(16px);
 }
 
-.tip-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.tip-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.tip-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.tip-card:nth-child(4) {
-  animation-delay: 0.4s;
-}
-.tip-card:nth-child(5) {
-  animation-delay: 0.5s;
+.quick-tips-section.visible .qt-stage {
+  animation: qtRise 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
 }
 
-@keyframes slideInUp {
+.quick-tips-section.visible .qt-stage:nth-child(2) {
+  animation-delay: 0.09s;
+}
+
+.quick-tips-section.visible .qt-stage:nth-child(3) {
+  animation-delay: 0.18s;
+}
+
+.quick-tips-section.visible .qt-stage:nth-child(4) {
+  animation-delay: 0.27s;
+}
+
+@keyframes qtRise {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* ===== ACCESSIBILITY ===== */
-.tip-card:focus-within {
-  outline: 3px solid var(--theme-accent-gold);
-  outline-offset: 2px;
+@media (prefers-reduced-motion: reduce) {
+  .quick-tips-section .qt-stage {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+
+  .qt-line {
+    transition: none;
+  }
+
+  .qt-line:hover {
+    transform: none;
+  }
 }
 
-.tip-card:focus-within .tip-number {
-  background: linear-gradient(135deg, var(--autumn-orange), var(--theme-red));
+/* ===== ACCESSIBILITY ===== */
+
+.qt-line:focus-within,
+.qt-stage--band:focus-within {
+  outline: 3px solid var(--qt-navy);
+  outline-offset: 3px;
 }
