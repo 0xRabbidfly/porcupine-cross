@@ -27,8 +27,9 @@
   }
 }
 
-@media (max-width: 899px) {
-  nav#main-nav a[href$='photos.html'] {
+/* Only worth drawing the eye to a card you are not already on. */
+@media (max-width: 768px) {
+  nav#main-nav a[href$='photos.html']:not([aria-current='page']) {
     color: var(--pc-gilt) !important;
   }
 }

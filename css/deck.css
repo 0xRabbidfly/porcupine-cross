@@ -1743,6 +1743,19 @@ footer {
     box-shadow: none !important;
   }
 
+  /* The card you are on gets the same played-card face as it does in the fan:
+     a gilt fill with ink on it. Left to the default row styling it was gilt
+     text on a five-percent panel, which is barely there. */
+  nav#main-nav a[aria-current='page'] {
+    background: var(--pc-gilt) !important;
+    color: var(--pc-ink) !important;
+    border-color: var(--pc-ink) !important;
+  }
+
+  nav#main-nav a[aria-current='page']::before {
+    color: var(--pc-ink) !important;
+  }
+
   nav#main-nav .menu-icon {
     display: none !important;
   }
