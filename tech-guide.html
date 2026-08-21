@@ -1,101 +1,115 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tech Guide | Prologue Cyclocross</title>
-    
+
     <!-- GOOGLE ANALYTICS 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE06TRH4DK"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-CE06TRH4DK');
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-CE06TRH4DK');
     </script>
-    
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/components/index.css">
-    <link rel="stylesheet" href="css/components/photos-menu-animation.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      .pdf-placeholder {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 60vh;
-        background: var(--cream, #f5f0e6);
-        border-radius: 16px;
-        margin: 60px auto 40px auto;
-        max-width: 900px;
-        box-shadow: 0 4px 24px rgba(44,62,80,0.07);
-        border: 2px dashed var(--theme-accent-gold, #ffc107);
-        padding: 48px 24px;
-      }
-      .pdf-placeholder i {
-        font-size: 3.5rem;
-        color: var(--theme-accent-gold, #ffc107);
-        margin-bottom: 18px;
-      }
-      .pdf-placeholder h2 {
-        color: var(--theme-red, #e73e3a);
-        margin-bottom: 12px;
-        font-size: 2rem;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-      }
-      .pdf-placeholder p {
-        color: var(--theme-dark-grey, #333);
-        font-size: 1.15rem;
-        margin-bottom: 0;
-      }
-    </style>
-</head>
-<body>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/components/index.css" />
+    <link rel="stylesheet" href="css/components/photos-menu-animation.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- PROLOGUE DECK -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700..900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/deck.css" />
+  </head>
+  <body>
     <header>
-        <div class="logo-container">
-            <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo">
-        </div>
-        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu" aria-expanded="false" aria-controls="main-nav">
-            <span class="hamburger"></span>
-        </a>
-        <nav id="main-nav" role="navigation" aria-label="Main navigation">
-            <a href="index.html#home"><i class="fas fa-home menu-icon"></i>Home</a>
-            <a href="index.html#about"><i class="fas fa-info-circle menu-icon"></i>About</a>
-            <a href="index.html#quick-tips"><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a>
-            <a href="index.html#schedule"><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a>
-            <a href="index.html#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
-            <a href="photos.html"><i class="fas fa-camera menu-icon"></i>Photos ✨</a>
-            <a href="index.html#register"><i class="fas fa-user-plus menu-icon"></i>Register</a>
-            <a href="tech-guide.html" aria-current="page"><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a>
-        </nav>
-        <div class="audio-promo-container compact">
-            <button class="audio-play-btn" aria-label="Play Race Outline" tabindex="0">
-                <i class="fas fa-play"></i>
-            </button>
-            <span class="audio-text"><span class="listen-emoji" aria-label="Listen">🎧</span> Race Outline</span>
-            <audio id="race-day-audio" preload="none" style="display:none;">
-                <source src="sounds/crosstoberfest.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
-        </div>
+      <div class="logo-container">
+        <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo" />
+      </div>
+      <a
+        href="#main-nav"
+        id="menu-toggle"
+        aria-label="Open Menu"
+        aria-expanded="false"
+        aria-controls="main-nav"
+      >
+        <span class="hamburger"></span>
+      </a>
+      <nav id="main-nav" role="navigation" aria-label="Main navigation">
+        <a href="index.html#home" data-rank="A" data-suit="&#9824;"
+          ><i class="fas fa-home menu-icon"></i>Home</a
+        >
+        <a href="index.html#about" data-rank="2" data-suit="&#9829;"
+          ><i class="fas fa-info-circle menu-icon"></i>About</a
+        >
+        <a href="index.html#quick-tips" data-rank="4" data-suit="&#9827;"
+          ><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a
+        >
+        <a href="index.html#schedule" data-rank="5" data-suit="&#9824;"
+          ><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a
+        >
+        <a href="index.html#course" data-rank="6" data-suit="&#9824;"
+          ><i class="fas fa-map-marked-alt menu-icon"></i>Course</a
+        >
+        <a href="photos.html" data-rank="J" data-suit="&#9829;"
+          ><i class="fas fa-camera menu-icon"></i>Photos</a
+        >
+        <a href="index.html#register" data-rank="7" data-suit="&#9830;"
+          ><i class="fas fa-user-plus menu-icon"></i>Register</a
+        >
+        <a href="tech-guide.html" aria-current="page" data-rank="J" data-suit="&#9827;"
+          ><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a
+        >
+      </nav>
+      <div class="audio-promo-container compact">
+        <button class="audio-play-btn" aria-label="Play Race Outline" tabindex="0">
+          <i class="fas fa-play"></i>
+        </button>
+        <span class="audio-text"
+          ><span class="listen-emoji" aria-label="Listen">🎧</span> Race Outline</span
+        >
+        <audio id="race-day-audio" preload="none" style="display: none">
+          <source src="sounds/crosstoberfest.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
     </header>
-    <main>
-      <div style="display: flex; flex-direction: column; align-items: center; margin-top: 40px;">
+    <main id="main" role="main">
+      <section class="page-card" data-rank="J" data-suit="&#9827;">
+        <h2>Technical Guide</h2>
+        <p class="page-lead">
+          The commissaires' document: categories, call-ups, course rules and the timings for race
+          day.
+        </p>
+
         <iframe
+          class="tech-frame"
           src="docs/Prologue Cross Technical Guide.pdf"
-          title="Prologue Cyclocross Tech Guide PDF"
-          width="100%"
-          height="900px"
-          style="max-width: 900px; min-height: 70vh; border: 2px solid var(--theme-accent-gold, #ffc107); border-radius: 16px; box-shadow: 0 4px 24px rgba(44,62,80,0.07); background: var(--cream, #f5f0e6);"
+          title="Prologue Cross technical guide"
           allowfullscreen
         ></iframe>
-        <p style="margin-top: 18px; color: var(--theme-dark-grey, #333); font-size: 1rem;">If the PDF does not display, <a href="docs/Prologue Cross Technical Guide.pdf" style="color: var(--theme-accent-gold, #ffc107); font-weight: bold; text-decoration: underline;">click here to download it</a>.</p>
-      </div>
+
+        <p class="page-note">
+          Not loading?
+          <a href="docs/Prologue Cross Technical Guide.pdf">Download the technical guide</a>.
+        </p>
+      </section>
     </main>
 
     <script type="module" src="js/animationBridge.js"></script>
@@ -103,28 +117,28 @@
     <script src="script.js"></script>
 
     <script>
-        // Track audio button clicks
-        document.addEventListener('DOMContentLoaded', function() {
-            const audioButton = document.querySelector('.audio-play-btn');
-            if (audioButton) {
-                audioButton.addEventListener('click', function() {
-                    // Send to Google Analytics 4
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'button_click', {
-                            'button_name': 'audio_play',
-                            'button_location': 'header',
-                            'page_location': window.location.pathname
-                        });
-                    }
-                    
-                    // Also log to console for testing
-                    console.log('Audio button clicked!', {
-                        location: 'header',
-                        page: window.location.pathname
-                    });
-                });
+      // Track audio button clicks
+      document.addEventListener('DOMContentLoaded', function () {
+        const audioButton = document.querySelector('.audio-play-btn');
+        if (audioButton) {
+          audioButton.addEventListener('click', function () {
+            // Send to Google Analytics 4
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'button_click', {
+                button_name: 'audio_play',
+                button_location: 'header',
+                page_location: window.location.pathname,
+              });
             }
-        });
+
+            // Also log to console for testing
+            console.log('Audio button clicked!', {
+              location: 'header',
+              page: window.location.pathname,
+            });
+          });
+        }
+      });
     </script>
-</body>
-</html> 
+  </body>
+</html>

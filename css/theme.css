@@ -1,3 +1,10 @@
+/**
+ * theme.css — base tokens.
+ *
+ * NOTE: css/deck.css loads last and redefines every colour and font token
+ * below to the Prologue Deck palette. These values are the fallback if the
+ * deck stylesheet is unavailable; edit deck.css to change the site's look.
+ */
 :root {
   /* Primary Brand Colors - extracted from Prologue Cross Logo */
   --color-primary: #d62d20; /* Deep red from logo card */

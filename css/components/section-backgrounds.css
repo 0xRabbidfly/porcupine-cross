@@ -1,120 +1,10 @@
 /**
- * Section Background Colors
+ * Section layout leftovers
  *
- * Implements alternating red/blue theme for sections
- * Using light variations for better readability
+ * This file used to carry the alternating red/blue section skin. The Prologue
+ * Deck system in css/deck.css owns colour, type and surface now, so only the
+ * genuinely structural rules remain here.
  */
-
-/* Hero section - Red theme */
-.hero,
-#home {
-  background: var(--color-red-light) !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(214, 45, 32, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* About section - Blue theme */
-#about,
-.about-section {
-  background: var(--color-blue-light) !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(30, 58, 138, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* Sponsors section - White theme */
-.sponsors {
-  background: var(--color-white-light) !important;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(31, 41, 55, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* Schedule section - Red theme */
-#schedule {
-  background: var(--color-red-light) !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(214, 45, 32, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* Course section - Blue theme */
-#course {
-  background: var(--color-blue-light) !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(30, 58, 138, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* Register section - Red theme */
-#register {
-  background: var(--color-red-light) !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(214, 45, 32, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* Contact section - Blue theme */
-#contact {
-  background: var(--color-blue-light) !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    rgba(30, 58, 138, 0.02) 0 12px,
-    transparent 12px 24px
-  ) !important;
-}
-
-/* Section text colors for better contrast */
-.hero h1,
-.hero h2,
-.hero p {
-  color: var(--color-dark) !important;
-}
-
-/* Override for specific blue elements */
-.hero .prologue-card-title {
-  color: var(--color-secondary) !important;
-}
-
-#schedule h2 {
-  color: var(--color-secondary) !important;
-}
-
-#schedule p {
-  color: var(--color-dark) !important;
-}
-
-#about h2,
-.about-section h2 {
-  color: var(--color-secondary) !important;
-  text-align: center !important;
-  font-size: 2rem !important;
-  font-weight: 700 !important;
-  margin-bottom: 1.2em !important;
-}
-
-#about p,
-.about-section p {
-  color: var(--color-dark) !important;
-  text-align: justify;
-  max-width: 750px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1.2em;
-}
 
 /* Text-wrapped photo inside the about section */
 .about-figure {
@@ -123,18 +13,9 @@
   max-width: 45%;
   height: auto;
   margin: 0 0 1rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* Mobile responsive text alignment for about section */
 @media (max-width: 768px) {
-  #about p,
-  .about-section p {
-    text-align: left;
-    padding: 0 4%;
-  }
-
   .about-figure {
     float: none;
     display: block;
@@ -144,64 +25,11 @@
   }
 }
 
-#course h2 {
-  color: var(--color-secondary) !important;
-}
-
-#course p {
-  color: var(--color-dark) !important;
-}
-
-/* Register section text colors for red background */
-/* Removed conflicting styles - now handled by new white text styles below */
-
-/* Register button styling */
-.register-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 16px 32px;
-  background: linear-gradient(135deg, var(--theme-red), #d62d20);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  box-shadow:
-    0 4px 15px rgba(214, 45, 32, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border: 2px solid #7f1d1d;
-  margin: 0.75rem auto;
-  width: fit-content;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.register-button .register-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.register-button i {
-  flex-shrink: 0;
-  font-size: 1.3rem;
-  color: #fbbf24;
-}
-
-/* Register deadline text styling for register section */
+/* Register deadline sits under the button label */
 .register-button .register-deadline {
   display: block;
   font-size: 0.7rem;
-  font-weight: normal;
+  font-weight: 400;
   margin-top: 2px;
   opacity: 0.9;
   text-align: center;
@@ -210,127 +38,6 @@
   letter-spacing: 0;
 }
 
-.register-button:hover {
-  background: linear-gradient(135deg, #e73e3a, #d62d20, #b91c1c);
-  transform: translateY(-3px);
-  box-shadow:
-    0 8px 25px rgba(214, 45, 32, 0.6),
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border-color: #991b1b;
-}
-
-.register-button:active {
-  transform: translateY(-1px);
-  box-shadow:
-    0 2px 8px rgba(214, 45, 32, 0.4),
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.register-button i {
-  font-size: 1.3rem;
-}
-
-/* Contact section text colors for blue background */
-#contact h2,
-#contact h3,
-#contact p {
-  color: var(--color-dark) !important;
-}
-
-/* Register section text colors for red background */
-#register h2 {
-  color: var(--color-secondary) !important;
-}
-
-#register h3 {
-  color: #ffffff !important;
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.8),
-    0 0 6px rgba(0, 0, 0, 0.4);
-  font-weight: 600;
-}
-
-#register p {
-  color: #ffffff !important;
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.8),
-    0 0 6px rgba(0, 0, 0, 0.4);
-  font-weight: 500;
-}
-
-/* Register section specific text elements */
-#register .register-note {
-  color: var(--color-dark) !important;
-  text-shadow: none;
-}
-
-#register .register-details {
-  color: var(--color-dark) !important;
-  text-shadow: none;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-}
-
-#contact h2 {
-  color: var(--color-secondary) !important;
-}
-
-/* Sponsors section text colors for white background */
-.sponsors h2,
-.sponsors p {
-  color: var(--color-dark) !important;
-}
-
-/* Ace icon styling for section headers */
-.ace-icon {
-  color: var(--color-secondary) !important;
-  font-size: 1.2em;
-  margin-right: 0.5em;
-  font-family: 'Stardos Stencil', 'Cinzel', serif;
-  display: inline-block;
-  transform: rotate(-10deg);
-  transition: transform 0.3s ease;
-}
-
-section:hover .ace-icon {
-  transform: rotate(5deg) scale(1.1);
-}
-
-/* Ensure countdown timer text is readable on blue background */
-.countdown-title {
-  color: #ffffff !important;
-}
-
-.countdown-date {
-  color: #ffffff !important;
-}
-
-.hero .countdown-date {
-  color: #ffffff !important;
-}
-
-.countdown-item span {
-  color: var(--color-dark) !important;
-}
-
-/* Schedule item styling for red background */
-#schedule .schedule-item {
-  background: rgba(255, 255, 255, 0.9) !important;
-  border-left: 4px solid var(--color-secondary) !important;
-}
-
-#schedule .schedule-item:hover {
-  background: rgba(255, 255, 255, 1) !important;
-  border-left-color: var(--color-secondary) !important;
-}
-
-/* Course map container styling for blue background */
 .course-map-container {
-  background: rgba(255, 255, 255, 0.3) !important;
-  border-radius: 12px !important;
-  padding: 20px !important;
-  margin: 20px 0 !important;
+  margin: 24px 0 0;
 }

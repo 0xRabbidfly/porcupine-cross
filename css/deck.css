@@ -1,0 +1,1955 @@
+/**
+ * deck.css — PROLOGUE DECK
+ * =========================================================================
+ * The site is a hand of cards dealt onto a table.
+ *
+ * The logo is already an ace of spades, so the deck is not a metaphor bolted
+ * on — it is the brand's own vocabulary. Every section is a face-up card:
+ * card stock, a gilt inner rule, and a corner index (rank + suit) top-left and
+ * bottom-right, rotated 180 degrees the way a real card is. The page ground is
+ * the back of the card.
+ *
+ * The indices carry information rather than decoration:
+ *   suit = what kind of content it is, using the historic suit symbolism
+ *     spades   the racing        home, schedule, course
+ *     hearts   the people        about, sponsors, photos, contact
+ *     diamonds money and entry   register
+ *     clubs    the ground rules  quick tips, tech guide
+ *   rank  = where it falls in the running order
+ * The nav shows the same indices, so the fan of cards in the header and the
+ * cards on the page are the same objects. A through 8 — the site is a straight.
+ *
+ * Loaded last. It owns the skin; the older component files still own layout.
+ * =========================================================================
+ */
+
+/* ===================================================================== */
+/* 1. THE DECK — tokens                                                  */
+/* ===================================================================== */
+
+:root {
+  /* Ink and suits. Two suit colours, one structural blue, stock, gilt, mud. */
+  --pc-ink: #111823; /* printer's blue-black: the table and all dark type */
+  --pc-ink-deep: #0a0f17; /* header and footer, a shade below the table */
+  --pc-ink-soft: #46536a; /* secondary type */
+  --pc-blood: #c4161c; /* the red suit ink */
+  --pc-blood-deep: #8f0f14;
+  --pc-royal: #1b3b8b; /* the deck's blue back: structure and links */
+  --pc-royal-deep: #12275c;
+  --pc-stock: #f7f2e7; /* card stock, warm and slightly toothy */
+  --pc-stock-shade: #ece4d2;
+  --pc-gilt: #c8a24a; /* the foil edge — the only precious colour */
+  --pc-mud: #6b4a2b; /* October ground */
+
+  /* Type */
+  --pc-display: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  --pc-body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+  --pc-data: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  --pc-suit: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols 2', sans-serif;
+
+  /* Card geometry */
+  --pc-radius: 16px;
+  --pc-inset: 11px; /* distance from card edge to the gilt rule */
+  --pc-hairline: rgba(17, 24, 35, 0.16);
+
+  /* The card face: stock, a gilt rule inset from the edge, a table shadow. */
+  --pc-card-shadow:
+    inset 0 0 0 var(--pc-inset) var(--pc-stock),
+    inset 0 0 0 calc(var(--pc-inset) + 1px) rgba(200, 162, 74, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 26px 60px -20px rgba(0, 0, 0, 0.85),
+    0 4px 14px -4px rgba(0, 0, 0, 0.5);
+
+  /* ---- Legacy aliases: the older stylesheets read these ---- */
+  --color-primary: var(--pc-blood);
+  --color-secondary: var(--pc-royal);
+  --color-accent: var(--pc-stock);
+  --color-dark: var(--pc-ink);
+  --color-medium: var(--pc-ink-soft);
+  --color-light: #7b8699;
+  --color-red-light: #fbf1ea;
+  --color-blue-light: #eef1f8;
+  --color-white-light: var(--pc-stock);
+  --color-red-medium: var(--pc-blood);
+  --color-blue-medium: var(--pc-royal);
+  --color-background: var(--pc-ink);
+  --color-surface: var(--pc-stock);
+  --color-mud: var(--pc-mud);
+  --color-sand: var(--pc-stock-shade);
+  --color-orange: var(--pc-mud);
+
+  --theme-red: var(--pc-blood);
+  --theme-dark-grey: var(--pc-ink);
+  --theme-medium-grey: var(--pc-ink-soft);
+  --theme-accent-gold: var(--pc-gilt);
+  --mud-brown: var(--pc-mud);
+  --forest-green: var(--pc-ink);
+  --deep-forest: var(--pc-ink);
+  --moss-green: var(--pc-ink);
+  --cream: var(--pc-stock);
+  --sand: var(--pc-stock-shade);
+  --autumn-orange: var(--pc-blood-deep);
+
+  --font-main: var(--pc-body);
+  --font-heading: var(--pc-display);
+
+  --menu-icon-color: var(--pc-stock);
+  --sponsor-bg: var(--pc-stock);
+  --sponsor-text: var(--pc-ink);
+}
+
+/* ===================================================================== */
+/* 2. THE TABLE — page ground and base type                              */
+/* ===================================================================== */
+
+body {
+  background-color: var(--pc-ink) !important;
+  background-image: url('../images/card-back.svg') !important;
+  background-size: 160px 160px !important;
+  background-repeat: repeat !important;
+  background-position: center top !important;
+  background-attachment: fixed !important;
+  font-family: var(--pc-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--pc-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The pattern is loud at full strength; a wash of ink knocks it back so the
+   cards stay the brightest thing on the page. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(17, 24, 35, 0.72) 0%,
+    rgba(10, 15, 23, 0.9) 55%,
+    rgba(6, 10, 16, 0.96) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--pc-display) !important;
+  font-weight: 900 !important;
+  color: var(--pc-ink);
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+p {
+  font-family: var(--pc-body);
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+a,
+a:visited {
+  color: var(--pc-royal);
+}
+
+::selection {
+  background: var(--pc-blood);
+  color: var(--pc-stock);
+}
+
+:focus-visible {
+  outline: 3px solid var(--pc-gilt);
+  outline-offset: 3px;
+}
+
+/* ===================================================================== */
+/* 3. THE DEALER'S EDGE — header and the fan of cards                    */
+/* ===================================================================== */
+
+header {
+  background: var(--pc-ink-deep) !important;
+  background-image:
+    linear-gradient(rgba(10, 15, 23, 0.82), rgba(10, 15, 23, 0.94)), url('../images/card-back.svg') !important;
+  background-size:
+    100% 100%,
+    120px 120px !important;
+  background-repeat: no-repeat, repeat !important;
+  border-bottom: 2px solid var(--pc-gilt) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.8) !important;
+  outline: none !important;
+  padding: 0 clamp(14px, 3vw, 40px) !important;
+  gap: 16px;
+  z-index: 1000;
+}
+
+header::after {
+  display: none !important;
+}
+
+.logo-container .surface-logo {
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+}
+
+/* --- The nav is a hand of cards, fanned --- */
+@media (min-width: 769px) {
+  nav#main-nav {
+    display: flex !important;
+    align-items: flex-end;
+    gap: 0 !important;
+    padding: 0 0 4px !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    perspective: 900px;
+  }
+
+  nav#main-nav a {
+    --fan-tilt: 0deg;
+    --fan-drop: 0px;
+    position: relative;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    width: 74px;
+    height: 56px;
+    margin: 0 -7px 0 0 !important;
+    padding: 5px 7px 6px !important;
+    background: var(--pc-stock);
+    color: var(--pc-ink) !important;
+    border: 1px solid rgba(17, 24, 35, 0.4);
+    border-radius: 6px;
+    box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.9);
+    font-family: var(--pc-data) !important;
+    font-size: 0.74rem !important;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-shadow: none !important;
+    text-decoration: none;
+    overflow: hidden !important;
+    line-height: 1.05;
+    transform: rotate(var(--fan-tilt)) translateY(var(--fan-drop));
+    transform-origin: 50% 130%;
+    transition:
+      transform 0.32s cubic-bezier(0.2, 0.9, 0.25, 1),
+      box-shadow 0.32s ease,
+      background-color 0.2s ease;
+  }
+
+  /* The corner index — the same rank and suit the section itself carries. */
+  nav#main-nav a::before {
+    content: attr(data-rank) '\A' attr(data-suit);
+    position: static;
+    white-space: pre;
+    font-family: var(--pc-display), var(--pc-suit);
+    font-weight: 900;
+    font-size: 0.86rem;
+    line-height: 0.84;
+    letter-spacing: 0;
+    color: var(--pc-index, var(--pc-ink));
+    margin-bottom: auto;
+    background: none;
+    width: auto;
+    height: auto;
+    transform: none;
+    border-radius: 0;
+  }
+
+  nav#main-nav a::after {
+    display: none;
+  }
+
+  nav#main-nav .menu-icon {
+    display: none !important;
+  }
+
+  /* The fan: outer cards lean away and sit lower, as a held hand does. */
+  nav#main-nav a:nth-child(1) {
+    --fan-tilt: -7deg;
+    --fan-drop: 7px;
+  }
+  nav#main-nav a:nth-child(2) {
+    --fan-tilt: -5deg;
+    --fan-drop: 3.5px;
+  }
+  nav#main-nav a:nth-child(3) {
+    --fan-tilt: -3deg;
+    --fan-drop: 1px;
+  }
+  nav#main-nav a:nth-child(4) {
+    --fan-tilt: -1deg;
+  }
+  nav#main-nav a:nth-child(5) {
+    --fan-tilt: 1deg;
+  }
+  nav#main-nav a:nth-child(6) {
+    --fan-tilt: 3deg;
+    --fan-drop: 1px;
+  }
+  nav#main-nav a:nth-child(7) {
+    --fan-tilt: 5deg;
+    --fan-drop: 3.5px;
+  }
+  nav#main-nav a:nth-child(8) {
+    --fan-tilt: 7deg;
+    --fan-drop: 7px;
+  }
+
+  /* Pick a card: it squares up and lifts out of the hand. */
+  nav#main-nav a:hover,
+  nav#main-nav a:focus-visible,
+  nav#main-nav a.active,
+  nav#main-nav a[aria-current='page'] {
+    background: var(--pc-stock) !important;
+    color: var(--pc-ink) !important;
+    transform: rotate(0deg) translateY(-10px);
+    box-shadow:
+      0 16px 26px -10px rgba(0, 0, 0, 0.95),
+      0 0 0 2px var(--pc-gilt);
+    z-index: 5;
+    text-shadow: none !important;
+  }
+
+  nav#main-nav a[aria-current='page'] {
+    background: var(--pc-gilt) !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1180px) {
+  nav#main-nav a {
+    width: 62px;
+    height: 50px;
+    font-size: 0.66rem !important;
+    letter-spacing: 0.02em;
+  }
+
+  nav#main-nav a::before {
+    font-size: 0.74rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 980px) {
+  nav#main-nav a {
+    width: 52px;
+    height: 46px;
+    font-size: 0.56rem !important;
+    padding: 4px 5px 5px !important;
+  }
+
+  nav#main-nav a::before {
+    font-size: 0.66rem;
+  }
+
+  .audio-text {
+    display: none;
+  }
+}
+
+/* --- Race outline player --- */
+.audio-play-btn {
+  background: transparent !important;
+  border: 2px solid var(--pc-gilt) !important;
+  color: var(--pc-gilt) !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1rem !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.audio-play-btn i {
+  animation: none !important;
+}
+
+.audio-play-btn:hover,
+.audio-play-btn:focus {
+  background: var(--pc-gilt) !important;
+  color: var(--pc-ink-deep) !important;
+  border-color: var(--pc-gilt) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.audio-text {
+  font-family: var(--pc-data);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pc-stock);
+  text-shadow: none;
+}
+
+.audio-text .listen-emoji {
+  display: none;
+}
+
+/* Hamburger */
+.hamburger,
+.hamburger::before,
+.hamburger::after {
+  background-color: var(--pc-gilt);
+}
+
+#menu-toggle.open .hamburger::before,
+#menu-toggle.open .hamburger::after {
+  background-color: var(--pc-gilt);
+}
+
+/* ===================================================================== */
+/* 4. THE CARDS — every section is dealt face up                         */
+/* ===================================================================== */
+
+main {
+  padding: clamp(16px, 2.5vw, 34px) 0 0;
+}
+
+section,
+#schedule,
+#course,
+.hero,
+.sponsors {
+  background: var(--pc-stock) !important;
+  background-image: none !important;
+  color: var(--pc-ink);
+  border: 1px solid rgba(17, 24, 35, 0.45) !important;
+  border-radius: var(--pc-radius) !important;
+  box-shadow: var(--pc-card-shadow) !important;
+  margin: 0 auto clamp(18px, 2.6vw, 34px) !important;
+  max-width: 1180px !important;
+  width: calc(100% - clamp(20px, 5vw, 64px)) !important;
+  padding: clamp(38px, 4.4vw, 60px) clamp(24px, 4vw, 58px) !important;
+  overflow: visible;
+  position: relative;
+}
+
+/* The old gloss strip across the top of every section. */
+section::before,
+#schedule::before,
+#course::before,
+.hero::before {
+  content: none;
+}
+
+/* --- Corner indices --- */
+[data-suit='♠'] {
+  --pc-index: var(--pc-ink);
+  --pc-glyph: '♠';
+}
+
+[data-suit='♥'] {
+  --pc-index: var(--pc-blood);
+  --pc-glyph: '♥';
+}
+
+[data-suit='♦'] {
+  --pc-index: var(--pc-blood);
+  --pc-glyph: '♦';
+}
+
+[data-suit='♣'] {
+  --pc-index: var(--pc-ink);
+  --pc-glyph: '♣';
+}
+
+section[data-rank]::before,
+section[data-rank]::after,
+.photos-page-container[data-rank]::before,
+.photos-page-container[data-rank]::after {
+  content: attr(data-rank) '\A' attr(data-suit);
+  position: absolute;
+  display: block;
+  white-space: pre;
+  font-family: var(--pc-display), var(--pc-suit);
+  font-weight: 900;
+  font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+  line-height: 0.86;
+  letter-spacing: 0;
+  text-align: center;
+  color: var(--pc-index);
+  z-index: 4;
+  pointer-events: none;
+  background: none;
+  height: auto;
+  border-radius: 0;
+}
+
+.photos-page-container[data-rank]::before,
+section[data-rank]::before {
+  top: 20px;
+  left: 22px;
+  right: auto;
+  bottom: auto;
+  width: auto;
+}
+
+.photos-page-container[data-rank]::after,
+section[data-rank]::after {
+  bottom: 20px;
+  right: 22px;
+  top: auto;
+  left: auto;
+  width: auto;
+  transform: rotate(180deg);
+}
+
+/* --- Dealt: the cards land on the table at slightly different angles, the
+       way a hand does. The hero is laid down first and square. --- */
+section:not(.visible) {
+  opacity: 0;
+  transform: translateY(46px) rotate(var(--deal-tilt, -1.2deg)) scale(0.985);
+}
+
+section.visible {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--rest-tilt, 0deg));
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.72s cubic-bezier(0.16, 0.9, 0.24, 1);
+}
+
+#about {
+  --deal-tilt: 1.6deg;
+  --rest-tilt: -0.35deg;
+}
+.sponsors {
+  --deal-tilt: -1.8deg;
+  --rest-tilt: 0.3deg;
+}
+#quick-tips {
+  --deal-tilt: 1.4deg;
+  --rest-tilt: -0.25deg;
+}
+#schedule {
+  --deal-tilt: -1.5deg;
+  --rest-tilt: 0.3deg;
+}
+#course {
+  --deal-tilt: 1.7deg;
+  --rest-tilt: -0.3deg;
+}
+#register {
+  --deal-tilt: -1.4deg;
+  --rest-tilt: 0.25deg;
+}
+#contact {
+  --deal-tilt: 1.5deg;
+  --rest-tilt: -0.3deg;
+}
+
+/* Square a card up when you touch it. */
+section.visible:hover,
+section.visible:focus-within {
+  transform: translateY(-2px) rotate(0deg);
+}
+
+/* --- Section headings --- */
+section > h2,
+.quick-tips-section h2,
+#register [data-phase] > h2 {
+  font-family: var(--pc-display) !important;
+  font-size: clamp(2rem, 4.6vw, 3.1rem) !important;
+  font-weight: 900 !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--pc-ink) !important;
+  text-align: center !important;
+  text-transform: none !important;
+  margin: 0 auto 0.5em !important;
+  max-width: 20ch;
+}
+
+/* The hard-coded spade in the markup gives way to the section's own suit. */
+.ace-icon {
+  display: none !important;
+}
+
+section[data-suit] > h2::before,
+.quick-tips-section[data-suit] h2::before,
+#register[data-suit] [data-phase] > h2::before {
+  content: var(--pc-glyph, '♠');
+  display: block;
+  font-family: var(--pc-suit);
+  font-size: 0.36em;
+  line-height: 1;
+  color: var(--pc-index, var(--pc-ink));
+  margin-bottom: 0.9em;
+}
+
+/* A gilt rule under each heading, the width of a card's centre panel. */
+section > h2::after,
+.quick-tips-section h2::after,
+#register [data-phase] > h2::after {
+  content: '';
+  display: block;
+  width: 64px;
+  height: 2px;
+  margin: 0.5em auto 0;
+  background: var(--pc-gilt);
+}
+
+section p {
+  font-family: var(--pc-body);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--pc-ink);
+}
+
+/* ===================================================================== */
+/* 5. THE ACE — hero                                                     */
+/* ===================================================================== */
+
+.hero {
+  padding: clamp(40px, 5vw, 68px) clamp(24px, 4vw, 58px) clamp(36px, 4vw, 52px) !important;
+  overflow: hidden !important;
+}
+
+.hero-desktop-layout {
+  grid-template-columns: minmax(230px, 300px) 1fr minmax(230px, 290px);
+  gap: clamp(22px, 3.2vw, 48px);
+  align-items: start;
+  padding: 0 !important;
+}
+
+.hero-countdown-side {
+  padding-top: 0 !important;
+}
+
+.hero-card-side {
+  padding-top: 0 !important;
+}
+
+/* The card art is a card: give it card physics. */
+.hero-card-logo {
+  border-radius: 12px !important;
+  background: none !important;
+  box-shadow:
+    0 30px 50px -22px rgba(0, 0, 0, 0.9),
+    0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  transform: rotate(-3deg);
+  transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+.hero-card-side:hover .hero-card-logo,
+.hero-mobile-card:hover .hero-card-logo {
+  transform: rotate(0deg) scale(1.02);
+}
+
+/* --- The marquee: wordmark, discipline, then the where and when --- */
+.hero-marquee {
+  text-align: center;
+  margin: 0 auto clamp(26px, 3.4vw, 44px);
+  max-width: 100%;
+}
+
+.hero h1,
+.hero h1.prologue-card-title {
+  font-family: var(--pc-display) !important;
+  font-size: clamp(3rem, 8.4vw, 6rem) !important;
+  font-weight: 900 !important;
+  line-height: 0.86 !important;
+  letter-spacing: 0.005em !important;
+  color: var(--pc-ink) !important;
+  text-transform: uppercase;
+  margin: 0 !important;
+  text-shadow: none !important;
+}
+
+.hero h2.cyclocross-subtitle {
+  font-family: var(--pc-data) !important;
+  font-weight: 600 !important;
+  font-size: clamp(0.95rem, 2vw, 1.35rem) !important;
+  letter-spacing: 0.58em !important;
+  text-indent: 0.58em;
+  text-transform: uppercase;
+  color: var(--pc-blood) !important;
+  background: none;
+  margin: 0.4rem 0 0 !important;
+  padding: 0;
+  display: block;
+}
+
+/* Where and when, ruled off from the wordmark */
+.hero p.location {
+  font-family: var(--pc-data);
+  font-size: clamp(0.72rem, 1.4vw, 0.86rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft) !important;
+  margin: 1.1rem auto 0 !important;
+  padding-top: 1rem;
+  max-width: none;
+  border-top: 1px solid var(--pc-hairline);
+  display: inline-block;
+}
+
+.hero p.location .pip {
+  font-family: var(--pc-suit);
+  color: var(--pc-ink);
+  margin: 0 0.5em;
+  letter-spacing: 0;
+}
+
+/* --- The turn.
+       PROLOGUE is dealt face down and turned over letter by letter on load.
+       It runs once: a wordmark that spends its life half-replaced by suits is
+       a wordmark nobody can read. Hovering deals it again. --- */
+.hero h1 .flip-letter {
+  min-width: 0 !important;
+  margin: 0 !important;
+  animation: pc-turn 0.62s cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+.hero h1 .letter-front {
+  position: static !important;
+  display: inline-block;
+}
+
+.hero h1 .letter-back {
+  position: absolute;
+  inset: 0;
+  font-family: var(--pc-suit) !important;
+  font-size: 0.58em !important;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes pc-turn {
+  from {
+    transform: rotateY(180deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.hero h1:hover .flip-letter {
+  animation: pc-turn-again 0.72s cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+@keyframes pc-turn-again {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+.hero h1 .flip-letter:nth-child(1) {
+  animation-delay: 0.34s !important;
+}
+.hero h1 .flip-letter:nth-child(2) {
+  animation-delay: 0.42s !important;
+}
+.hero h1 .flip-letter:nth-child(3) {
+  animation-delay: 0.5s !important;
+}
+.hero h1 .flip-letter:nth-child(4) {
+  animation-delay: 0.58s !important;
+}
+.hero h1 .flip-letter:nth-child(5) {
+  animation-delay: 0.66s !important;
+}
+.hero h1 .flip-letter:nth-child(6) {
+  animation-delay: 0.74s !important;
+}
+.hero h1 .flip-letter:nth-child(7) {
+  animation-delay: 0.82s !important;
+}
+.hero h1 .flip-letter:nth-child(8) {
+  animation-delay: 0.9s !important;
+}
+
+/* A hairline above the lead, like a card's centre rule */
+.hero-content-side .ace-theme-copy {
+  border-top: 1px solid var(--pc-hairline);
+  padding-top: 18px;
+  margin-top: 0;
+  font-family: var(--pc-body) !important;
+  max-width: none;
+}
+
+.hero-lead p {
+  font-family: var(--pc-body) !important;
+  font-size: 0.98rem !important;
+  line-height: 1.72 !important;
+  color: var(--pc-ink) !important;
+  text-align: left !important;
+}
+
+.hero-lead p b {
+  display: block;
+  font-family: var(--pc-data);
+  font-size: 1.06rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pc-blood);
+  margin-bottom: 0.15em;
+}
+
+/* The suit that tracks back and forth under the copy — keep it, quieter. */
+.hero-copy-side::after {
+  font-family: var(--pc-suit);
+}
+
+/* ===================================================================== */
+/* 6. THE CLOCK — countdown                                              */
+/* ===================================================================== */
+
+.countdown-container {
+  background: var(--pc-ink) !important;
+  background-image: url('../images/card-back.svg') !important;
+  background-size: 130px 130px !important;
+  background-blend-mode: multiply;
+  border: 1px solid var(--pc-ink) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    inset 0 0 0 5px var(--pc-ink),
+    inset 0 0 0 6px rgba(200, 162, 74, 0.6),
+    0 16px 30px -14px rgba(0, 0, 0, 0.9) !important;
+  padding: 18px 16px 16px !important;
+  max-width: 300px;
+  margin: 0 auto !important;
+  animation: none !important;
+  overflow: hidden;
+}
+
+.countdown-container::before,
+.countdown-container::after {
+  display: none !important;
+  content: none !important;
+}
+
+.countdown-date {
+  font-family: var(--pc-data) !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pc-gilt) !important;
+  text-shadow: none !important;
+  margin: 0 0 2px !important;
+}
+
+.countdown-title {
+  font-family: var(--pc-data) !important;
+  font-size: 0.66rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 242, 231, 0.6) !important;
+  margin: 0 0 12px !important;
+}
+
+.countdown-timer {
+  gap: 6px !important;
+  margin-bottom: 12px !important;
+}
+
+.countdown-item {
+  background: rgba(247, 242, 231, 0.07) !important;
+  border: 1px solid rgba(200, 162, 74, 0.28);
+  border-radius: 4px;
+  padding: 7px 3px 5px !important;
+}
+
+.countdown-item span:first-child,
+.countdown-number,
+#countdown-days,
+#countdown-hours,
+#countdown-minutes,
+#countdown-seconds {
+  font-family: var(--pc-display) !important;
+  font-size: 1.5rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  color: var(--pc-stock) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  font-family: var(--pc-data) !important;
+  font-size: 0.56rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.16em;
+  color: rgba(247, 242, 231, 0.62) !important;
+  margin-top: 3px;
+}
+
+/* ===================================================================== */
+/* 7. BUTTONS — one shape, used everywhere                               */
+/* ===================================================================== */
+
+.hero-register-button,
+.register-button,
+.cta-button,
+.download-btn,
+.back-to-home a {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+  background: var(--pc-blood) !important;
+  background-image: none !important;
+  color: var(--pc-stock) !important;
+  border: 1px solid var(--pc-blood-deep) !important;
+  border-radius: 4px !important;
+  padding: 13px 26px !important;
+  font-family: var(--pc-data) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-shadow: none !important;
+  box-shadow:
+    0 0 0 1px rgba(200, 162, 74, 0.5) inset,
+    0 8px 18px -8px rgba(0, 0, 0, 0.8) !important;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.hero-register-button:hover,
+.register-button:hover,
+.cta-button:hover,
+.download-btn:hover,
+.back-to-home a:hover,
+.hero-register-button:focus-visible,
+.register-button:focus-visible,
+.cta-button:focus-visible {
+  background: var(--pc-ink) !important;
+  color: var(--pc-stock) !important;
+  border-color: var(--pc-ink) !important;
+  transform: translateY(-2px);
+}
+
+.hero-register-button i,
+.register-button i,
+.cta-button i {
+  color: var(--pc-gilt) !important;
+  font-size: 0.95rem !important;
+}
+
+.hero-register-button .register-text,
+.register-button .register-text {
+  line-height: 1.1;
+}
+
+.hero-register-note,
+.register-note,
+.hero .hero-register-note,
+.hero-register-cta .hero-register-note {
+  font-family: var(--pc-data) !important;
+  font-size: 0.72rem !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 242, 231, 0.55) !important;
+  background: none !important;
+  text-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 8px !important;
+}
+
+/* ===================================================================== */
+/* 8. ABOUT                                                              */
+/* ===================================================================== */
+
+#about p,
+.about-section p,
+#course p {
+  text-align: left !important;
+  max-width: 46rem;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  color: var(--pc-ink) !important;
+}
+
+/* The opening paragraph is the standfirst. */
+#about > p:first-of-type {
+  font-size: 1.18rem;
+  line-height: 1.6;
+  color: var(--pc-ink) !important;
+}
+
+#about strong,
+.about-section strong {
+  color: var(--pc-blood);
+  font-weight: 600;
+}
+
+.about-figure {
+  border-radius: 8px;
+  border: 1px solid rgba(17, 24, 35, 0.25);
+  box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.7);
+}
+
+/* ===================================================================== */
+/* 9. SPONSORS — the backers' card                                       */
+/* ===================================================================== */
+
+.sponsors {
+  padding: clamp(34px, 4vw, 52px) clamp(24px, 4vw, 52px) !important;
+}
+
+.sponsors-text {
+  font-family: var(--pc-display) !important;
+  font-size: clamp(1.4rem, 2.6vw, 2rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+  color: var(--pc-ink) !important;
+  text-shadow: none !important;
+  animation: none !important;
+}
+
+.sponsor-logos {
+  gap: clamp(18px, 3vw, 34px) !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+.sponsor-logo {
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.72;
+  transition:
+    filter 0.3s ease,
+    opacity 0.3s ease;
+  mix-blend-mode: multiply;
+}
+
+.sponsor-logos a:hover .sponsor-logo,
+.sponsor-logos a:focus-visible .sponsor-logo {
+  filter: none;
+  opacity: 1;
+}
+
+/* ===================================================================== */
+/* 10. SCHEDULE — the start sheet                                        */
+/* ===================================================================== */
+
+#schedule h3 {
+  font-family: var(--pc-data) !important;
+  font-size: clamp(0.92rem, 2vw, 1.05rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft) !important;
+  margin: 2.4em auto 1.3em !important;
+  max-width: 70rem;
+}
+
+#schedule h3:first-of-type {
+  margin-top: 0.4em !important;
+}
+
+.blue-quotes {
+  color: var(--pc-blood);
+  font-weight: 700;
+}
+
+.blue-quotes::before,
+.blue-quotes::after {
+  content: none !important;
+}
+
+/* Seven races: seven cards laid left to right in running order. */
+#schedule .schedule-grid {
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 10px !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+}
+
+@media (max-width: 1100px) {
+  #schedule .schedule-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #schedule .schedule-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+#schedule .schedule-item,
+.pre-ride-grid .schedule-item,
+.panel,
+.card {
+  min-width: 0 !important;
+  background: var(--pc-stock) !important;
+  border: 1px solid rgba(17, 24, 35, 0.35) !important;
+  border-top: 4px solid var(--pc-ink) !important;
+  border-radius: 3px !important;
+  box-shadow: 0 6px 14px -10px rgba(0, 0, 0, 0.7) !important;
+  min-height: 0 !important;
+  padding: 16px 12px 18px !important;
+  justify-content: flex-start !important;
+  transition:
+    transform 0.2s ease,
+    border-top-color 0.2s ease;
+}
+
+#schedule .schedule-item:hover {
+  transform: translateY(-3px);
+  border-top-color: var(--pc-blood) !important;
+  box-shadow: 0 10px 20px -12px rgba(0, 0, 0, 0.8) !important;
+}
+
+#schedule .event-time,
+#schedule .event-time b {
+  font-family: var(--pc-display) !important;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.05;
+  color: var(--pc-ink) !important;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px !important;
+}
+
+#schedule .event-description {
+  font-family: var(--pc-data) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.05em;
+  line-height: 1.45 !important;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft) !important;
+  border-bottom: none !important;
+  border-top: 1px solid var(--pc-hairline) !important;
+  padding: 8px 0 0 !important;
+  min-width: 0 !important;
+  display: block !important;
+  width: 100%;
+}
+
+/* --- Pre-ride --- */
+.pre-ride-steps {
+  background: var(--pc-stock-shade) !important;
+  background-image: none !important;
+  border: 1px solid rgba(17, 24, 35, 0.3) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  max-width: 720px;
+  padding: 26px 28px !important;
+}
+
+.pre-ride-steps::before {
+  content: none !important;
+}
+
+.pre-ride-steps h4 {
+  font-family: var(--pc-data) !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase;
+  color: var(--pc-blood) !important;
+  margin-bottom: 16px !important;
+}
+
+.steps-icon {
+  animation: none !important;
+  transform: none !important;
+}
+
+.step-item {
+  background: var(--pc-stock) !important;
+  border: 1px solid rgba(17, 24, 35, 0.2);
+  border-left: 3px solid var(--pc-blood) !important;
+  border-radius: 3px !important;
+  padding: 14px 16px !important;
+}
+
+.step-item:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.step-number {
+  background: var(--pc-ink) !important;
+  background-image: none !important;
+  border: none !important;
+  border-radius: 2px !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-family: var(--pc-display) !important;
+  font-weight: 900 !important;
+  font-size: 0.95rem !important;
+  box-shadow: none !important;
+  color: var(--pc-stock) !important;
+}
+
+.step-content p,
+.step-content a {
+  font-family: var(--pc-body) !important;
+  color: var(--pc-ink) !important;
+}
+
+.step-content a {
+  color: var(--pc-blood) !important;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(196, 22, 28, 0.4) !important;
+}
+
+.step-content a:hover {
+  border-bottom-color: var(--pc-blood) !important;
+  color: var(--pc-blood-deep) !important;
+}
+
+/* ===================================================================== */
+/* 11. COURSE                                                            */
+/* ===================================================================== */
+
+#course {
+  color: var(--pc-ink) !important;
+}
+
+#course h2 {
+  color: var(--pc-ink) !important;
+}
+
+#course p {
+  color: var(--pc-ink) !important;
+  text-align: left !important;
+  max-width: 68ch;
+}
+
+#course > p:first-of-type strong {
+  font-family: var(--pc-data);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pc-blood);
+}
+
+#course strong {
+  color: var(--pc-blood);
+}
+
+.course-map {
+  border: 1px solid rgba(17, 24, 35, 0.35) !important;
+  border-radius: 6px !important;
+  max-width: 100% !important;
+  box-shadow: 0 20px 40px -22px rgba(0, 0, 0, 0.8) !important;
+  margin: 32px auto 0 !important;
+}
+
+/* ===================================================================== */
+/* 12. REGISTER — the money card                                         */
+/* ===================================================================== */
+
+#register h2 {
+  color: var(--pc-ink) !important;
+}
+
+.register-icon {
+  border: 1px solid rgba(17, 24, 35, 0.4) !important;
+  border-radius: 8px !important;
+  background: var(--pc-stock) !important;
+  width: 108px !important;
+  height: 150px !important;
+  margin: 0 auto;
+  box-shadow:
+    inset 0 0 0 5px var(--pc-stock),
+    inset 0 0 0 6px rgba(200, 162, 74, 0.6),
+    0 20px 34px -18px rgba(0, 0, 0, 0.85) !important;
+  animation: none !important;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+.register-icon-link {
+  width: 108px !important;
+  height: 150px !important;
+}
+
+.register-icon-link:hover .register-icon,
+.register-icon-link:focus-visible .register-icon {
+  transform: rotate(-4deg) scale(1.04);
+  background: var(--pc-stock) !important;
+  box-shadow:
+    inset 0 0 0 5px var(--pc-stock),
+    inset 0 0 0 6px var(--pc-gilt),
+    0 26px 40px -18px rgba(0, 0, 0, 0.9) !important;
+}
+
+.register-icon .fa-hand-paper {
+  display: none !important;
+}
+
+.register-icon .fa-trophy {
+  position: absolute;
+  bottom: 14px;
+  font-size: 1.1rem !important;
+  color: var(--pc-gilt) !important;
+}
+
+.card-symbols {
+  opacity: 1 !important;
+  animation: none !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px !important;
+}
+
+.card-symbol {
+  font-family: var(--pc-suit);
+  font-size: 1.5rem !important;
+  animation: none !important;
+}
+
+.card-symbol.spade,
+.card-symbol.club {
+  color: var(--pc-ink) !important;
+}
+
+.card-symbol.heart,
+.card-symbol.diamond {
+  color: var(--pc-blood) !important;
+}
+
+.register-details {
+  font-family: var(--pc-body);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--pc-ink) !important;
+}
+
+.register-details strong {
+  font-family: var(--pc-data);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.82rem;
+  color: var(--pc-ink-soft);
+}
+
+.register-note {
+  color: var(--pc-ink-soft) !important;
+}
+
+/* ===================================================================== */
+/* 13. CONTACT                                                           */
+/* ===================================================================== */
+
+#contact h2 {
+  color: var(--pc-ink) !important;
+}
+
+.contact-intro,
+.contact-outro {
+  font-family: var(--pc-body) !important;
+  font-size: 1.05rem !important;
+  font-style: normal !important;
+  color: var(--pc-ink-soft) !important;
+  max-width: 52ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contact-grid {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 14px !important;
+  margin: 2.2rem 0 !important;
+}
+
+@media (max-width: 1000px) {
+  .contact-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.contact-item {
+  background: var(--pc-stock) !important;
+  border: 1px solid rgba(17, 24, 35, 0.3) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  padding: 22px !important;
+}
+
+.contact-item::before {
+  content: none !important;
+}
+
+.contact-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--pc-gilt) !important;
+  box-shadow: 0 12px 22px -14px rgba(0, 0, 0, 0.7) !important;
+}
+
+.contact-icon {
+  width: 34px !important;
+  height: 34px !important;
+  background: none !important;
+  background-image: none !important;
+  border: 1px solid var(--pc-hairline) !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  margin-bottom: 14px !important;
+}
+
+.contact-icon i {
+  font-size: 0.95rem !important;
+  color: var(--pc-blood) !important;
+}
+
+.contact-info h3 {
+  font-family: var(--pc-data) !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft) !important;
+  margin-bottom: 6px !important;
+}
+
+.contact-info a {
+  font-family: var(--pc-body);
+  font-size: 1.02rem !important;
+  font-weight: 600;
+  color: var(--pc-royal) !important;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(27, 59, 139, 0.35);
+}
+
+.contact-info a:hover {
+  color: var(--pc-blood) !important;
+  border-bottom-color: var(--pc-blood);
+  text-decoration: none !important;
+}
+
+.social-description {
+  font-family: var(--pc-body);
+  font-size: 0.86rem !important;
+  font-style: normal !important;
+  color: var(--pc-ink-soft) !important;
+}
+
+/* ===================================================================== */
+/* 14. FOOT OF THE TABLE                                                 */
+/* ===================================================================== */
+
+.footer-card-logo-container {
+  padding: 34px 0 6px !important;
+}
+
+.footer-card-logo {
+  background: none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 24px 44px -22px rgba(0, 0, 0, 0.95) !important;
+  transform: rotate(2.5deg);
+}
+
+footer {
+  background: var(--pc-ink-deep) !important;
+  color: rgba(247, 242, 231, 0.5) !important;
+  border-top: 2px solid var(--pc-gilt) !important;
+  font-family: var(--pc-data) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 26px 0 22px !important;
+  margin-top: 20px !important;
+}
+
+/* ===================================================================== */
+/* 15. PHOTOS PAGE                                                       */
+/* ===================================================================== */
+
+.photos-page-container {
+  background: var(--pc-stock);
+  border: 1px solid rgba(17, 24, 35, 0.45);
+  border-radius: var(--pc-radius);
+  box-shadow: var(--pc-card-shadow);
+  max-width: 1180px;
+  width: calc(100% - clamp(20px, 5vw, 64px));
+  margin: clamp(16px, 2.5vw, 34px) auto;
+  padding: clamp(38px, 4.4vw, 60px) clamp(24px, 4vw, 50px) !important;
+  position: relative;
+}
+
+.photos-page-header h1::before {
+  content: var(--pc-glyph, '♠');
+  display: block;
+  font-family: var(--pc-suit);
+  font-size: 0.36em;
+  line-height: 1;
+  color: var(--pc-index, var(--pc-ink));
+  margin-bottom: 0.9em;
+}
+
+.photos-page-header h1 {
+  font-family: var(--pc-display) !important;
+  font-size: clamp(2rem, 4.6vw, 3.1rem) !important;
+  font-weight: 900 !important;
+  text-align: center;
+  color: var(--pc-ink) !important;
+  margin: 0 0 0.4em;
+}
+
+.photos-page-description {
+  font-family: var(--pc-body);
+  text-align: center;
+  max-width: 56ch;
+  margin: 0 auto 2rem;
+  color: var(--pc-ink-soft);
+}
+
+.gallery-year-btn {
+  font-family: var(--pc-data) !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em;
+  background: transparent !important;
+  color: var(--pc-ink-soft) !important;
+  border: 1px solid rgba(17, 24, 35, 0.3) !important;
+  border-radius: 3px !important;
+  padding: 8px 18px !important;
+  cursor: pointer;
+}
+
+.gallery-year-btn[aria-selected='true'] {
+  background: var(--pc-ink) !important;
+  color: var(--pc-stock) !important;
+  border-color: var(--pc-ink) !important;
+}
+
+.gallery-stats {
+  font-family: var(--pc-data);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft);
+}
+
+.back-to-home {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
+/* Photos are prints: stock border, a real shadow, and a slight turn when you
+   reach for one. */
+.photo-grid {
+  gap: 16px !important;
+  padding: 0 !important;
+}
+
+.photo-item {
+  background: var(--pc-stock);
+  border-radius: 3px !important;
+  overflow: visible !important;
+  padding: 6px 6px 6px !important;
+  box-shadow: 0 12px 22px -14px rgba(0, 0, 0, 0.9);
+}
+
+.photo-item img {
+  border-radius: 1px;
+  display: block;
+}
+
+.photo-item:hover,
+.photo-item:focus-visible {
+  transform: translateY(-6px) rotate(-1.4deg) !important;
+  box-shadow: 0 22px 32px -14px rgba(0, 0, 0, 0.95) !important;
+  z-index: 2;
+}
+
+.lightbox {
+  background: rgba(6, 10, 16, 0.94) !important;
+}
+
+.lightbox-info h3 {
+  font-family: var(--pc-data) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pc-stock) !important;
+}
+
+.lightbox-nav-btn,
+.lightbox-close {
+  color: var(--pc-gilt) !important;
+}
+
+/* ===================================================================== */
+/* 16. THE DEAL — page load                                              */
+/* ===================================================================== */
+
+.hero .hero-card-side,
+.hero .hero-mobile-card {
+  animation: pc-deal 0.85s cubic-bezier(0.16, 0.9, 0.24, 1) both;
+}
+
+@keyframes pc-deal {
+  from {
+    opacity: 0;
+    transform: translate(120px, -90px) rotate(16deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+.hero .hero-marquee {
+  animation: pc-rise 0.6s ease-out 0.28s both;
+}
+
+.hero .ace-theme-copy {
+  animation: pc-rise 0.6s ease-out 0.4s both;
+}
+
+.hero .hero-countdown-side,
+.hero .hero-mobile-countdown {
+  animation: pc-rise 0.6s ease-out 0.52s both;
+}
+
+@keyframes pc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================================================================== */
+/* 17. RESPONSIVE                                                        */
+/* ===================================================================== */
+
+/* --- The mobile panel: the same hand, dealt as a list --- */
+@media (max-width: 768px) {
+  nav#main-nav {
+    background-color: var(--pc-ink-deep) !important;
+    background-image:
+      linear-gradient(rgba(10, 15, 23, 0.88), rgba(10, 15, 23, 0.94)),
+      url('../images/card-back.svg') !important;
+    background-size:
+      100% 100%,
+      130px 130px !important;
+    background-repeat: no-repeat, repeat !important;
+    border: 2px solid var(--pc-gilt) !important;
+    border-top: none !important;
+    border-radius: 0 0 10px 10px !important;
+    box-shadow: 0 18px 34px -14px rgba(0, 0, 0, 0.95) !important;
+    padding: 8px !important;
+  }
+
+  nav#main-nav a {
+    font-family: var(--pc-data) !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--pc-stock) !important;
+    text-shadow: none !important;
+    background: rgba(247, 242, 231, 0.05);
+    border: 1px solid rgba(200, 162, 74, 0.22) !important;
+    border-radius: 4px !important;
+    padding: 13px 16px !important;
+    margin-bottom: 5px;
+  }
+
+  /* The index replaces the sliding accent bar the old menu used. */
+  nav#main-nav a::before {
+    content: attr(data-rank) attr(data-suit) !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 2.6em;
+    display: inline-block;
+    background: none !important;
+    transform: none !important;
+    font-family: var(--pc-display), var(--pc-suit);
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: var(--pc-gilt);
+    margin-right: 14px;
+  }
+
+  nav#main-nav a:hover,
+  nav#main-nav a:focus {
+    background: rgba(200, 162, 74, 0.16) !important;
+    color: var(--pc-stock) !important;
+    padding-left: 16px !important;
+    letter-spacing: 0.16em !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  nav#main-nav .menu-icon {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  section,
+  #schedule,
+  #course,
+  .hero,
+  .sponsors {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: calc(100% - 20px) !important;
+    padding: 30px 20px !important;
+    --pc-inset: 8px;
+    /* One card fills the screen on a phone, so the fan's tilt reads as a
+       rendering fault rather than a hand. Lay them straight. */
+    --rest-tilt: 0deg !important;
+    --deal-tilt: 0deg !important;
+  }
+
+  .hero .hero-mobile-card {
+    animation-name: pc-rise;
+  }
+
+  /* Leave the corner index room before the wordmark starts. */
+  .hero-marquee {
+    margin-top: 22px;
+  }
+
+  section[data-rank]::before {
+    top: 14px;
+    left: 15px;
+  }
+
+  section[data-rank]::after {
+    bottom: 14px;
+    right: 15px;
+  }
+
+  .hero-mobile-card .hero-card-logo {
+    max-width: 220px;
+    margin: 0 auto;
+  }
+
+  .hero-lead p {
+    text-align: left !important;
+    padding: 0 !important;
+  }
+
+  .contact-item {
+    text-align: left !important;
+  }
+
+  .contact-icon {
+    margin: 0 0 14px !important;
+  }
+
+  footer {
+    font-size: 0.68rem !important;
+  }
+}
+
+/* ===================================================================== */
+/* 18. REDUCED MOTION                                                    */
+/* ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  section:not(.visible) {
+    opacity: 1;
+    transform: none;
+  }
+
+  section.visible,
+  #about,
+  .sponsors,
+  #quick-tips,
+  #schedule,
+  #course,
+  #register,
+  #contact {
+    transform: none !important;
+  }
+
+  .hero-card-logo,
+  .footer-card-logo {
+    transform: none !important;
+  }
+}
+
+/* ===================================================================== */
+/* 19. LATE CORRECTIONS                                                  */
+/* ===================================================================== */
+
+/* One pre-ride session, so one centred slot rather than column 1 of 3. */
+.pre-ride-grid {
+  grid-template-columns: minmax(0, 220px) !important;
+  justify-content: center !important;
+  max-width: none !important;
+}
+
+/* ===================================================================== */
+/* 20. STANDALONE PAGE CARDS — tech guide, 404                           */
+/* ===================================================================== */
+
+/* Standalone pages have nothing to scroll into, so they are never hidden
+    waiting for the deal. */
+section.page-card,
+section.page-card:not(.visible) {
+  opacity: 1;
+  transform: none;
+}
+
+.page-card > h2 {
+  margin-top: 0.2em !important;
+}
+
+.page-lead {
+  font-family: var(--pc-body);
+  font-size: 1.06rem;
+  line-height: 1.65;
+  text-align: center;
+  max-width: 46ch;
+  margin: 0 auto 2rem;
+  color: var(--pc-ink-soft);
+}
+
+.tech-frame {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  height: min(78vh, 980px);
+  margin: 0 auto;
+  border: 1px solid rgba(17, 24, 35, 0.4);
+  border-radius: 4px;
+  background: var(--pc-stock-shade);
+}
+
+.page-note {
+  font-family: var(--pc-data);
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--pc-ink-soft);
+  margin: 1.4rem 0 0;
+}
+
+.page-note a {
+  color: var(--pc-blood);
+  border-bottom: 1px solid rgba(196, 22, 28, 0.4);
+  text-decoration: none;
+}
+
+/* --- The 404 lays the rest of the deck out face up --- */
+.deck-hand {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto;
+  padding: 0;
+  /* Four to a row, two rows: a tidy eight-card layout rather than 6 + 2. */
+  max-width: 428px;
+}
+
+.deck-hand a {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 92px;
+  height: 128px;
+  padding: 8px 10px 12px;
+  background: var(--pc-stock);
+  color: var(--pc-ink);
+  border: 1px solid rgba(17, 24, 35, 0.45);
+  border-radius: 7px;
+  box-shadow:
+    inset 0 0 0 5px var(--pc-stock),
+    inset 0 0 0 6px rgba(200, 162, 74, 0.5),
+    0 14px 24px -14px rgba(0, 0, 0, 0.8);
+  font-family: var(--pc-data);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.9, 0.25, 1),
+    box-shadow 0.25s ease;
+}
+
+.deck-hand a::before {
+  content: attr(data-rank) '\A' attr(data-suit);
+  white-space: pre;
+  font-family: var(--pc-display), var(--pc-suit);
+  font-weight: 900;
+  font-size: 0.95rem;
+  line-height: 0.86;
+  letter-spacing: 0;
+  color: var(--pc-index, var(--pc-ink));
+  margin-bottom: auto;
+}
+
+.deck-hand a:hover,
+.deck-hand a:focus-visible {
+  transform: translateY(-8px);
+  box-shadow:
+    inset 0 0 0 5px var(--pc-stock),
+    inset 0 0 0 6px var(--pc-gilt),
+    0 22px 32px -14px rgba(0, 0, 0, 0.9);
+}
+
+/* The joker carries a word where a rank would be, so it is set smaller. */
+section[data-rank='JOKER']::before,
+section[data-rank='JOKER']::after {
+  font-family: var(--pc-data);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  writing-mode: vertical-rl;
+}
+
+section[data-rank='JOKER']::after {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 600px) {
+  .deck-hand a {
+    width: 78px;
+    height: 108px;
+    font-size: 0.68rem;
+  }
+}

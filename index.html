@@ -110,19 +110,17 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <!-- Add Google Fonts -->
+    <!-- PROLOGUE DECK TYPE
+         Bodoni Moda  display / card indices (a card index is a didone)
+         Barlow       body
+         Barlow Condensed  race data, labels, nav -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700..900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Stardos+Stencil:wght@700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap"
-      rel="stylesheet"
-    />
+
+    <!-- PROLOGUE DECK — loaded last, owns the skin -->
+    <link rel="stylesheet" href="css/deck.css" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -140,14 +138,30 @@
         <span class="hamburger"></span>
       </a>
       <nav id="main-nav" role="navigation" aria-label="Main navigation">
-        <a href="#home"><i class="fas fa-home menu-icon"></i>Home</a>
-        <a href="#about"><i class="fas fa-info-circle menu-icon"></i>About</a>
-        <a href="#quick-tips"><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a>
-        <a href="#schedule"><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a>
-        <a href="#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
-        <a href="photos.html"><i class="fas fa-camera menu-icon"></i>Photos ✨</a>
-        <a href="#register"><i class="fas fa-user-plus menu-icon"></i>Register</a>
-        <a href="tech-guide.html"><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a>
+        <a href="#home" data-rank="A" data-suit="&#9824;"
+          ><i class="fas fa-home menu-icon"></i>Home</a
+        >
+        <a href="#about" data-rank="2" data-suit="&#9829;"
+          ><i class="fas fa-info-circle menu-icon"></i>About</a
+        >
+        <a href="#quick-tips" data-rank="4" data-suit="&#9827;"
+          ><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a
+        >
+        <a href="#schedule" data-rank="5" data-suit="&#9824;"
+          ><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a
+        >
+        <a href="#course" data-rank="6" data-suit="&#9824;"
+          ><i class="fas fa-map-marked-alt menu-icon"></i>Course</a
+        >
+        <a href="photos.html" data-rank="J" data-suit="&#9829;"
+          ><i class="fas fa-camera menu-icon"></i>Photos</a
+        >
+        <a href="#register" data-rank="7" data-suit="&#9830;"
+          ><i class="fas fa-user-plus menu-icon"></i>Register</a
+        >
+        <a href="tech-guide.html" data-rank="J" data-suit="&#9827;"
+          ><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a
+        >
       </nav>
       <div class="audio-promo-container compact">
         <button class="audio-play-btn" aria-label="Play Race Outline" tabindex="0">
@@ -164,8 +178,18 @@
     </header>
 
     <main id="main" role="main">
-      <section id="home" class="hero section-grid">
-        <!-- Desktop Layout: Card + Title + Copy + Countdown -->
+      <section id="home" class="hero section-grid" data-rank="A" data-suit="&#9824;">
+        <!-- The wordmark runs full width: the letters flip to reveal suits -->
+        <div class="hero-marquee">
+          <h1 class="prologue-card-title">Prologue</h1>
+          <h2 class="cyclocross-subtitle">Cyclocross</h2>
+          <p class="location">
+            Uxbridge, Ontario <span class="pip" aria-hidden="true">&#9824;</span> Sunday, October
+            18, 2026
+          </p>
+        </div>
+
+        <!-- Desktop Layout: Card + Copy + Countdown -->
         <div class="hero-desktop-layout">
           <div class="hero-card-side">
             <div class="hero-card-rotator hero-card-logo" data-rotate-interval="7000">
@@ -185,13 +209,6 @@
             </div>
           </div>
           <div class="hero-content-side">
-            <!-- Interactive PROLOGUE Title -->
-            <div class="hero-title-section">
-              <h1 class="prologue-card-title">Prologue</h1>
-              <h2 class="cyclocross-subtitle">Cyclocross</h2>
-              <p class="location">Uxbridge</p>
-            </div>
-
             <!-- Hero Copy -->
             <div class="ace-theme-copy">
               <div class="hero-lead">
@@ -264,11 +281,6 @@
               />
             </div>
           </div>
-          <div class="hero-mobile-title">
-            <h1 class="prologue-card-title">Prologue</h1>
-            <h2 class="cyclocross-subtitle">Cyclocross</h2>
-            <p class="location">Uxbridge</p>
-          </div>
           <div class="hero-mobile-copy">
             <div class="ace-theme-copy">
               <div class="hero-lead">
@@ -323,7 +335,7 @@
         </div>
       </section>
 
-      <section id="about" class="about-section">
+      <section id="about" class="about-section" data-rank="2" data-suit="&#9829;">
         <h2><span class="ace-icon">♠</span>The Prologue Experience</h2>
         <p>
           Get ready to race, ride and discover cyclocross. Prologue Cross takes over
@@ -374,7 +386,7 @@
         </p>
       </section>
 
-      <section class="sponsors">
+      <section class="sponsors" data-rank="3" data-suit="&#9829;">
         <div class="sponsor-logos">
           <!-- Stylized "Our Sponsors!" text in top left -->
           <div class="sponsors-title">
@@ -441,9 +453,7 @@
         </div>
       </section>
 
-      <section id="quick-tips" class="quick-tips-section">
-        <div class="qt-tape" aria-hidden="true"></div>
-
+      <section id="quick-tips" class="quick-tips-section" data-rank="4" data-suit="&#9827;">
         <div class="qt-inner">
           <h2><span class="ace-icon">♠</span>What you really need to know</h2>
           <p class="quick-tips-intro">
@@ -566,7 +576,7 @@
         </div>
       </section>
 
-      <section id="schedule">
+      <section id="schedule" data-rank="5" data-suit="&#9824;">
         <h2><span class="ace-icon">♠</span>Schedule</h2>
         <h3><span class="blue-quotes">RACE DAY</span> on Sunday, October 18, 2026</h3>
         <div class="schedule-grid">
@@ -639,7 +649,7 @@
         </div>
       </section>
 
-      <section id="course">
+      <section id="course" data-rank="6" data-suit="&#9824;">
         <h2><span class="ace-icon">♠</span>The Course</h2>
         <p><strong>Tackle the Terrain. Get Ready to Ride or Race.</strong></p>
 
@@ -668,7 +678,7 @@
         </div>
       </section>
 
-      <section id="register">
+      <section id="register" data-rank="7" data-suit="&#9830;">
         <div class="register-phase" data-flip-at="2026-10-18T16:00:00-04:00">
           <div data-phase="pre">
             <h2><span class="ace-icon">♠</span>Deal Yourself In</h2>
@@ -753,7 +763,7 @@
         </div>
       </section>
 
-      <section id="contact">
+      <section id="contact" data-rank="8" data-suit="&#9829;">
         <h2><span class="ace-icon">♠</span>Contact Us</h2>
         <div class="contact-content">
           <p class="contact-intro">

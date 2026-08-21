@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <!--
+    Prologue Deck — the back of the card.
+    A guilloche lattice of interlocking rosettes with a spade pip at each
+    junction. Tiles seamlessly: every circle centre sits on a tile corner or
+    the exact centre, so the arcs continue across the seam.
+  -->
+  <defs>
+    <g id="pip">
+      <path d="M0 -10.5C0 -10.5 -8 -4 -8 1.2C-8 4.3 -5.9 6.4 -3.3 6.4C-2.1 6.4 -1.1 5.9 -0.5 5.1C-0.7 7.6 -1.6 9.4 -2.8 10.5H2.8C1.6 9.4 0.7 7.6 0.5 5.1C1.1 5.9 2.1 6.4 3.3 6.4C5.9 6.4 8 4.3 8 1.2C8 -4 0 -10.5 0 -10.5Z" />
+    </g>
+  </defs>
+
+  <rect width="160" height="160" fill="#111823" />
+
+  <!-- Lattice: diagonal filigree threads -->
+  <g stroke="#1b3b8b" stroke-width="1" fill="none" opacity="0.55">
+    <path d="M-20 20 L180 -180 M-20 60 L180 -140 M-20 100 L180 -100 M-20 140 L180 -60
+             M-20 180 L180 -20 M-20 220 L180 20 M-20 260 L180 60 M-20 300 L180 100" />
+    <path d="M180 20 L-20 -180 M180 60 L-20 -140 M180 100 L-20 -100 M180 140 L-20 -60
+             M180 180 L-20 -20 M180 220 L-20 20 M180 260 L-20 60 M180 300 L-20 100" />
+  </g>
+
+  <!-- Rosettes on the tile corners and centre -->
+  <g stroke="#c4161c" fill="none" opacity="0.6">
+    <g stroke-width="1.4">
+      <circle cx="0" cy="0" r="46" />
+      <circle cx="160" cy="0" r="46" />
+      <circle cx="0" cy="160" r="46" />
+      <circle cx="160" cy="160" r="46" />
+      <circle cx="80" cy="80" r="46" />
+    </g>
+    <g stroke-width="0.9" opacity="0.7">
+      <circle cx="0" cy="0" r="33" />
+      <circle cx="160" cy="0" r="33" />
+      <circle cx="0" cy="160" r="33" />
+      <circle cx="160" cy="160" r="33" />
+      <circle cx="80" cy="80" r="33" />
+    </g>
+  </g>
+
+  <!-- Spade pips at the lattice junctions -->
+  <g fill="#c4161c" opacity="0.85">
+    <use href="#pip" transform="translate(80 80) scale(0.85)" />
+    <use href="#pip" transform="translate(0 0) scale(0.85)" />
+    <use href="#pip" transform="translate(160 0) scale(0.85)" />
+    <use href="#pip" transform="translate(0 160) scale(0.85)" />
+    <use href="#pip" transform="translate(160 160) scale(0.85)" />
+  </g>
+  <g fill="#1b3b8b" opacity="0.9">
+    <use href="#pip" transform="translate(80 0) scale(0.6)" />
+    <use href="#pip" transform="translate(0 80) scale(0.6)" />
+    <use href="#pip" transform="translate(160 80) scale(0.6)" />
+    <use href="#pip" transform="translate(80 160) scale(0.6)" />
+  </g>
+</svg>

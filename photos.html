@@ -542,6 +542,13 @@
         }
       }
     </style>
+
+    <!-- PROLOGUE DECK -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700..900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/deck.css" />
   </head>
   <body>
     <header>
@@ -558,14 +565,30 @@
         <span class="hamburger"></span>
       </a>
       <nav id="main-nav" role="navigation" aria-label="Main navigation">
-        <a href="index.html#home"><i class="fas fa-home menu-icon"></i>Home</a>
-        <a href="index.html#about"><i class="fas fa-info-circle menu-icon"></i>About</a>
-        <a href="index.html#quick-tips"><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a>
-        <a href="index.html#schedule"><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a>
-        <a href="index.html#course"><i class="fas fa-map-marked-alt menu-icon"></i>Course</a>
-        <a href="photos.html" aria-current="page"><i class="fas fa-camera menu-icon"></i>Photos</a>
-        <a href="index.html#register"><i class="fas fa-user-plus menu-icon"></i>Register</a>
-        <a href="tech-guide.html"><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a>
+        <a href="index.html#home" data-rank="A" data-suit="&#9824;"
+          ><i class="fas fa-home menu-icon"></i>Home</a
+        >
+        <a href="index.html#about" data-rank="2" data-suit="&#9829;"
+          ><i class="fas fa-info-circle menu-icon"></i>About</a
+        >
+        <a href="index.html#quick-tips" data-rank="4" data-suit="&#9827;"
+          ><i class="fas fa-lightbulb menu-icon"></i>Quick Tips</a
+        >
+        <a href="index.html#schedule" data-rank="5" data-suit="&#9824;"
+          ><i class="fas fa-calendar-alt menu-icon"></i>Schedule</a
+        >
+        <a href="index.html#course" data-rank="6" data-suit="&#9824;"
+          ><i class="fas fa-map-marked-alt menu-icon"></i>Course</a
+        >
+        <a href="photos.html" aria-current="page" data-rank="J" data-suit="&#9829;"
+          ><i class="fas fa-camera menu-icon"></i>Photos</a
+        >
+        <a href="index.html#register" data-rank="7" data-suit="&#9830;"
+          ><i class="fas fa-user-plus menu-icon"></i>Register</a
+        >
+        <a href="tech-guide.html" data-rank="J" data-suit="&#9827;"
+          ><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a
+        >
       </nav>
       <div class="audio-promo-container compact">
         <button class="audio-play-btn" aria-label="Play Race Outline" tabindex="0">
@@ -582,10 +605,10 @@
     </header>
 
     <main>
-      <div class="photos-page-container">
+      <div class="photos-page-container" data-rank="J" data-suit="&#9829;">
         <!-- Page Header -->
         <div class="photos-page-header">
-          <h1><span class="ace-icon">♠</span><span id="gallery-title">2025 Event Photos</span></h1>
+          <h1><span id="gallery-title">2025 Event Photos</span></h1>
           <p class="photos-page-description" id="gallery-description">
             Browse and download professional photos from the Prologue Cyclocross 2025 event. Click
             any photo to view and download the high-resolution version.

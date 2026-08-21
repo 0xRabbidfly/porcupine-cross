@@ -649,10 +649,10 @@ class App {
 
       // Available suits and their colors
       const suits = [
-        { symbol: '♠', color: '#000000' }, // Spade - black
-        { symbol: '♣', color: '#000000' }, // Club - black
-        { symbol: '♥', color: '#e73e3a' }, // Heart - red
-        { symbol: '♦', color: '#e73e3a' }, // Diamond - red
+        { symbol: '♠', color: '#111823' }, // Spade - ink
+        { symbol: '♣', color: '#111823' }, // Club - ink
+        { symbol: '♥', color: '#c4161c' }, // Heart - blood
+        { symbol: '♦', color: '#c4161c' }, // Diamond - blood
       ];
 
       // Create flipping letter structure
