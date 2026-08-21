@@ -116,23 +116,6 @@ section,
   box-sizing: border-box;
 }
 
-section::before,
-#schedule::before,
-#course::before,
-.hero::before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 18px;
-  border-radius: 22px 22px 0 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
 section {
   padding: 70px 4%;
   border-bottom: none;
