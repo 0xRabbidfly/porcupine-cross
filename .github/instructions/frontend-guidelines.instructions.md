@@ -1,0 +1,233 @@
+---
+description: 'Frontend guidelines & best practices for the Porcupine Cross site.'
+applyTo: '**'
+---
+
+# Frontend Guidelines & Best Practices
+
+## 1. Architecture & Code Organization
+
+### Component-Based Architecture
+
+- Each UI component should be self-contained with isolated state
+- Clear public API for component interaction
+- Event-based communication via eventBus pattern
+- Modular CSS files for each component
+- **Component Integration**: New components must integrate cleanly with existing app architecture via `main.js` initialization
+- **Event Handling**: Support both keyboard and touch interactions for cross-platform compatibility
+- **State Management**: Use clear state machines with `isActive` flags to prevent multiple simultaneous activations
+
+### File Structure Standards
+
+- `/js/components/` - UI components (CountdownTimer, AudioManager, etc.)
+- `/js/core/` - Core services (eventBus, AnimationSystem, App)
+- `/js/utils/` - Utility functions (domUtils, audioUtils)
+- `/css/components/` - Component-specific styles
+- `/tests/unit/` - Unit tests for all components
+
+### File Organization Principles
+
+- **One Component, One File**: Never mix multiple components
+- **Flat Directory Structure**: Avoid deep nesting (max 3 levels)
+- **Consistent Naming**: Use kebab-case for files, PascalCase for classes
+- **Logical Grouping**: Group by feature, not by file type
+
+### Module System & Dependencies
+
+- Use ES6+ modules with import/export
+- **Import Ordering**: External → Internal → Relative imports
+- **Circular Dependencies**: Strictly forbidden
+- Minimal global namespace pollution
+- Clear separation of concerns
+
+## 2. Code Quality & Maintenance
+
+### Zero-Tolerance Deprecated Code Policy
+
+- **Immediate Removal**: Delete deprecated code as soon as replacement is ready
+- **No Backwards Compatibility**: Clean breaks preferred over compatibility layers
+- **No Commented Code**: Delete unused code blocks immediately
+- **Aggressive Consolidation**: Merge duplicate functionality without delay
+
+### Quality Metrics & Targets
+
+- **Cyclomatic Complexity**: < 10 per function
+- **Function Length**: < 50 lines per function
+- **Class Size**: < 300 lines per class
+- **File Size**: CSS < 400 lines, JS < 500 lines
+- **Test Coverage**: > 80% coverage
+- **Total Project**: Aim for <10K lines of active code
+
+### Regular Cleanup Schedule
+
+- **Weekly**: Review and remove unused CSS variables and classes
+- **Monthly**: Audit all imports and dependencies for usage
+- **Before Each Feature**: Aggressive cleanup of related areas
+
+### Cleanup Checklist
+
+- [ ] Remove commented-out code blocks
+- [ ] Consolidate duplicate functionality
+- [ ] Delete unused files and dependencies
+- [ ] Minimize CSS variable declarations
+- [ ] Streamline HTML element structure
+- [ ] Consolidate inline scripts
+
+## 3. CSS Best Practices
+
+### Modular CSS Architecture
+
+- Component-based CSS with scoped class names
+- Use CSS variables for theming and animation timing
+- Separate files for each component's styles
+- Clear hierarchy: theme.css → component CSS → specific overrides
+
+### Responsive Design
+
+- Mobile-first responsive design approach
+- Percentage-based positioning for responsive elements
+- Dynamic repositioning based on viewport dimensions
+- Container-relative positioning for accuracy
+
+### CSS Performance & Animations
+
+- **Selector Efficiency**: Avoid complex nested selectors
+- **Hardware Acceleration**: Use transform3d() for animations
+- **Critical Path**: Inline critical CSS, async load non-critical
+- **CSS Containment**: Use `contain` property for isolated components
+- Use CSS transitions for smooth animations
+- Transform and opacity for performance
+- Unified AnimationSystem API for complex animations
+
+## 4. JavaScript Best Practices
+
+### Event Management
+
+- Use event delegation for efficient handling
+- EventBus pattern for component communication
+- Publish-subscribe pattern for decoupled components
+- **Debouncing/Throttling**: For scroll and resize events
+
+### State Management
+
+- State machine pattern for UI components
+- Clear state transitions preventing invalid changes
+- Singleton pattern for core services (AnimationSystem, AudioManager)
+- Track animation states properly
+
+### JavaScript Performance
+
+- Minimal DOM manipulation
+- CSS transitions over JavaScript animations
+- **Memory Management**: Clean up event listeners and timers
+- **Animation**: Prefer CSS transforms over JavaScript manipulation
+- Efficient animation batching and queuing
+- Progressive enhancement approach
+- **Animation Sequencing**: Use `setTimeout` chains for complex multi-stage animations
+- **Interval Management**: Always clear intervals in cleanup methods to prevent memory leaks
+
+## 5. Testing & Quality Assurance
+
+### Test Coverage Standards
+
+- Unit tests for all components and utilities
+- Jest as main test runner and assertion library
+- @testing-library/dom for DOM testing utilities
+- High test coverage for critical code paths
+
+### Testing Patterns
+
+- **Effective Mocking**: Tests should verify the public API and observable behavior, not internal implementation details
+- **Minimal DOM Mocking**: Avoid complex, manual DOM mocking. Use simple element mocks for basic tests
+- **Browser API Polyfilling**: Create polyfills for browser APIs (`KeyboardEvent`, `Event`) in `tests/jest.setup.js`
+- **Test Environment Setup**: Ensure Jest setup file provides all necessary browser API mocks for consistent testing
+- Test-driven development for core components
+- Component-specific coverage goals
+
+## 6. Development Tooling & Workflow
+
+### Required Tools
+
+- **Linting**: ESLint v9+ with centralized flat config (`eslint.config.js`)
+- **Testing**: Jest for unit tests + coverage reporting
+- **Formatting**: Prettier for consistent code formatting
+- **Pre-commit**: Husky + lint-staged for automated quality checks
+
+### ESLint Configuration Standards
+
+- **Browser Globals**: Define all browser APIs in main config
+- **Test Globals**: Define Jest and test-specific globals in test configuration
+- **File Ignoring**: Use `ignores` array to exclude build artifacts
+- **No Inline Declarations**: Never use `/* global */` comments
+- **Strict Rules**: Use `error` level for critical rules like `no-console`, `no-unused-vars`
+
+### Development Workflow
+
+- **Pre-commit Hook**: Automatically runs lint-staged and full test suite
+- **Lint-First Development**: Fix all ESLint errors before committing
+- **Test Coverage**: Ensure comprehensive unit tests before integration
+- **Code Review**: Required for all changes
+- **Zero Backwards Compatibility**: Clean breaks only
+
+## 7. Performance & Optimization
+
+### Core Web Vitals Targets
+
+- **LCP (Largest Contentful Paint)**: < 2.5 seconds
+- **FID (First Input Delay)**: < 100 milliseconds
+- **CLS (Cumulative Layout Shift)**: < 0.1
+- **INP (Interaction to Next Paint)**: < 200 milliseconds
+
+### Asset Optimization
+
+- **Images**: Optimize with modern formats (WebP, AVIF)
+- **Fonts**: Load only required font weights and styles
+- **CSS**: Use shorthand properties aggressively
+- **JavaScript**: Prefer native APIs over libraries when possible
+- **Caching**: Implement proper caching strategies
+
+### Code Optimization
+
+- **Critical CSS**: Inline above-the-fold styles
+- **Component CSS**: Load component styles on-demand
+- **JavaScript**: Use dynamic imports for non-critical features
+- **Dead Code Detection**: Regular audits using tools
+- **Tree Shaking**: Structure exports for optimal bundling
+
+## 8. Security & Browser Support
+
+### Security Practices
+
+- **No eval()**: Never use eval() or Function constructor
+- **CSP Headers**: Implement Content Security Policy
+- **XSS Prevention**: Escape all user-generated content
+- **Dependency Audits**: Regular npm audit runs
+- **Input Validation**: Always validate and sanitize user input
+
+### Browser Compatibility
+
+- ES6+ features with graceful degradation
+- Feature detection for advanced APIs
+- CSS variables with fallbacks
+- Touch-friendly interactions for mobile
+- Progressive enhancement approach
+
+## 9. Project-Specific Guidelines
+
+### Interactive Elements
+
+- **Map System**: Percentage-based hotspot positioning, dynamic container adjustment
+- **Animation System**: Unified API, state-based triggers, clean cleanup
+- **Easter Eggs**: Hidden interactive features for user engagement
+- Event-based communication between elements
+
+### Documentation Standards
+
+- **Code Documentation**: JSDoc comments for all public APIs
+- **Project Documentation**: Keep technical stack updated
+- **Debugging Documentation**: Document debugging strategies
+- **Integration Notes**: Document component integration patterns
+
+---
+
+_This document should be updated as the project evolves and new best practices are established._

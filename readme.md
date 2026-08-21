@@ -150,7 +150,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment configuration.
 
 ## 📋 Guidelines & Standards
 
-The project follows comprehensive [Front-end Guidelines](.cursor/rules/front-end-guidelines.mdc) covering:
+The project follows comprehensive [Front-end Guidelines](.github/instructions/frontend-guidelines.instructions.md) covering:
 
 1. **Architecture & Code Organization**
 2. **Code Quality & Maintenance**

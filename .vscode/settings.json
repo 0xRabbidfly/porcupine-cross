@@ -1,0 +1,28 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.useFlatConfig": true,
+  "eslint.validate": ["javascript"],
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "jest.runMode": "on-demand",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/coverage": true,
+    "**/dist": true,
+    "**/.playwright-mcp": true,
+    "**/photos/**/high-res": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/coverage/**": true,
+    "**/dist/**": true
+  },
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true
+  }
+}

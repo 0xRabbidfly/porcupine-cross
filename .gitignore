@@ -39,7 +39,12 @@ Desktop.ini
 
 # Editor directories and files
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/mcp.json
 *.swp
 *.swo
 *~
