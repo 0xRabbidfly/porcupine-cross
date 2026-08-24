@@ -285,7 +285,7 @@ h2.cyclocross-subtitle {
 .hero-bg-side {
   flex: 1 1 50%;
   min-width: 0;
-  background: url('../../images/Prologue-Banner-Transparent.png') center center no-repeat;
+  background: url('../../images/prologue-banner.png') center center no-repeat;
   background-size: contain;
   background-color: var(--cream);
   min-height: 280px;

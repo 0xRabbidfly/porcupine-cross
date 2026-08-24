@@ -1,200 +1,98 @@
-/* sponsors.css - Styles for the sponsor section only
-   Refactored: Mobile-first, CSS variables, and improved structure. */
+/* sponsors.css - layout for the sponsor section only.
+   Visual treatment (tiles, colours, hover) lives in deck.css section 9. */
 
 :root {
   --sponsor-bg: var(--moss-green);
   --sponsor-text: var(--cream);
-  --sponsor-gap: 20px;
-  --sponsor-logo-max-width: 140px;
-  --sponsor-logo-max-height: 60px;
-  --sponsor-logo-bg: #000;
-  --sponsor-row-gap: 15px;
+  --sponsor-tile-height: 84px;
 }
 
-/* Base Styles (Mobile First) */
 .sponsors {
   background-color: var(--sponsor-bg);
   color: var(--sponsor-text);
   text-align: center;
   padding: 25px 0;
-  margin-bottom: 10px;
+  margin: 0 auto 10px;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  border-top: none;
-  background-image: none;
 }
 
+/* Ten cells on one grid: the title takes the first, the nine sponsors flow into
+   the rest, so adding a sponsor never adds a row. */
 .sponsor-logos {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: repeat(3, auto);
-  justify-items: center;
-  align-items: center;
-  gap: 20px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  align-items: stretch;
   box-sizing: border-box;
   width: 100%;
-  max-width: 100%;
-  padding: 20px;
-  min-height: 200px;
+  padding: 0;
 }
 
-/* Stylized "Our Sponsors!" title in top left */
 .sponsors-title {
-  grid-column: 1;
-  grid-row: 1;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  position: relative;
-  z-index: 2;
+  gap: 2px;
+  text-align: left;
+  padding: 0 6px;
+}
+
+.sponsors-suit {
+  font-family: var(--pc-suit);
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .sponsors-text {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
   font-weight: 700;
-  color: var(--color-secondary) !important;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  text-shadow:
-    2px 2px 0px var(--theme-accent-gold),
-    4px 4px 8px rgba(0, 0, 0, 0.3);
-  animation: sponsorsPulse 3s ease-in-out infinite;
-  position: relative;
+  line-height: 1.05;
 }
 
-@keyframes sponsorsPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    text-shadow:
-      2px 2px 0px var(--theme-accent-gold),
-      4px 4px 8px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    transform: scale(1.05);
-    text-shadow:
-      3px 3px 0px var(--theme-accent-gold),
-      6px 6px 12px rgba(0, 0, 0, 0.4);
-  }
+.sponsor-logos > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--sponsor-tile-height);
+  padding: 12px 16px;
 }
 
-/* First row: 3 logos centered (skip first column) */
-.sponsor-logos > a:nth-child(2) {
-  grid-column: 2;
-  grid-row: 1;
+.sponsor-logo {
+  max-width: 100%;
+  max-height: calc(var(--sponsor-tile-height) - 26px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
-.sponsor-logos > a:nth-child(3) {
-  grid-column: 3;
-  grid-row: 1;
+/* Bike Sports is a wide wordmark; it needs the width more than the height. */
+.sponsor-logo.bike-sports {
+  max-height: calc(var(--sponsor-tile-height) - 38px);
 }
 
-.sponsor-logos > a:nth-child(4) {
-  grid-column: 4;
-  grid-row: 1;
-}
-
-/* Second row: 4 logos */
-.sponsor-logos > a:nth-child(5) {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.sponsor-logos > a:nth-child(6) {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.sponsor-logos > a:nth-child(7) {
-  grid-column: 3;
-  grid-row: 2;
-}
-
-.sponsor-logos > a:nth-child(8) {
-  grid-column: 4;
-  grid-row: 2;
-}
-
-.sponsor-logos > a:nth-child(9) {
-  grid-column: 2 / 4;
-  grid-row: 3;
-}
-
-.sponsor-logos:last-child {
-  margin-bottom: 0;
-}
-
-/* Mobile responsive grid */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .sponsor-logos {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto repeat(5, 1fr);
-    gap: 15px;
-    padding: 15px;
-    min-height: 450px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
   }
 
   .sponsors-title {
     grid-column: 1 / -1;
-    grid-row: 1;
-    margin-bottom: 10px;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    padding: 0 0 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --sponsor-tile-height: 62px;
   }
 
-  .sponsors-text {
-    font-size: clamp(1.5rem, 5vw, 2rem);
-  }
-
-  /* Mobile sponsor positioning - 2 per row */
-  .sponsor-logos > a:nth-child(2) {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .sponsor-logos > a:nth-child(3) {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .sponsor-logos > a:nth-child(4) {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .sponsor-logos > a:nth-child(5) {
-    grid-column: 2;
-    grid-row: 3;
-  }
-
-  .sponsor-logos > a:nth-child(6) {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .sponsor-logos > a:nth-child(7) {
-    grid-column: 2;
-    grid-row: 4;
-  }
-
-  .sponsor-logos > a:nth-child(8) {
-    grid-column: 1;
-    grid-row: 5;
-  }
-
-  .sponsor-logos > a:nth-child(9) {
-    grid-column: 2;
-    grid-row: 5;
-  }
-
-  .sponsor-logo {
-    max-height: 60px !important;
+  .sponsor-logos > a {
     padding: 8px;
-  }
-
-  .bike-sports {
-    max-height: 60px !important;
-    padding: 12px;
   }
 }
 

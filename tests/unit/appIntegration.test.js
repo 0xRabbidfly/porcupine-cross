@@ -27,7 +27,7 @@ describe('App Integration', () => {
         <span id="countdown-seconds">00</span>
       </div>
       <div class="course-map-container">
-        <img src="images/prologue-course-map-2026.png" alt="Prologue Course Map" class="course-map">
+        <img src="images/prologue-course-map-2026.jpg" alt="Prologue Course Map" class="course-map">
       </div>
       <nav id="main-nav">
         <a href="#home">Home</a>

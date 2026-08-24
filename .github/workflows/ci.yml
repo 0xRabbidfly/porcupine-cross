@@ -11,29 +11,29 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x, 21.x]
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-      
+
     - name: Run tests
       run: npm test
-      
+
     - name: Generate coverage report
       run: npm run test:coverage
-      
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
@@ -45,19 +45,19 @@ jobs:
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build project
       run: |
         mkdir -p dist
@@ -70,23 +70,20 @@ jobs:
         cp -r js dist/
         cp -r images dist/
         cp -r docs dist/
-        # Create sounds directory and copy specific files
-        mkdir -p dist/sounds
-        shopt -s extglob
-        cp -r sounds/!(crosstoberfest.mp3) dist/sounds/
+        cp -r sounds dist/
         # Verify the build structure
         echo "Build directory structure:"
         find dist -type f | head -20
         echo ""
         echo "SEO Files Check:"
         ls -la dist/*.txt dist/*.xml dist/*.md 2>/dev/null || echo "No SEO files found"
-    
+
     - name: Verify SEO files
       run: |
         echo "🔍 Verifying critical SEO files..."
         required_files=("robots.txt" "sitemap.xml" "SEO-SETUP.md")
         missing_files=()
-        
+
         for file in "${required_files[@]}"; do
           if [ -f "dist/$file" ]; then
             echo "✅ $file - Found"
@@ -95,13 +92,13 @@ jobs:
             missing_files+=("$file")
           fi
         done
-        
+
         if [ ${#missing_files[@]} -gt 0 ]; then
           echo "⚠️  Warning: Missing SEO files: ${missing_files[*]}"
         else
           echo "🎯 All SEO files present and accounted for!"
         fi
-    
+
     - name: Deploy to production
       env:
         FTP_SERVER: server228.web-hosting.com
@@ -109,25 +106,25 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
         npm install ftp-deploy
-        
+
         echo "Starting deployment with debug mode..."
         node -e "
           const FtpDeploy = require('ftp-deploy');
           const ftpDeploy = new FtpDeploy();
-          
+
           // Enable debugging
           ftpDeploy.on('uploaded', function(data) {
             // console.log('Uploaded: ' + data.filename); // comment out or remove
           });
-          
+
           ftpDeploy.on('upload-error', function(data) {
             // console.log('Upload error: ' + data.filename + ' - ' + data.err); // comment out or remove
           });
-          
+
           ftpDeploy.on('log', function(data) {
             // console.log('FTP Log: ' + data); // comment out or remove
           });
-          
+
           const config = {
             user: process.env.FTP_USERNAME,
             password: process.env.FTP_PASSWORD,
@@ -142,17 +139,17 @@ jobs:
             secure: true,
             secureOptions: { rejectUnauthorized: false }
           };
-          
+
           console.log('Starting FTP deployment with configuration:');
           console.log('Host: ' + config.host);
           console.log('Username: ' + config.user);
           console.log('Remote Path: ' + (config.remoteRoot || '(default FTP directory)'));
           console.log('Using FTPES (explicit SSL)');
-          
+
           ftpDeploy.deploy(config)
             .then(res => console.log('Deployment complete!'))
             .catch(err => {
               console.error('Deployment failed:', err);
               process.exit(1);
             });
-        " 
+        "

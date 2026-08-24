@@ -101,7 +101,7 @@ class App {
 
       // Track audio file clicks in GA4
       if (window.gtag) {
-        const audioFile = document.querySelector('audio[src*="crosstoberfest.mp3"]');
+        const audioFile = document.querySelector('#race-day-audio');
         if (audioFile) {
           audioFile.addEventListener('play', () => {
             window.gtag('event', 'RaceOutline', {

@@ -101,6 +101,9 @@
   --menu-icon-color: var(--pc-stock);
   --sponsor-bg: var(--pc-stock);
   --sponsor-text: var(--pc-ink);
+
+  /* The fan needs more height than the old flat bar did. */
+  --header-height-desktop: 108px;
 }
 
 /* ===================================================================== */
@@ -225,7 +228,27 @@ header::after {
 
 /* --- The nav is a hand of cards, fanned --- */
 @media (min-width: 769px) {
+  /* Three tracks rather than space-between, so the hand is dealt over the same
+     centre line as the cards on the table below it. */
+  header {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .logo-container {
+    justify-self: start;
+  }
+
+  .audio-promo-container {
+    justify-self: end;
+    /* The grid gap sets the spacing now; the legacy 25px side margins only eat
+       into the room the centred hand needs. */
+    margin: 0 !important;
+  }
+
   nav#main-nav {
+    justify-self: center;
     display: flex !important;
     align-items: flex-end;
     gap: 0 !important;
@@ -246,17 +269,17 @@ header::after {
     justify-content: flex-end;
     align-items: flex-start;
     box-sizing: border-box;
-    width: 106px;
-    height: 76px;
-    margin: 0 -2px 0 0 !important;
-    padding: 8px 11px 10px !important;
+    width: 110px;
+    height: 84px;
+    margin: 0 3px !important;
+    padding: 9px 12px 11px !important;
     background: var(--pc-stock);
     color: var(--pc-ink) !important;
     border: 1px solid rgba(17, 24, 35, 0.45);
     border-radius: 6px;
     box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.9);
     font-family: var(--pc-data) !important;
-    font-size: 0.98rem !important;
+    font-size: 1.12rem !important;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -272,6 +295,19 @@ header::after {
       background-color 0.2s ease;
   }
 
+  /* The wordmark splits the hand into two fours, the way a dealer breaks a
+     deck. It is sized off the card height so the three scale together. */
+  .nav-banner {
+    height: 56px;
+    width: auto;
+    margin: 0 20px 8px;
+    border: 1px solid rgba(17, 24, 35, 0.45);
+    border-radius: 6px;
+    box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.9);
+    flex: none;
+    align-self: flex-end;
+  }
+
   /* The corner index — the same rank and suit the section itself carries. */
   nav#main-nav a::before {
     content: attr(data-rank) '\A' attr(data-suit);
@@ -279,7 +315,7 @@ header::after {
     white-space: pre;
     font-family: var(--pc-display), var(--pc-suit);
     font-weight: 900;
-    font-size: 1.22rem;
+    font-size: 1.32rem;
     line-height: 0.84;
     letter-spacing: 0;
     color: var(--pc-index, var(--pc-ink));
@@ -299,34 +335,36 @@ header::after {
     display: none !important;
   }
 
-  /* The fan: outer cards lean away and sit lower, as a held hand does. */
-  nav#main-nav a:nth-child(1) {
+  /* The fan: outer cards lean away and sit lower, as a held hand does.
+     Typed by element so the banner between cards 4 and 5 does not shift the
+     count the way :nth-child would. */
+  nav#main-nav a:nth-of-type(1) {
     --fan-tilt: -7deg;
     --fan-drop: 7px;
   }
-  nav#main-nav a:nth-child(2) {
+  nav#main-nav a:nth-of-type(2) {
     --fan-tilt: -5deg;
     --fan-drop: 3.5px;
   }
-  nav#main-nav a:nth-child(3) {
+  nav#main-nav a:nth-of-type(3) {
     --fan-tilt: -3deg;
     --fan-drop: 1px;
   }
-  nav#main-nav a:nth-child(4) {
+  nav#main-nav a:nth-of-type(4) {
     --fan-tilt: -1deg;
   }
-  nav#main-nav a:nth-child(5) {
+  nav#main-nav a:nth-of-type(5) {
     --fan-tilt: 1deg;
   }
-  nav#main-nav a:nth-child(6) {
+  nav#main-nav a:nth-of-type(6) {
     --fan-tilt: 3deg;
     --fan-drop: 1px;
   }
-  nav#main-nav a:nth-child(7) {
+  nav#main-nav a:nth-of-type(7) {
     --fan-tilt: 5deg;
     --fan-drop: 3.5px;
   }
-  nav#main-nav a:nth-child(8) {
+  nav#main-nav a:nth-of-type(8) {
     --fan-tilt: 7deg;
     --fan-drop: 7px;
   }
@@ -375,45 +413,62 @@ header::after {
   }
 }
 
-@media (min-width: 769px) and (max-width: 1340px) {
-  nav#main-nav a {
-    width: 92px;
-    height: 68px;
-    font-size: 0.86rem !important;
-    padding: 7px 9px 9px !important;
-  }
-
-  nav#main-nav a::before {
-    font-size: 1.05rem;
-  }
-
+/* Centring the hand means the side tracks must each clear half the leftover,
+   and the audio label is the widest thing competing for it. */
+@media (min-width: 769px) and (max-width: 1699px) {
   .audio-text {
     display: none;
   }
 }
 
-@media (min-width: 769px) and (max-width: 1100px) {
+@media (min-width: 769px) and (max-width: 1449px) {
   nav#main-nav a {
-    width: 80px;
-    height: 60px;
-    font-size: 0.76rem !important;
+    width: 90px;
+    height: 74px;
+    font-size: 0.96rem !important;
+    padding: 8px 10px 10px !important;
   }
 
   nav#main-nav a::before {
-    font-size: 0.92rem;
+    font-size: 1.14rem;
+  }
+
+  .nav-banner {
+    height: 40px;
+    margin: 0 10px 6px;
   }
 }
 
-@media (min-width: 769px) and (max-width: 950px) {
+/* Below this the banner cannot shrink further without the wordmark going
+   illegible, so the hand closes back up into one run of eight. */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .nav-banner {
+    display: none;
+  }
+
   nav#main-nav a {
-    width: 70px;
-    height: 56px;
-    font-size: 0.66rem !important;
-    padding: 5px 6px 6px !important;
+    width: 88px;
+    height: 70px;
+    font-size: 0.9rem !important;
+    margin: 0 2px !important;
   }
 
   nav#main-nav a::before {
-    font-size: 0.82rem;
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 999px) {
+  nav#main-nav a {
+    width: 62px;
+    height: 56px;
+    font-size: 0.68rem !important;
+    padding: 5px 6px 7px !important;
+    margin: 0 1px !important;
+  }
+
+  nav#main-nav a::before {
+    font-size: 0.84rem;
   }
 }
 
@@ -1092,6 +1147,10 @@ section p {
   padding: clamp(34px, 4vw, 52px) clamp(24px, 4vw, 52px) !important;
 }
 
+.sponsors-suit {
+  color: var(--pc-blood) !important;
+}
+
 .sponsors-text {
   font-family: var(--pc-display) !important;
   font-size: clamp(1.4rem, 2.6vw, 2rem) !important;
@@ -1103,10 +1162,62 @@ section p {
   animation: none !important;
 }
 
+/* A hairline under the title so the block reads as a label for the row rather
+   than a stray heading floating in the grid. */
+.sponsors-title::after {
+  content: '';
+  display: block;
+  width: 46px;
+  height: 2px;
+  margin-top: 6px;
+  background: var(--pc-gilt);
+}
+
 .sponsor-logos {
-  gap: clamp(18px, 3vw, 34px) !important;
+  gap: clamp(12px, 1.6vw, 18px) !important;
   padding: 0 !important;
   min-height: 0 !important;
+}
+
+/* Each backer gets its own chip off the same stock as the card, cut a shade
+   deeper so the row reads as nine tiles rather than nine floating pictures. */
+.sponsor-logos > a {
+  position: relative;
+  background: linear-gradient(160deg, #fffdf7 0%, var(--pc-stock-shade) 100%);
+  border: 1px solid var(--pc-hairline);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 6px 14px -10px rgba(0, 0, 0, 0.7);
+  transition:
+    transform 0.25s cubic-bezier(0.16, 0.9, 0.24, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* The gilt corner ticks are the card's own detailing, shrunk to chip size. */
+.sponsor-logos > a::before,
+.sponsor-logos > a::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--pc-gilt);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.sponsor-logos > a::before {
+  top: 5px;
+  left: 5px;
+  border-width: 1px 0 0 1px;
+}
+
+.sponsor-logos > a::after {
+  bottom: 5px;
+  right: 5px;
+  border-width: 0 1px 1px 0;
 }
 
 /* Sponsors show in their own colours. Multiply only drops the white boxes some
@@ -1114,12 +1225,34 @@ section p {
    little white rectangles. */
 .sponsor-logo {
   mix-blend-mode: multiply;
-  transition: transform 0.25s ease;
+  filter: saturate(0.72) contrast(1.02);
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* A real mouse click leaves :focus but not :focus-visible, so both states are
+   listed everywhere here. */
+.sponsor-logos > a:hover,
+.sponsor-logos > a:focus-visible {
+  transform: translateY(-4px) rotate(-0.8deg);
+  border-color: rgba(200, 162, 74, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 16px 26px -16px rgba(0, 0, 0, 0.8);
+}
+
+.sponsor-logos > a:hover::before,
+.sponsor-logos > a:hover::after,
+.sponsor-logos > a:focus-visible::before,
+.sponsor-logos > a:focus-visible::after {
+  opacity: 1;
 }
 
 .sponsor-logos a:hover .sponsor-logo,
 .sponsor-logos a:focus-visible .sponsor-logo {
   transform: scale(1.05);
+  filter: saturate(1) contrast(1);
 }
 
 /* ===================================================================== */
@@ -1741,6 +1874,11 @@ footer {
     border-radius: 0 0 10px 10px !important;
     box-shadow: 0 18px 34px -14px rgba(0, 0, 0, 0.95) !important;
     padding: 8px !important;
+  }
+
+  /* The mobile panel is a list, not a fan, so it has no middle to split. */
+  .nav-banner {
+    display: none;
   }
 
   nav#main-nav a {

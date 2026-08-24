@@ -63,32 +63,14 @@ function copyFiles() {
     copyDir('./images', './dist/images');
   }
 
-  // Copy sounds except crosstoberfest.mp3
+  // Copy sounds
   if (fs.existsSync('./sounds')) {
-    fs.readdirSync('./sounds').forEach(file => {
-      if (file !== 'crosstoberfest.mp3') {
-        const srcPath = path.join('./sounds', file);
-        const destPath = path.join('./dist/sounds', file);
-        const stats = fs.statSync(srcPath);
-        if (stats.isDirectory()) {
-          copyDir(srcPath, destPath);
-        } else {
-          if (!fs.existsSync('./dist/sounds')) {
-            fs.mkdirSync('./dist/sounds', { recursive: true });
-          }
-          fs.copyFileSync(srcPath, destPath);
-        }
-      }
-    });
+    copyDir('./sounds', './dist/sounds');
   }
 
   // Ensure critical SEO files are copied
-  const criticalFiles = [
-    'robots.txt',
-    'sitemap.xml', 
-    'SEO-SETUP.md'
-  ];
-  
+  const criticalFiles = ['robots.txt', 'sitemap.xml', 'SEO-SETUP.md'];
+
   criticalFiles.forEach(file => {
     if (fs.existsSync(`./${file}`)) {
       fs.copyFileSync(`./${file}`, `./dist/${file}`);
@@ -205,22 +187,22 @@ async function testFtpConnection(config) {
 function showDeploymentSummary() {
   console.info('\n📁 DEPLOYMENT SUMMARY:');
   console.info('=====================');
-  
+
   const distFiles = fs.readdirSync('./dist');
   const htmlFiles = distFiles.filter(f => f.endsWith('.html'));
   const seoFiles = ['robots.txt', 'sitemap.xml', 'SEO-SETUP.md'].filter(f => distFiles.includes(f));
-  
+
   console.info(`📄 HTML Pages: ${htmlFiles.length} files`);
   htmlFiles.forEach(file => console.info(`   - ${file}`));
-  
+
   console.info(`🔍 SEO Files: ${seoFiles.length} files`);
   seoFiles.forEach(file => console.info(`   - ${file}`));
-  
+
   console.info(`📁 CSS: ${fs.existsSync('./dist/css') ? 'Included' : 'Missing'}`);
   console.info(`📁 JS: ${fs.existsSync('./dist/js') ? 'Included' : 'Missing'}`);
   console.info(`📁 Images: ${fs.existsSync('./dist/images') ? 'Included' : 'Missing'}`);
   console.info(`📁 Sounds: ${fs.existsSync('./dist/sounds') ? 'Included' : 'Missing'}`);
-  
+
   console.info('=====================\n');
 }
 
@@ -268,7 +250,7 @@ console.info(`Deploying to ${env} environment (${config.description})...`);
     // Build the project
     console.info('Building project...');
     copyFiles();
-    
+
     // Show deployment summary
     showDeploymentSummary();
 
