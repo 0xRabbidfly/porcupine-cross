@@ -44,10 +44,12 @@
   --pc-mud: #6b4a2b; /* October ground */
 
   /* Type */
-  /* Bodoni is the card-index letterform, so it sets indices, the wordmark and
-     race times. Section headings are read, not glanced at, so they take a slab
-     with far more weight in the thin strokes. */
+  /* Bodoni sets display lettering. It does not set numerals: a didone's thin
+     strokes are the whole of a 4's diagonal, and at index size they drop out
+     and leave a 1. Every figure on the site takes the grotesque instead —
+     which is also what a real deck's indices are cut from. */
   --pc-display: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  --pc-numeral: 'Libre Franklin', 'Franklin Gothic Medium', 'Helvetica Neue', Arial, sans-serif;
   --pc-heading: 'Bitter', 'Bodoni Moda', Georgia, serif;
   --pc-body: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --pc-data: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
@@ -313,7 +315,7 @@ header::after {
     content: attr(data-rank) '\A' attr(data-suit);
     position: static;
     white-space: pre;
-    font-family: var(--pc-display), var(--pc-suit);
+    font-family: var(--pc-numeral), var(--pc-suit);
     font-weight: 900;
     font-size: 1.32rem;
     line-height: 0.84;
@@ -588,7 +590,7 @@ section[data-rank]::after,
   position: absolute;
   display: block;
   white-space: pre;
-  font-family: var(--pc-display), var(--pc-suit);
+  font-family: var(--pc-numeral), var(--pc-suit);
   font-weight: 900;
   font-size: clamp(1.5rem, 2.1vw, 2rem);
   line-height: 0.82;
@@ -1013,7 +1015,8 @@ section p {
 #countdown-hours,
 #countdown-minutes,
 #countdown-seconds {
-  font-family: var(--pc-display) !important;
+  font-family: var(--pc-numeral) !important;
+  font-variant-numeric: lining-nums tabular-nums;
   font-size: 1.5rem !important;
   font-weight: 900 !important;
   line-height: 1 !important;
@@ -1330,7 +1333,7 @@ section p {
 
 #schedule .event-time,
 #schedule .event-time b {
-  font-family: var(--pc-display) !important;
+  font-family: var(--pc-numeral) !important;
   font-size: clamp(1.05rem, 1.6vw, 1.3rem) !important;
   font-weight: 900 !important;
   line-height: 1.05;
@@ -1405,7 +1408,7 @@ section p {
   border-radius: 2px !important;
   width: 28px !important;
   height: 28px !important;
-  font-family: var(--pc-display) !important;
+  font-family: var(--pc-numeral) !important;
   font-weight: 900 !important;
   font-size: 0.95rem !important;
   box-shadow: none !important;
@@ -1906,7 +1909,7 @@ footer {
     display: inline-block;
     background: none !important;
     transform: none !important;
-    font-family: var(--pc-display), var(--pc-suit);
+    font-family: var(--pc-numeral), var(--pc-suit);
     font-weight: 900;
     font-size: 0.95rem;
     color: var(--pc-gilt);
@@ -2147,7 +2150,7 @@ section.page-card:not(.visible) {
 .deck-hand a::before {
   content: attr(data-rank) '\A' attr(data-suit);
   white-space: pre;
-  font-family: var(--pc-display), var(--pc-suit);
+  font-family: var(--pc-numeral), var(--pc-suit);
   font-weight: 900;
   font-size: 0.95rem;
   line-height: 0.86;
