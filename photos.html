@@ -180,6 +180,17 @@
         color: var(--color-dark);
       }
 
+      .gallery-retry {
+        margin-top: 18px;
+        padding: 9px 20px;
+        font: inherit;
+        cursor: pointer;
+        color: var(--color-dark);
+        background: transparent;
+        border: 1px solid var(--color-secondary);
+        border-radius: 4px;
+      }
+
       .gallery-placeholder i {
         font-size: 2.5rem;
         color: var(--color-secondary);
@@ -289,13 +300,14 @@
         object-fit: cover;
       }
 
-      .loading-spinner {
+      .gallery-loading {
+        grid-column: 1 / -1;
         text-align: center;
         padding: 40px;
         color: var(--color-medium);
       }
 
-      .loading-spinner i {
+      .gallery-loading i {
         font-size: 2rem;
         margin-bottom: 10px;
       }
@@ -664,7 +676,7 @@
 
           <!-- Photo Grid -->
           <div id="photo-grid" class="photo-grid">
-            <div class="loading-spinner">
+            <div class="gallery-loading">
               <i class="fas fa-spinner fa-spin"></i>
               <p>Loading photos...</p>
             </div>
@@ -733,13 +745,24 @@
         }
 
         async load() {
+          let failure = null;
+
           try {
             await this.loadPhotos();
-          } catch {
+          } catch (error) {
             this.photos = [];
+            // A missing photos.json is how a year with no gallery announces
+            // itself. Anything else is a fault, and saying "coming soon" to
+            // someone whose connection dropped is just wrong.
+            failure = error.missingGallery ? null : error;
           }
 
           this.updateStats();
+
+          if (failure) {
+            this.showLoadError();
+            return;
+          }
 
           if (this.photos.length === 0) {
             this.showPlaceholder();
@@ -763,12 +786,26 @@
         }
 
         async loadPhotos() {
-          const response = await fetch(this.basePath + 'photos.json');
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          // Without a deadline a stalled request leaves the gallery spinning
+          // for as long as the reader is willing to wait, with nothing to read
+          // and nothing to press.
+          const controller = new AbortController();
+          const deadline = setTimeout(() => controller.abort(), 15000);
+
+          try {
+            const response = await fetch(this.basePath + 'photos.json', {
+              signal: controller.signal,
+            });
+            if (!response.ok) {
+              const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+              error.missingGallery = response.status === 404;
+              throw error;
+            }
+            const data = await response.json();
+            this.photos = data.photos || [];
+          } finally {
+            clearTimeout(deadline);
           }
-          const data = await response.json();
-          this.photos = data.photos || [];
         }
 
         showPlaceholder() {
@@ -784,6 +821,28 @@
                         </p>
                     </div>
                 `;
+        }
+
+        showLoadError() {
+          this.hasMorePhotos = false;
+          this.hideLoadingIndicator();
+          const grid = document.getElementById('photo-grid');
+          grid.innerHTML = `
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        <h2>Photos didn't load</h2>
+                        <p>
+                            The ${this.year} gallery could not be reached. Check your connection
+                            and try again.
+                        </p>
+                        <button type="button" class="gallery-retry">Try again</button>
+                    </div>
+                `;
+          grid.querySelector('.gallery-retry').addEventListener('click', () => {
+            grid.innerHTML =
+              '<div class="gallery-loading"><i class="fas fa-spinner fa-spin"></i><p>Loading photos...</p></div>';
+            this.load();
+          });
         }
 
         updateStats() {
