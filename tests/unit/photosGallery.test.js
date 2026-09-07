@@ -32,10 +32,11 @@ describe('photos gallery loading indicator', () => {
     expect(read('photos.html')).not.toMatch(/loading-spinner/);
   });
 
-  test('photos.html still ships an in-grid loading indicator', () => {
+  test('the gallery holds its shape with face-down cards, not a loading message', () => {
     const html = read('photos.html');
-    expect(html).toMatch(/class="gallery-loading"/);
-    expect(html).toMatch(/Loading photos/);
+    // Painted with the first frame, so the grid is never an empty box.
+    expect((html.match(/class="photo-skeleton"/g) || []).length).toBeGreaterThanOrEqual(6);
+    expect(html).not.toMatch(/Loading photos/);
   });
 
   test('index.html still owns the full-page loader', () => {
@@ -84,7 +85,7 @@ describe('photos gallery load states', () => {
     );
     await settle();
 
-    expect(grid(win).querySelector('.gallery-loading')).toBeNull();
+    expect(grid(win).querySelector('.photo-skeleton')).toBeNull();
     expect(grid(win).querySelector('.gallery-retry')).not.toBeNull();
     expect(grid(win).textContent).toContain("Photos didn't load");
   });
@@ -111,7 +112,21 @@ describe('photos gallery load states', () => {
     const win = boot(() => Promise.resolve({ ok: true, status: 200, json: async () => sample }));
     await settle();
 
-    expect(grid(win).querySelector('.gallery-loading')).toBeNull();
+    expect(grid(win).querySelector('.photo-skeleton')).toBeNull();
     expect(grid(win).querySelectorAll('.photo-item')).toHaveLength(1);
+  });
+  test('a slow year switch shows face-down cards rather than an empty grid', async () => {
+    let release;
+    const win = boot(
+      () =>
+        new Promise(resolve => {
+          release = () => resolve({ ok: true, status: 200, json: async () => sample });
+        })
+    );
+    await settle();
+    win.document.querySelector('.gallery-year-btn[data-year="2026"]').click();
+
+    expect(grid(win).querySelectorAll('.photo-skeleton').length).toBeGreaterThan(0);
+    release();
   });
 });

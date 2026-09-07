@@ -300,16 +300,70 @@
         object-fit: cover;
       }
 
-      .gallery-loading {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 40px;
-        color: var(--color-medium);
+      /* A photo that has not arrived yet is simply a card face down. Sized off
+         .photo-item so the grid never reflows when the real photo replaces it. */
+      .photo-skeleton {
+        position: relative;
+        aspect-ratio: 1;
+        padding: 6px;
+        border-radius: 3px;
+        background: var(--pc-stock, #f7f2e7);
+        box-shadow: 0 12px 22px -14px rgba(0, 0, 0, 0.9);
       }
 
-      .gallery-loading i {
-        font-size: 2rem;
-        margin-bottom: 10px;
+      .photo-skeleton::after {
+        content: '';
+        position: absolute;
+        inset: 6px;
+        border-radius: 1px;
+        background-color: var(--pc-royal, #1b3b8b);
+        background-image: url('images/card-back.svg');
+        /* Small enough that the guilloche reads as pattern rather than as a
+           few stray circles at photo-tile size. */
+        background-size: 44px 44px;
+        animation: card-breathe 2.4s ease-in-out infinite;
+      }
+
+      /* Staggered so the grid breathes like a hand being shuffled rather than
+         one slab blinking on and off. */
+      .photo-skeleton:nth-child(3n + 2)::after {
+        animation-delay: 0.3s;
+      }
+
+      .photo-skeleton:nth-child(3n)::after {
+        animation-delay: 0.6s;
+      }
+
+      /* Stays a blue card back throughout. Dropping the opacity far enough to
+         register as "loading" turned it grey, which is not a card. */
+      @keyframes card-breathe {
+        0%,
+        100% {
+          opacity: 0.78;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* Each photo turns face up as it decodes. */
+      .photo-item img {
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .photo-item img.is-loaded {
+        opacity: 1;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .photo-skeleton::after {
+          animation: none;
+        }
+
+        .photo-item img {
+          transition: none;
+        }
       }
 
       .scroll-sentinel {
@@ -675,11 +729,21 @@
           </div>
 
           <!-- Photo Grid -->
+          <!-- Face-down cards hold the gallery's shape until the photos arrive.
+               They ship in the HTML so the grid is there on the first paint. -->
           <div id="photo-grid" class="photo-grid">
-            <div class="gallery-loading">
-              <i class="fas fa-spinner fa-spin"></i>
-              <p>Loading photos...</p>
-            </div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
+            <div class="photo-skeleton"></div>
           </div>
 
           <!-- Infinite Scroll Sentinel -->
@@ -781,8 +845,15 @@
           this.currentPage = 0;
           this.currentPhotoIndex = 0;
           this.hasMorePhotos = true;
-          document.getElementById('photo-grid').innerHTML = '';
+          this.showSkeletons();
           this.load();
+        }
+
+        // Twelve is about two rows on a desktop grid and six on a phone: enough
+        // to say "photos go here" without pretending to know the real count.
+        showSkeletons() {
+          document.getElementById('photo-grid').innerHTML =
+            '<div class="photo-skeleton"></div>'.repeat(12);
         }
 
         async loadPhotos() {
@@ -839,8 +910,7 @@
                     </div>
                 `;
           grid.querySelector('.gallery-retry').addEventListener('click', () => {
-            grid.innerHTML =
-              '<div class="gallery-loading"><i class="fas fa-spinner fa-spin"></i><p>Loading photos...</p></div>';
+            this.showSkeletons();
             this.load();
           });
         }
@@ -859,7 +929,7 @@
           const endIndex = startIndex + this.photosPerPage;
           const photosToShow = this.photos.slice(0, endIndex);
 
-          // Clear loading spinner on first load only
+          // Clear the face-down cards on first load only
           if (this.currentPage === 0) {
             grid.innerHTML = '';
           }
@@ -872,12 +942,18 @@
             const photoIndex = lastRenderedIndex + index;
             const photoItem = document.createElement('div');
             photoItem.className = 'photo-item';
-            photoItem.innerHTML = `
-                        <img src="${this.basePath}thumbnails/${photo.filename}"
-                             alt="Event Photo ${photo.id}"
-                             loading="lazy"
-                             onerror="this.style.display='none'">
-                    `;
+
+            const img = document.createElement('img');
+            img.loading = 'lazy';
+            img.alt = `Event Photo ${photo.id}`;
+            // Listeners before src, so a cached thumbnail cannot finish loading
+            // before anything is listening and get stuck at opacity 0.
+            img.addEventListener('load', () => img.classList.add('is-loaded'));
+            img.addEventListener('error', () => {
+              img.style.display = 'none';
+            });
+            img.src = `${this.basePath}thumbnails/${photo.filename}`;
+            photoItem.appendChild(img);
 
             photoItem.addEventListener('click', () => this.openLightbox(photoIndex));
             grid.appendChild(photoItem);
