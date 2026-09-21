@@ -16,8 +16,8 @@
   max-width: 1200px;
 }
 
-/* Ten cells on one grid: the title takes the first, the nine sponsors flow into
-   the rest, so adding a sponsor never adds a row. */
+/* The title sits above the grid so the ten sponsors divide evenly: two rows of
+   five, no cell spent on the heading and no ragged last row. */
 .sponsor-logos {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -36,6 +36,7 @@
   gap: 2px;
   text-align: left;
   padding: 0 6px;
+  margin-bottom: 18px;
 }
 
 .sponsors-suit {
@@ -71,18 +72,20 @@
   max-height: calc(var(--sponsor-tile-height) - 38px);
 }
 
+/* Two columns below 900px — three would leave the tenth sponsor alone on a
+   row of its own. */
 @media (max-width: 900px) {
   .sponsor-logos {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
   .sponsors-title {
-    grid-column: 1 / -1;
     flex-direction: row;
     align-items: baseline;
     gap: 8px;
     padding: 0 0 2px;
+    margin-bottom: 12px;
   }
 }
 

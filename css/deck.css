@@ -1564,6 +1564,55 @@ section p {
   color: var(--pc-ink-soft) !important;
 }
 
+/* The button and the two entry deadlines sit side by side. */
+.register-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 1.4rem;
+}
+
+.register-deadlines {
+  margin: 0 !important;
+  text-align: left;
+  border-left: 2px solid var(--pc-gilt);
+  padding-left: 16px;
+}
+
+.register-deadlines .register-deadline {
+  display: block;
+  font-family: var(--pc-data);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft);
+  opacity: 1;
+  margin: 0;
+}
+
+.register-deadlines .register-deadline.is-early {
+  color: var(--pc-blood);
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .register-deadlines {
+    border-left: 0;
+    border-top: 2px solid var(--pc-gilt);
+    padding: 12px 0 0;
+    text-align: center;
+  }
+
+  .register-deadlines .register-deadline {
+    text-align: center;
+  }
+}
+
 /* ===================================================================== */
 /* 13. CONTACT                                                           */
 /* ===================================================================== */
