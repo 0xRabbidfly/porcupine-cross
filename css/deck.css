@@ -1645,6 +1645,86 @@ section p {
   color: var(--pc-ink-soft);
 }
 
+/* The on-site entries are a second, quieter way in: a price list ruled off
+   from the online CTA above it, read down the left and priced on the right. */
+.onsite {
+  max-width: 400px;
+  margin: 2rem auto 0;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--pc-hairline);
+  text-align: left;
+}
+
+.onsite-title {
+  margin: 0 0 0.9rem !important;
+  font-family: var(--pc-data) !important;
+  font-size: 0.86rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase;
+  text-align: center !important;
+  color: var(--pc-ink-soft) !important;
+}
+
+.onsite-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.onsite-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px dotted rgba(17, 24, 35, 0.22);
+}
+
+.onsite-list li:last-child {
+  border-bottom: 0;
+}
+
+.onsite-item {
+  font-family: var(--pc-body);
+  font-size: 1rem;
+  color: var(--pc-ink);
+}
+
+/* The price is pushed to the right edge so the column of figures lines up. */
+.onsite-price {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--pc-numeral);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--pc-ink);
+}
+
+.onsite-price small {
+  font-family: var(--pc-data);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft);
+}
+
+.onsite-price.is-free {
+  font-family: var(--pc-data);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pc-blood);
+}
+
+.onsite-note {
+  margin: 1rem 0 0 !important;
+  font-family: var(--pc-body) !important;
+  font-size: 0.88rem !important;
+  font-style: italic;
+  text-align: center;
+  color: var(--pc-ink-soft) !important;
+}
+
 /* ===================================================================== */
 /* 13. CONTACT                                                           */
 /* ===================================================================== */
