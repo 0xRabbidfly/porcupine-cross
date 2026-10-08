@@ -4,7 +4,7 @@
 :root {
   --sponsor-bg: var(--moss-green);
   --sponsor-text: var(--cream);
-  --sponsor-tile-height: 84px;
+  --sponsor-tile-height: 44px;
 }
 
 .sponsors {
@@ -16,16 +16,27 @@
   max-width: 1200px;
 }
 
-/* The title sits above the grid so the ten sponsors divide evenly: two rows of
-   five, no cell spent on the heading and no ragged last row. */
+/* Flex rather than grid: the sponsor count keeps changing and no fixed column
+   count divides every one of them evenly. Nine to a row, and whatever is left
+   over centres itself on the last row instead of hanging off the left edge.
+   The gap is a token because the flex basis has to subtract the same value
+   deck.css sets, and the two drifting apart silently costs a column. */
 .sponsor-logos {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
-  align-items: stretch;
+  --sponsor-columns: 9;
+  --sponsor-gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sponsor-gap);
   box-sizing: border-box;
   width: 100%;
   padding: 0;
+}
+
+.sponsor-logos > a {
+  box-sizing: border-box;
+  flex: 0 0
+    calc((100% - (var(--sponsor-columns) - 1) * var(--sponsor-gap)) / var(--sponsor-columns));
 }
 
 .sponsors-title {
@@ -56,7 +67,7 @@
   align-items: center;
   justify-content: center;
   min-height: var(--sponsor-tile-height);
-  padding: 12px 16px;
+  padding: 6px 8px;
 }
 
 .sponsor-logo {
@@ -72,12 +83,9 @@
   max-height: calc(var(--sponsor-tile-height) - 38px);
 }
 
-/* Two columns below 900px — three would leave the tenth sponsor alone on a
-   row of its own. */
 @media (max-width: 900px) {
   .sponsor-logos {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    --sponsor-columns: 5;
   }
 
   .sponsors-title {
@@ -91,41 +99,45 @@
 
 @media (max-width: 480px) {
   :root {
-    --sponsor-tile-height: 62px;
+    --sponsor-tile-height: 38px;
+  }
+
+  .sponsor-logos {
+    --sponsor-columns: 3;
   }
 
   .sponsor-logos > a {
-    padding: 8px;
+    padding: 5px 6px;
   }
 }
 
 /* Bike Sports Image Styling - Made smaller */
 .bike-sports {
-  max-height: 40px !important;
+  max-height: 20px !important;
   max-width: 100% !important;
   width: auto !important;
   height: auto !important;
   object-fit: contain;
   background-color: #333;
-  padding: 6px;
+  padding: 3px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* General sponsor logo styling */
 .sponsor-logo {
-  max-height: 80px !important;
+  max-height: 40px !important;
   max-width: 100% !important;
   width: auto !important;
   height: auto !important;
   object-fit: contain;
-  padding: 10px;
+  padding: 5px;
 }
 
 /* Placeholder for empty grid cell */
 .sponsor-placeholder {
   width: 100%;
-  height: 80px;
+  height: 40px;
   background-color: transparent;
 }
 
@@ -139,15 +151,9 @@
     margin-right: auto;
   }
 
-  .sponsor-logos {
-    gap: 25px;
-    padding: 30px;
-    min-height: 250px;
-  }
-
   .sponsor-logo {
-    max-height: 100px !important;
-    padding: 15px;
+    max-height: 50px !important;
+    padding: 8px;
     transition:
       filter 0.25s ease-out,
       transform 0.25s ease-out;
@@ -159,11 +165,11 @@
   }
 
   .bike-sports {
-    max-height: 50px !important;
-    padding: 10px;
+    max-height: 25px !important;
+    padding: 5px;
   }
 
   .sponsor-placeholder {
-    height: 100px;
+    height: 50px;
   }
 }

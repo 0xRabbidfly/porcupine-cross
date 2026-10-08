@@ -1177,13 +1177,13 @@ section p {
 }
 
 .sponsor-logos {
-  gap: clamp(12px, 1.6vw, 18px) !important;
+  gap: var(--sponsor-gap) !important;
   padding: 0 !important;
   min-height: 0 !important;
 }
 
 /* Each backer gets its own chip off the same stock as the card, cut a shade
-   deeper so the row reads as nine tiles rather than nine floating pictures. */
+   deeper so the row reads as a row of tiles rather than floating pictures. */
 .sponsor-logos > a {
   position: relative;
   background: linear-gradient(160deg, #fffdf7 0%, var(--pc-stock-shade) 100%);
@@ -1574,75 +1574,30 @@ section p {
   margin-top: 1.4rem;
 }
 
+/* The deadline leads and the button answers it, so the text sits left and the
+   button right rather than the button standing alone above its own fine print. */
 .register-deadlines {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-/* The discount is the one thing on this card worth a raised voice, so it gets
-   the gilt — the deck's only precious colour — and sits at a slight angle, as
-   though stamped on the stock rather than printed with it. */
-.early-bird {
-  position: relative;
-  margin: 0 !important;
-  padding: 0 0 12px !important;
-  width: 218px;
-  overflow: hidden;
-  text-align: center;
-  background: linear-gradient(165deg, #fffdf7 0%, var(--pc-stock-shade) 100%);
-  border: 2px solid var(--pc-gilt);
-  border-radius: 10px;
-  transform: rotate(-1.6deg);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 12px 22px -14px rgba(0, 0, 0, 0.8);
-}
-
-.early-bird-flag {
-  display: block;
-  padding: 5px 0 4px;
-  background: var(--pc-gilt);
-  font-family: var(--pc-data);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-indent: 0.24em;
-  text-transform: uppercase;
-  color: var(--pc-ink);
-}
-
-.early-bird-amount {
-  display: block;
-  margin-top: 7px;
-  font-family: var(--pc-numeral);
-  font-size: 2.1rem;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  color: var(--pc-blood);
-}
-
-.early-bird-when {
-  display: block;
-  margin-top: 5px;
-  font-family: var(--pc-data);
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--pc-ink-soft);
+  text-align: left;
+  max-width: 23rem;
 }
 
 .register-deadlines .register-deadline {
   margin: 0 !important;
   font-family: var(--pc-data);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--pc-ink-soft);
+  color: var(--pc-blood);
+}
+
+.register-deadline-sub {
+  margin: 6px 0 0 !important;
+  font-family: var(--pc-body);
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--pc-ink-soft) !important;
 }
 
 /* The on-site entries are a second, quieter way in: a price list ruled off
