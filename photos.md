@@ -20,7 +20,7 @@ photos/
 - [ ] Set up subdirectories: `high-res/` and `thumbnails/`
 - [ ] Upload high-resolution photos to `high-res/`
 - [ ] Generate thumbnails (see Thumbnail Generation section)
-- [ ] Update and run `generate-metadata.ps1`
+- [ ] Run `scripts/generate-metadata.ps1 -Year 2026`
 - [ ] Upload all files to web server
 - [ ] Update `photos.html` with new year
 - [ ] Test gallery functionality
@@ -61,31 +61,38 @@ photos/
 
 ## 📋 Metadata Generation
 
-### Update the PowerShell Script
-
-Edit `generate-metadata.ps1` with your new paths:
-
-```powershell
-# Update these paths for 2026
-$highResPath = "Z:\Prologue CX 2026\high-res"
-$thumbnailPath = "Z:\Prologue CX 2026\thumbnails"
-$outputJsonPath = "Z:\Prologue CX 2026\photos.json"
-```
-
 ### Run the Script
 
+The script takes the year as an argument — nothing in it needs editing. Run it
+from the project root:
+
 ```powershell
-# Run from the project root directory
-.\generate-metadata.ps1
+# Photos already sitting in photos/event-2026/high-res and /thumbnails
+pwsh scripts/generate-metadata.ps1 -Year 2026 -EventDate 2026-10-18
 ```
+
+To read from folders elsewhere on disk:
+
+```powershell
+pwsh scripts/generate-metadata.ps1 -Year 2026 -EventDate 2026-10-18 `
+    -HighResPath "D:\Prologue CX 2026\high-res" `
+    -ThumbnailPath "D:\Prologue CX 2026\thumbnails"
+```
+
+`-EventDate` is optional; left out, the newest photo's date is used.
 
 The script will:
 
 - Verify both directories exist
-- Match high-res photos with thumbnails
+- Match high-res photos with thumbnails by filename
+- Report both a photo with no thumbnail and a thumbnail with no photo
+- Name any non-image file it found and ignored
 - Generate sequential photo IDs
-- Create the `photos.json` metadata file
+- Write `photos.json` into `photos/event-<year>/`
 - Provide upload instructions
+
+Every URL it writes is built from `-Year`, so the gallery year and the paths
+cannot drift apart.
 
 ## 🌐 Website Updates
 
