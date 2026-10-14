@@ -1373,65 +1373,6 @@ section p {
   content: none !important;
 }
 
-.pre-ride-steps h4 {
-  font-family: var(--pc-data) !important;
-  font-size: 0.88rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.18em !important;
-  text-transform: uppercase;
-  color: var(--pc-blood) !important;
-  margin-bottom: 16px !important;
-}
-
-.steps-icon {
-  animation: none !important;
-  transform: none !important;
-}
-
-.step-item {
-  background: var(--pc-stock) !important;
-  border: 1px solid rgba(17, 24, 35, 0.2);
-  border-left: 3px solid var(--pc-blood) !important;
-  border-radius: 3px !important;
-  padding: 14px 16px !important;
-}
-
-.step-item:hover {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.step-number {
-  background: var(--pc-ink) !important;
-  background-image: none !important;
-  border: none !important;
-  border-radius: 2px !important;
-  width: 28px !important;
-  height: 28px !important;
-  font-family: var(--pc-numeral) !important;
-  font-weight: 900 !important;
-  font-size: 0.95rem !important;
-  box-shadow: none !important;
-  color: var(--pc-stock) !important;
-}
-
-.step-content p,
-.step-content a {
-  font-family: var(--pc-body) !important;
-  color: var(--pc-ink) !important;
-}
-
-.step-content a {
-  color: var(--pc-blood) !important;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(196, 22, 28, 0.4) !important;
-}
-
-.step-content a:hover {
-  border-bottom-color: var(--pc-blood) !important;
-  color: var(--pc-blood-deep) !important;
-}
-
 /* ===================================================================== */
 /* 11. COURSE                                                            */
 /* ===================================================================== */
@@ -2304,24 +2245,4 @@ section[data-rank='JOKER']::after {
     height: 108px;
     font-size: 0.68rem;
   }
-}
-
-/* ===================================================================== */
-/* 21. PRE-RIDE                                                          */
-/* ===================================================================== */
-
-/* One session and one thing to do before it: the slot first, the instruction
-   under it. No warning banner, no step number for a list of one. */
-.pre-ride-steps .steps-list {
-  max-width: 34rem;
-  margin: 18px auto 0;
-}
-
-.pre-ride-steps .step-item {
-  gap: 0 !important;
-  padding: 14px 18px !important;
-}
-
-.pre-ride-steps .step-content p {
-  text-align: center;
 }
