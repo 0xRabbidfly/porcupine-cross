@@ -154,10 +154,13 @@
         <a href="#course" data-rank="6" data-suit="&#9824;"
           ><i class="fas fa-map-marked-alt menu-icon"></i>Course</a
         >
+        <a href="#results" data-rank="7" data-suit="&#9827;"
+          ><i class="fas fa-flag-checkered menu-icon"></i>Results</a
+        >
         <a href="photos.html" data-rank="J" data-suit="&#9829;"
           ><i class="fas fa-camera menu-icon"></i>Photos</a
         >
-        <a href="#register" data-rank="7" data-suit="&#9830;"
+        <a href="#register" data-rank="8" data-suit="&#9830;"
           ><i class="fas fa-user-plus menu-icon"></i>Register</a
         >
         <a href="tech-guide.html" data-rank="J" data-suit="&#9827;"
@@ -720,7 +723,49 @@
         </div>
       </section>
 
-      <section id="register" data-rank="7" data-suit="&#9830;">
+      <section id="results" data-rank="7" data-suit="&#9827;">
+        <h2><span class="ace-icon">♣</span>Results</h2>
+        <div class="results-table">
+          <a
+            href="https://racetiming.ca/rr4eventpage.php?EventId=2639"
+            target="_blank"
+            rel="noopener"
+            class="results-hand"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <span class="results-card results-card-second" data-suit="&#9829;">
+              <span class="results-card-index">K<br />&#9829;</span>
+              <span class="results-card-pip">&#9829;</span>
+              <span class="results-card-place">2nd</span>
+            </span>
+            <span class="results-card results-card-first" data-suit="&#9824;">
+              <span class="results-card-index">A<br />&#9824;</span>
+              <span class="results-card-pip">&#9824;</span>
+              <span class="results-card-place">1st</span>
+            </span>
+            <span class="results-card results-card-third" data-suit="&#9830;">
+              <span class="results-card-index">Q<br />&#9830;</span>
+              <span class="results-card-pip">&#9830;</span>
+              <span class="results-card-place">3rd</span>
+            </span>
+          </a>
+        </div>
+        <div class="results-action">
+          <a
+            href="https://racetiming.ca/rr4eventpage.php?EventId=2639"
+            target="_blank"
+            rel="noopener"
+            class="results-button"
+          >
+            <i class="fas fa-flag-checkered"></i>
+            <span class="register-text">View start list and race results</span>
+          </a>
+          <p class="register-note">Timing by RaceTiming.ca</p>
+        </div>
+      </section>
+
+      <section id="register" data-rank="8" data-suit="&#9830;">
         <div class="register-phase" data-flip-at="2026-10-18T16:00:00-04:00">
           <div data-phase="pre">
             <h2><span class="ace-icon">♠</span>Deal Yourself In</h2>
@@ -832,7 +877,7 @@
         </div>
       </section>
 
-      <section id="contact" data-rank="8" data-suit="&#9829;">
+      <section id="contact" data-rank="9" data-suit="&#9829;">
         <h2><span class="ace-icon">♠</span>Contact Us</h2>
         <div class="contact-content">
           <p class="contact-intro">
@@ -1113,6 +1158,19 @@
             }
           });
         });
+
+        const resultsButton = document.querySelector('.results-button');
+        if (resultsButton) {
+          resultsButton.addEventListener('click', function () {
+            if (typeof gtag !== 'undefined') {
+              gtag('event', 'button_click', {
+                button_name: 'results',
+                button_location: 'results',
+                page_location: window.location.pathname,
+              });
+            }
+          });
+        }
 
         // Track audio button clicks
         const audioButton = document.querySelector('.audio-play-btn');

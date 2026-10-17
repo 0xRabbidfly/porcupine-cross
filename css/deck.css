@@ -297,8 +297,8 @@ header::after {
       background-color 0.2s ease;
   }
 
-  /* The wordmark splits the hand into two fours, the way a dealer breaks a
-     deck. It is sized off the card height so the three scale together. */
+  /* The wordmark breaks the hand after the fourth card, the way a dealer cuts
+     a deck. It is sized off the card height so the three scale together. */
   .nav-banner {
     height: 56px;
     width: auto;
@@ -337,38 +337,41 @@ header::after {
     display: none !important;
   }
 
-  /* The fan: outer cards lean away and sit lower, as a held hand does.
-     Typed by element so the banner between cards 4 and 5 does not shift the
-     count the way :nth-child would. */
+  /* The fan: outer cards lean away and sit lower, as a held hand does. Nine
+     cards, so the fifth stands square in the middle. Typed by element so the
+     banner between cards 4 and 5 does not shift the count the way :nth-child
+     would. */
   nav#main-nav a:nth-of-type(1) {
-    --fan-tilt: -7deg;
-    --fan-drop: 7px;
+    --fan-tilt: -8deg;
+    --fan-drop: 8px;
   }
   nav#main-nav a:nth-of-type(2) {
-    --fan-tilt: -5deg;
-    --fan-drop: 3.5px;
+    --fan-tilt: -6deg;
+    --fan-drop: 4.5px;
   }
   nav#main-nav a:nth-of-type(3) {
-    --fan-tilt: -3deg;
-    --fan-drop: 1px;
+    --fan-tilt: -4deg;
+    --fan-drop: 2px;
   }
   nav#main-nav a:nth-of-type(4) {
-    --fan-tilt: -1deg;
-  }
-  nav#main-nav a:nth-of-type(5) {
-    --fan-tilt: 1deg;
+    --fan-tilt: -2deg;
+    --fan-drop: 0.5px;
   }
   nav#main-nav a:nth-of-type(6) {
-    --fan-tilt: 3deg;
-    --fan-drop: 1px;
+    --fan-tilt: 2deg;
+    --fan-drop: 0.5px;
   }
   nav#main-nav a:nth-of-type(7) {
-    --fan-tilt: 5deg;
-    --fan-drop: 3.5px;
+    --fan-tilt: 4deg;
+    --fan-drop: 2px;
   }
   nav#main-nav a:nth-of-type(8) {
-    --fan-tilt: 7deg;
-    --fan-drop: 7px;
+    --fan-tilt: 6deg;
+    --fan-drop: 4.5px;
+  }
+  nav#main-nav a:nth-of-type(9) {
+    --fan-tilt: 8deg;
+    --fan-drop: 8px;
   }
 
   /* Clicking a link leaves it focused. Without this the legacy desktop menu's
@@ -442,7 +445,7 @@ header::after {
 }
 
 /* Below this the banner cannot shrink further without the wordmark going
-   illegible, so the hand closes back up into one run of eight. */
+   illegible, so the hand closes back up into one run of nine. */
 @media (min-width: 769px) and (max-width: 1199px) {
   .nav-banner {
     display: none;
@@ -658,13 +661,17 @@ section.visible {
   --deal-tilt: 1.7deg;
   --rest-tilt: -0.3deg;
 }
+#results {
+  --deal-tilt: -1.6deg;
+  --rest-tilt: 0.3deg;
+}
 #register {
-  --deal-tilt: -1.4deg;
-  --rest-tilt: 0.25deg;
+  --deal-tilt: 1.4deg;
+  --rest-tilt: -0.25deg;
 }
 #contact {
-  --deal-tilt: 1.5deg;
-  --rest-tilt: -0.3deg;
+  --deal-tilt: -1.5deg;
+  --rest-tilt: 0.3deg;
 }
 
 /* Square a card up when you touch it. */
@@ -1039,6 +1046,7 @@ section p {
 
 .hero-register-button,
 .register-button,
+.results-button,
 .cta-button,
 .download-btn,
 .back-to-home a {
@@ -1068,11 +1076,13 @@ section p {
 
 .hero-register-button:hover,
 .register-button:hover,
+.results-button:hover,
 .cta-button:hover,
 .download-btn:hover,
 .back-to-home a:hover,
 .hero-register-button:focus-visible,
 .register-button:focus-visible,
+.results-button:focus-visible,
 .cta-button:focus-visible {
   background: var(--pc-ink) !important;
   color: var(--pc-stock) !important;
@@ -1082,13 +1092,15 @@ section p {
 
 .hero-register-button i,
 .register-button i,
+.results-button i,
 .cta-button i {
   color: var(--pc-gilt) !important;
   font-size: 0.95rem !important;
 }
 
 .hero-register-button .register-text,
-.register-button .register-text {
+.register-button .register-text,
+.results-button .register-text {
   line-height: 1.1;
 }
 
@@ -2089,6 +2101,7 @@ footer {
   #quick-tips,
   #schedule,
   #course,
+  #results,
   #register,
   #contact {
     transform: none !important;
@@ -2244,5 +2257,223 @@ section[data-rank='JOKER']::after {
     width: 78px;
     height: 108px;
     font-size: 0.68rem;
+  }
+}
+
+/* ===================================================================== */
+/* 21. RESULTS — the winning hand                                        */
+/* ===================================================================== */
+
+/* The podium laid on the felt as a hand: the ace of spades raised in the
+   middle, king and queen either side. The hand is a second way into the
+   timing page, the way the register card sits beside the money button. */
+.results-table {
+  max-width: 540px;
+  margin: 1.4rem auto 0;
+  padding: 30px 20px 24px;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(247, 242, 231, 0.1), transparent 68%), var(--pc-felt);
+  border: 1px solid var(--pc-felt-deep);
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 0 5px var(--pc-felt),
+    inset 0 0 0 6px rgba(200, 162, 74, 0.6),
+    inset 0 22px 40px -22px rgba(0, 0, 0, 0.85);
+}
+
+.results-hand {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 200px;
+  text-decoration: none;
+}
+
+.results-card {
+  --fan: 0deg;
+  --lift: 0px;
+  --spread: 0px;
+  position: relative;
+  display: block;
+  flex: none;
+  width: 112px;
+  height: 156px;
+  margin: 0 -16px;
+  background: var(--pc-stock);
+  border: 1px solid rgba(17, 24, 35, 0.4);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 0 5px var(--pc-stock),
+    inset 0 0 0 6px rgba(200, 162, 74, 0.6),
+    0 20px 30px -16px rgba(0, 0, 0, 0.9);
+  color: var(--pc-index, var(--pc-ink));
+  transform-origin: 50% 120%;
+  transform: translateX(var(--spread)) translateY(var(--lift)) rotate(var(--fan));
+  transition: transform 0.7s cubic-bezier(0.16, 0.9, 0.24, 1) 0.25s;
+}
+
+.results-card-second {
+  --fan: -13deg;
+  --lift: 6px;
+}
+
+.results-card-first {
+  --lift: -12px;
+  z-index: 2;
+  width: 128px;
+  height: 178px;
+}
+
+.results-card-third {
+  --fan: 13deg;
+  --lift: 6px;
+}
+
+.results-card-index {
+  position: absolute;
+  top: 10px;
+  left: 11px;
+  font-family: var(--pc-numeral), var(--pc-suit);
+  font-weight: 900;
+  font-size: 1.2rem;
+  line-height: 0.86;
+  text-align: center;
+}
+
+.results-card-pip {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pc-suit);
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.results-card-first .results-card-pip {
+  font-size: 4.2rem;
+}
+
+.results-card-place {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  font-family: var(--pc-data);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pc-ink-soft);
+}
+
+.results-card-first .results-card-place {
+  padding: 2px 9px 2px 11px;
+  background: var(--pc-gilt);
+  border-radius: 2px;
+  color: var(--pc-ink);
+}
+
+/* Reaching for the hand, or for the button under it, spreads the cards. */
+.results-hand:hover .results-card-second,
+#results:has(.results-button:hover, .results-button:focus-visible) .results-card-second {
+  --fan: -18deg;
+  --spread: -10px;
+}
+
+.results-hand:hover .results-card-first,
+#results:has(.results-button:hover, .results-button:focus-visible) .results-card-first {
+  --lift: -22px;
+}
+
+.results-hand:hover .results-card-third,
+#results:has(.results-button:hover, .results-button:focus-visible) .results-card-third {
+  --fan: 18deg;
+  --spread: 10px;
+}
+
+/* Until the section turns face up the hand lies squared under the ace, then
+   fans as the card lands. */
+@media (prefers-reduced-motion: no-preference) {
+  #results:not(.visible) .results-card-second {
+    --fan: 0deg;
+    --lift: 0px;
+    --spread: 58px;
+  }
+
+  #results:not(.visible) .results-card-third {
+    --fan: 0deg;
+    --lift: 0px;
+    --spread: -58px;
+  }
+}
+
+.results-action {
+  margin-top: 1.8rem;
+  text-align: center;
+}
+
+.results-button {
+  justify-content: center;
+  max-width: 100%;
+  padding: 16px 30px !important;
+  font-size: 1.12rem !important;
+  text-align: center;
+}
+
+/* A mouse click leaves the button :focus without :focus-visible, and the
+   legacy a:focus rule rings it in red. Keep the ring for the keyboard only. */
+.results-button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.results-action .register-note {
+  margin-top: 12px !important;
+}
+
+@media (max-width: 768px) {
+  .results-table {
+    padding: 24px 8px 18px;
+  }
+
+  .results-hand {
+    height: 160px;
+  }
+
+  .results-card {
+    width: 88px;
+    height: 124px;
+    margin: 0 -12px;
+  }
+
+  .results-card-first {
+    width: 100px;
+    height: 140px;
+  }
+
+  .results-card-index {
+    top: 8px;
+    left: 9px;
+    font-size: 1rem;
+  }
+
+  .results-card-pip {
+    font-size: 2.3rem;
+  }
+
+  .results-card-first .results-card-pip {
+    font-size: 3.2rem;
+  }
+
+  .results-card-place {
+    bottom: 9px;
+    font-size: 0.64rem;
+  }
+
+  .results-button {
+    padding: 14px 18px !important;
+    font-size: 0.98rem !important;
+    letter-spacing: 0.1em !important;
   }
 }
