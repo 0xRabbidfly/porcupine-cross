@@ -124,9 +124,178 @@ describe('photos gallery load states', () => {
         })
     );
     await settle();
-    win.document.querySelector('.gallery-year-btn[data-year="2026"]').click();
+    // 2026 is the default, so switch to the other year.
+    win.document.querySelector('.gallery-year-btn[data-year="2025"]').click();
 
     expect(grid(win).querySelectorAll('.photo-skeleton').length).toBeGreaterThan(0);
     release();
+  });
+});
+
+describe('photos gallery race filter', () => {
+  const html = read('photos.html');
+
+  // Race-day times in Ontario (EDT, UTC-4), as photos.json stores them in UTC.
+  const at = hhmm => {
+    const [h, m] = hhmm.split(':').map(Number);
+    return new Date(Date.UTC(2026, 9, 18, h + 4, m)).toISOString();
+  };
+  const shots = [
+    ['warmup', '08:20'],
+    ['menC', '09:05'],
+    ['menC-late', '09:59'],
+    ['youth', '10:00'],
+    ['menB', '11:30'],
+    ['menB-gap', '12:10'], // no 12:00 chip: the women's pre-ride is not a race
+    ['kids', '12:45'],
+    ['women', '13:40'],
+    ['menA', '14:25'],
+    ['menA-late', '15:30'],
+  ];
+  const sample = {
+    photos: shots.map(([name, time], i) => ({
+      id: `photo_${i + 1}`,
+      filename: `${name}.jpg`,
+      date_taken: at(time),
+    })),
+  };
+
+  function boot() {
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: 'https://example.test/photos.html',
+      virtualConsole: new VirtualConsole(),
+      beforeParse(win) {
+        win.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => sample });
+        win.IntersectionObserver = class {
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+  }
+
+  const settle = () => new Promise(resolve => setTimeout(resolve, 50));
+  const shown = win =>
+    Array.from(win.document.querySelectorAll('#photo-grid .photo-item img')).map(img =>
+      img.src.split('/').pop().replace('.jpg', '')
+    );
+  const chip = (win, time) =>
+    win.document.querySelector(`.gallery-race-btn[data-start="2026-10-18T${time}:00-04:00"]`);
+
+  test('every race chip starts when the schedule on index.html says it does', () => {
+    const index = new JSDOM(read('index.html')).window.document;
+    const to24h = text => {
+      const [, h, m, half] = text.trim().match(/^(\d{1,2}):(\d{2})\s*(am|pm)$/i);
+      const hour = (Number(h) % 12) + (half.toLowerCase() === 'pm' ? 12 : 0);
+      return `${String(hour).padStart(2, '0')}:${m}`;
+    };
+    const scheduled = Array.from(index.querySelectorAll('.schedule-grid > .schedule-item'))
+      .filter(item => !/pre-ride/i.test(item.querySelector('.event-description').textContent))
+      .map(item => to24h(item.querySelector('.event-time').textContent));
+
+    const page = new JSDOM(html).window.document;
+    const chips = Array.from(page.querySelectorAll('.gallery-races[data-year="2026"] [data-start]'))
+      .map(button => button.dataset.start)
+      .filter(Boolean)
+      .map(start => start.slice(11, 16));
+
+    expect(scheduled.length).toBeGreaterThan(0);
+    expect(chips).toEqual(scheduled);
+  });
+
+  test('all races is selected to start with and shows the whole year', async () => {
+    const win = boot();
+    await settle();
+
+    expect(
+      win.document.querySelector('.gallery-race-btn[data-start=""]').getAttribute('aria-pressed')
+    ).toBe('true');
+    expect(shown(win)).toHaveLength(shots.length);
+  });
+
+  test('a race shows the photos from its start to the next start', async () => {
+    const win = boot();
+    await settle();
+
+    chip(win, '10:00').click();
+    expect(shown(win)).toEqual(['youth']);
+    expect(chip(win, '10:00').getAttribute('aria-pressed')).toBe('true');
+    expect(win.document.getElementById('photo-count').textContent).toBe('1 Photos Available');
+
+    chip(win, '11:00').click();
+    expect(shown(win)).toEqual(['menB', 'menB-gap']);
+  });
+
+  test('the first window takes earlier photos and the last runs to the end of the day', async () => {
+    const win = boot();
+    await settle();
+
+    chip(win, '09:00').click();
+    expect(shown(win)).toEqual(['warmup', 'menC', 'menC-late']);
+
+    chip(win, '14:20').click();
+    expect(shown(win)).toEqual(['menA', 'menA-late']);
+  });
+
+  test('each chip counts its photos', async () => {
+    const win = boot();
+    await settle();
+
+    const count = time => chip(win, time).querySelector('.race-count').textContent;
+    expect(count('10:00')).toBe('1');
+    expect(count('13:15')).toBe('1');
+    expect(
+      win.document.querySelector('.gallery-race-btn[data-start=""] .race-count').textContent
+    ).toBe(String(shots.length));
+  });
+
+  test('a race nobody photographed hides its chip', async () => {
+    const kidsFree = { photos: sample.photos.filter(photo => photo.filename !== 'kids.jpg') };
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: 'https://example.test/photos.html',
+      virtualConsole: new VirtualConsole(),
+      beforeParse(w) {
+        w.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => kidsFree });
+        w.IntersectionObserver = class {
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    await settle();
+
+    expect(chip(dom.window, '12:30').hidden).toBe(true);
+    expect(chip(dom.window, '11:00').hidden).toBe(false);
+  });
+
+  test('the lightbox steps through the selected race only', async () => {
+    const win = boot();
+    await settle();
+
+    chip(win, '14:20').click();
+    win.document.querySelector('#photo-grid .photo-item').click();
+    win.document.getElementById('lightbox-next').click();
+    expect(win.document.getElementById('lightbox-image').src).toMatch(/menA-late\.jpg$/);
+    win.document.getElementById('lightbox-next').click();
+    expect(win.document.getElementById('lightbox-image').src).toMatch(/menA-late\.jpg$/);
+  });
+
+  test('a year without a race schedule hides the chips and shows everything', async () => {
+    const win = boot();
+    await settle();
+
+    chip(win, '09:00').click();
+    win.document.querySelector('.gallery-year-btn[data-year="2025"]').click();
+    await settle();
+
+    expect(win.document.querySelector('.gallery-races[data-year="2026"]').hidden).toBe(true);
+    expect(shown(win)).toHaveLength(shots.length);
   });
 });

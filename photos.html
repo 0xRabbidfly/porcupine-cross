@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261017" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261017" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261017" />
+    <link rel="stylesheet" href="style.css?v=20261022" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261022" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261022" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -614,7 +614,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:opsz,wght@6..96,700..900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261017" />
+    <link rel="stylesheet" href="css/deck.css?v=20261022" />
   </head>
   <body>
     <header>
@@ -678,9 +678,9 @@
       <div class="photos-page-container" data-rank="J" data-suit="&#9829;">
         <!-- Page Header -->
         <div class="photos-page-header">
-          <h1><span id="gallery-title">2025 Event Photos</span></h1>
+          <h1><span id="gallery-title">2026 Event Photos</span></h1>
           <p class="photos-page-description" id="gallery-description">
-            Browse and download professional photos from the Prologue Cyclocross 2025 event. Click
+            Browse and download professional photos from the Prologue Cyclocross 2026 event. Click
             any photo to view and download the high-resolution version.
           </p>
         </div>
@@ -694,7 +694,7 @@
               class="gallery-year-btn"
               role="tab"
               data-year="2026"
-              aria-selected="false"
+              aria-selected="true"
             >
               2026
             </button>
@@ -703,9 +703,66 @@
               class="gallery-year-btn"
               role="tab"
               data-year="2025"
-              aria-selected="true"
+              aria-selected="false"
             >
               2025
+            </button>
+          </div>
+
+          <!-- Race Filter: each race runs from its start to the next start. The
+               times are the schedule on index.html, and a test holds them to it.
+               A race nobody photographed hides its chip once the photos load. -->
+          <div class="gallery-races" role="group" aria-label="Filter by race" data-year="2026">
+            <button type="button" class="gallery-race-btn" data-start="" aria-pressed="true">
+              All races
+            </button>
+            <button
+              type="button"
+              class="gallery-race-btn"
+              data-start="2026-10-18T09:00:00-04:00"
+              aria-pressed="false"
+            >
+              <b>9:00</b> Men C &middot; Masters 55+
+            </button>
+            <button
+              type="button"
+              class="gallery-race-btn"
+              data-start="2026-10-18T10:00:00-04:00"
+              aria-pressed="false"
+            >
+              <b>10:00</b> U17 &middot; U15 &middot; U13
+            </button>
+            <button
+              type="button"
+              class="gallery-race-btn"
+              data-start="2026-10-18T11:00:00-04:00"
+              aria-pressed="false"
+            >
+              <b>11:00</b> Men B &middot; Masters 35+
+            </button>
+            <button
+              type="button"
+              class="gallery-race-btn"
+              data-start="2026-10-18T12:30:00-04:00"
+              aria-pressed="false"
+            >
+              <b>12:30</b> Kids Try-a-Race
+            </button>
+            <button
+              type="button"
+              class="gallery-race-btn"
+              data-start="2026-10-18T13:15:00-04:00"
+              aria-pressed="false"
+            >
+              <b>1:15</b> Women A &middot; B &middot; Masters
+            </button>
+            <button
+              type="button"
+              class="gallery-race-btn"
+              data-start="2026-10-18T14:20:00-04:00"
+              aria-pressed="false"
+            >
+              <b>2:20</b> Men A &middot; Single Speed
             </button>
           </div>
 
@@ -793,7 +850,11 @@
     <script>
       class PhotoGallery {
         constructor(year) {
+          // allPhotos is the year; photos is what the grid and lightbox walk,
+          // which is the year narrowed to the selected race.
+          this.allPhotos = [];
           this.photos = [];
+          this.raceStart = '';
           this.currentPage = 0;
           this.photosPerPage = 50;
           this.currentPhotoIndex = 0;
@@ -806,6 +867,7 @@
         }
 
         async init() {
+          this.selectRaceButton('');
           this.setupEventListeners();
           this.setupInfiniteScroll();
           await this.load();
@@ -817,6 +879,7 @@
           try {
             await this.loadPhotos();
           } catch (error) {
+            this.allPhotos = [];
             this.photos = [];
             // A missing photos.json is how a year with no gallery announces
             // itself. Anything else is a fault, and saying "coming soon" to
@@ -824,6 +887,7 @@
             failure = error.missingGallery ? null : error;
           }
 
+          this.updateRaceCounts();
           this.updateStats();
 
           if (failure) {
@@ -844,12 +908,98 @@
 
           this.year = year;
           this.basePath = `/photos/event-${year}/`;
+          this.allPhotos = [];
           this.photos = [];
           this.currentPage = 0;
           this.currentPhotoIndex = 0;
           this.hasMorePhotos = true;
+          this.selectRaceButton('');
           this.showSkeletons();
           this.load();
+        }
+
+        // The race buttons for the current year, in start order. A year
+        // without a race schedule has none, and the gallery is just the year.
+        raceButtons() {
+          return Array.from(
+            document.querySelectorAll(`.gallery-races[data-year="${this.year}"] [data-start]`)
+          )
+            .filter(button => button.dataset.start)
+            .sort((a, b) => Date.parse(a.dataset.start) - Date.parse(b.dataset.start));
+        }
+
+        // A race owns every photo from its start until the next race starts.
+        // Photos taken before the first start belong to the first window.
+        photosInRace(start) {
+          if (!start) return this.allPhotos;
+
+          const starts = this.raceButtons().map(button => Date.parse(button.dataset.start));
+          const index = starts.indexOf(Date.parse(start));
+          const from = index === 0 ? -Infinity : starts[index];
+          const until = index + 1 < starts.length ? starts[index + 1] : Infinity;
+
+          return this.allPhotos.filter(photo => {
+            const taken = Date.parse(photo.date_taken);
+            return taken >= from && taken < until;
+          });
+        }
+
+        selectRaceButton(start) {
+          this.raceStart = start;
+          document.querySelectorAll('.gallery-races').forEach(group => {
+            group.hidden = group.dataset.year !== this.year;
+          });
+          document.querySelectorAll('.gallery-race-btn').forEach(button => {
+            button.setAttribute('aria-pressed', String(button.dataset.start === start));
+          });
+        }
+
+        setRace(start) {
+          if (start === this.raceStart) return;
+
+          this.selectRaceButton(start);
+          // Still loading: loadPhotos applies the selection when it lands.
+          if (this.allPhotos.length === 0) return;
+
+          this.photos = this.photosInRace(start);
+          this.currentPage = 0;
+          this.currentPhotoIndex = 0;
+          this.updateStats();
+
+          if (this.photos.length === 0) {
+            this.showEmptyRace();
+            return;
+          }
+
+          this.renderPhotos();
+        }
+
+        updateRaceCounts() {
+          document
+            .querySelectorAll(`.gallery-races[data-year="${this.year}"] .gallery-race-btn`)
+            .forEach(button => {
+              let count = button.querySelector('.race-count');
+              if (!count) {
+                count = document.createElement('span');
+                count.className = 'race-count';
+                button.appendChild(count);
+              }
+              const inRace = this.photosInRace(button.dataset.start).length;
+              count.textContent = this.allPhotos.length ? String(inRace) : '';
+              button.hidden = Boolean(button.dataset.start) && this.allPhotos.length > 0 && !inRace;
+            });
+        }
+
+        showEmptyRace() {
+          this.hasMorePhotos = false;
+          this.hideLoadingIndicator();
+          document.getElementById('photo-grid').innerHTML = `
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-camera-retro"></i>
+                        <h2>No photos from this race</h2>
+                        <p>Nothing was shot in this window. Try the race before or after it.</p>
+                    </div>
+                `;
         }
 
         // Twelve is about two rows on a desktop grid and six on a phone: enough
@@ -876,7 +1026,8 @@
               throw error;
             }
             const data = await response.json();
-            this.photos = data.photos || [];
+            this.allPhotos = data.photos || [];
+            this.photos = this.photosInRace(this.raceStart);
           } finally {
             clearTimeout(deadline);
           }
@@ -1111,6 +1262,10 @@
 
         document.querySelectorAll('.gallery-year-btn').forEach(button => {
           button.addEventListener('click', () => selectYear(gallery, button.dataset.year));
+        });
+
+        document.querySelectorAll('.gallery-race-btn').forEach(button => {
+          button.addEventListener('click', () => gallery.setRace(button.dataset.start));
         });
       });
     </script>

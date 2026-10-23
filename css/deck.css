@@ -1825,6 +1825,134 @@ footer {
   border-color: var(--pc-ink) !important;
 }
 
+/* Race filter: a row of start-time chips under the year tabs. The time is set
+   like a card index, the count like a pip. */
+.gallery-races {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 980px;
+  margin: 18px auto 14px;
+}
+
+.gallery-races[hidden],
+.gallery-race-btn[hidden] {
+  display: none;
+}
+
+.gallery-race-btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  font-family: var(--pc-data);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--pc-ink);
+  background: var(--pc-stock);
+  border: 1px solid var(--pc-hairline);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.gallery-race-btn b {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+  color: var(--pc-blood);
+}
+
+.gallery-race-btn .race-count {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--pc-ink-soft);
+  background: var(--pc-stock-shade);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.gallery-race-btn .race-count:empty {
+  display: none;
+}
+
+.gallery-race-btn:hover {
+  border-color: var(--pc-gilt);
+  transform: translateY(-1px);
+}
+
+/* style.css rings every focused button in red; a chip shows its state by fill. */
+.gallery-race-btn:focus {
+  box-shadow: none;
+}
+
+.gallery-race-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.gallery-race-btn:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 2px;
+}
+
+.gallery-race-btn[aria-pressed='true'] {
+  background: var(--pc-felt);
+  border-color: var(--pc-gilt);
+  color: var(--pc-stock);
+}
+
+.gallery-race-btn[aria-pressed='true'] b {
+  color: var(--pc-gilt);
+}
+
+.gallery-race-btn[aria-pressed='true'] .race-count {
+  background: rgba(247, 242, 231, 0.16);
+  color: var(--pc-stock);
+}
+
+/* On a phone the chips run as one swipeable strip instead of five rows. The
+   page container is a grid item, which grows to fit its widest content unless
+   told otherwise, and the strip would widen the whole page instead of scrolling.
+   Its width also has to include its padding, or the card overhangs a phone by
+   the padding's worth and the page scrolls sideways. */
+@media (max-width: 600px) {
+  .photos-page-container {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .gallery-races {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 4px 6px;
+  }
+
+  .gallery-races::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-race-btn {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-race-btn {
+    transition: none;
+  }
+
+  .gallery-race-btn:hover {
+    transform: none;
+  }
+}
+
 .gallery-stats {
   font-family: var(--pc-data);
   font-size: 0.78rem;
