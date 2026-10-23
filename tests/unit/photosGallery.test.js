@@ -662,3 +662,143 @@ describe('photos gallery bib finder', () => {
     expect(win.document.getElementById('lightbox-image').src).toMatch(/menB-4\.jpg$/);
   });
 });
+
+describe('photos gallery rider panel', () => {
+  const html = read('photos.html');
+  const at = hhmm => {
+    const [h, m] = hhmm.split(':').map(Number);
+    return new Date(Date.UTC(2026, 9, 18, h + 4, m)).toISOString();
+  };
+  // Bib 204 rides Men B (6 laps in 42:00, 7 minutes a lap) and single speed as 289.
+  const shots = [
+    ['menB-1', '11:10', { 204: 'number' }],
+    ['menB-2', '11:20', { 204: 'kit', 5: 'number' }],
+    ['menB-3', '11:30', { 5: 'number' }],
+    ['menB-4', '11:40', { 204: 'number', 5: 'kit', 7: 'number' }],
+    ['menA-1', '14:40', { 289: 'number' }],
+  ];
+  const data = {
+    photos: shots.map(([name, time, bibs], i) => ({
+      id: `photo_${i + 1}`,
+      filename: `${name}.jpg`,
+      date_taken: at(time),
+      bibs,
+    })),
+    results: {
+      204: {
+        race: 'Master Men 35+',
+        place: 2,
+        field: 9,
+        laps: 6,
+        time: '42:00',
+        start: '2026-10-18T11:01:00-04:00',
+      },
+      289: {
+        race: 'Single Speed',
+        place: 4,
+        field: 6,
+        laps: 6,
+        time: '49:03',
+        start: '2026-10-18T14:21:00-04:00',
+      },
+      5: { race: 'Cat B', status: 'DNF', start: '2026-10-18T11:00:00-04:00', field: 18 },
+    },
+    same_rider: [['204', '289']],
+  };
+
+  function boot() {
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: 'https://example.test/photos.html',
+      virtualConsole: new VirtualConsole(),
+      beforeParse(win) {
+        win.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => data });
+        win.IntersectionObserver = class {
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+  }
+  const settle = () => new Promise(resolve => setTimeout(resolve, 50));
+  const search = (win, value) => {
+    win.document.getElementById('bib-input').value = value;
+    win.document
+      .querySelector('.bib-finder')
+      .dispatchEvent(new win.Event('submit', { cancelable: true }));
+  };
+  const panel = win => win.document.querySelector('.rider-panel');
+  const text = (win, sel) => panel(win).querySelector(sel).textContent.replace(/\s+/g, ' ').trim();
+
+  test('stays hidden until a bib is searched, and hides again when it is cleared', async () => {
+    const win = boot();
+    await settle();
+    expect(panel(win).hidden).toBe(true);
+    search(win, '204');
+    expect(panel(win).hidden).toBe(false);
+    win.document.querySelector('.bib-clear').click();
+    expect(panel(win).hidden).toBe(true);
+  });
+
+  test('gives the rider their result', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+    expect(text(win, '.rider-bib')).toBe('204');
+    expect(text(win, '.rider-result')).toBe('2nd of 9 in Master Men 35+');
+    expect(text(win, '.rider-detail')).toBe('42:00 over 6 laps');
+
+    search(win, '5');
+    expect(text(win, '.rider-result')).toBe('Raced Cat B');
+    expect(text(win, '.rider-detail')).toBe('Did not finish');
+  });
+
+  test('marks each photo with the lap it caught the rider on', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+    const laps = Array.from(win.document.querySelectorAll('#photo-grid .photo-lap')).map(
+      mark => mark.textContent
+    );
+    // 9, 19 and 39 minutes after an 11:01 start, at 7 minutes a lap.
+    expect(laps).toEqual(['Lap 2', 'Lap 3', 'Lap 6']);
+  });
+
+  test('links the same rider on their other bib', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+    const also = Array.from(panel(win).querySelectorAll('.rider-link')).find(link =>
+      link.textContent.startsWith('Also raced')
+    );
+    expect(also.textContent.replace(/\s+/g, ' ')).toBe('Also raced Single Speed as 289');
+    also.click();
+    expect(win.document.getElementById('bib-input').value).toBe('289');
+    expect(text(win, '.rider-result')).toBe('4th of 6 in Single Speed');
+  });
+
+  test('lists who shared the frame, most photos first, and jumps to them', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+    const rivals = Array.from(panel(win).querySelectorAll('.rider-link'))
+      .filter(link => !link.textContent.startsWith('Also'))
+      .map(link => link.textContent.replace(/\s+/g, ' ').trim());
+    expect(rivals).toEqual(['5 2 photos', '7 1 photo']);
+
+    panel(win).querySelectorAll('.rider-link')[1].click();
+    expect(win.location.search).toBe('?bib=5');
+  });
+
+  test('offers a photo card of the rider', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+    const button = panel(win).querySelector('.rider-card-btn');
+    expect(button.hidden).toBe(false);
+    expect(button.textContent.trim()).toBe('Make my photo card');
+  });
+});

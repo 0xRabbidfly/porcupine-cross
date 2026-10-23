@@ -21,6 +21,11 @@
 # "number" means the bib was read in the photo; "kit" means the number is hidden
 # and the rider was matched by kit to a photo where it was read. They are merged
 # into each photo here, so regenerating photos.json never drops them.
+#
+# Race results, when the year has them, sit beside it as results.json:
+#   { "results": { "204": { "race": "Master Women 35+", "place": 1, ... } },
+#     "same_rider": [["240", "289"]] }
+# Bib numbers only, never names. They are copied to the top of photos.json.
 
 [CmdletBinding()]
 param(
@@ -41,7 +46,9 @@ param(
     # two 2026 cameras exported with its EXIF artist field blanked.
     [hashtable]$Photographers = @{},
 
-    [string]$BibsPath
+    [string]$BibsPath,
+
+    [string]$ResultsPath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,6 +58,12 @@ if (-not $HighResPath) { $HighResPath = Join-Path $eventRoot 'high-res' }
 if (-not $ThumbnailPath) { $ThumbnailPath = Join-Path $eventRoot 'thumbnails' }
 if (-not $OutputJsonPath) { $OutputJsonPath = Join-Path $eventRoot 'photos.json' }
 if (-not $BibsPath) { $BibsPath = Join-Path $eventRoot 'bibs.json' }
+
+if (-not $ResultsPath) { $ResultsPath = Join-Path $eventRoot 'results.json' }
+$raceResults = $null
+if (Test-Path $ResultsPath) {
+    $raceResults = Get-Content $ResultsPath -Raw | ConvertFrom-Json -AsHashtable
+}
 
 $bibs = @{}
 if (Test-Path $BibsPath) {
@@ -187,6 +200,10 @@ $metadata = [ordered]@{
         ForEach-Object { [ordered]@{ name = $_.Key; photos = $_.Value } })
     photos    = $photos
     generated = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+}
+if ($raceResults) {
+    $metadata.results = $raceResults.results
+    $metadata.same_rider = $raceResults.same_rider
 }
 
 New-Item -ItemType Directory -Force -Path (Split-Path $OutputJsonPath -Parent) | Out-Null

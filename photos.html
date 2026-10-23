@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261023" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261023" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261023" />
+    <link rel="stylesheet" href="style.css?v=20261023-2" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261023-2" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261023-2" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -563,7 +563,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261023" />
+    <link rel="stylesheet" href="css/deck.css?v=20261023-2" />
   </head>
   <body>
     <header>
@@ -798,6 +798,22 @@
             </form>
           </div>
 
+          <!-- One rider's day, shown while a bib is searched: their result from
+               the year's results, who they raced alongside, and a card of their
+               photos to share. Bib numbers only, never names. -->
+          <div class="rider-panel" hidden>
+            <div class="rider-bib" aria-hidden="true"></div>
+            <div class="rider-body">
+              <p class="rider-result"></p>
+              <p class="rider-detail"></p>
+              <div class="rider-links"></div>
+            </div>
+            <button type="button" class="rider-card-btn">
+              <i class="fas fa-image" aria-hidden="true"></i>
+              <span>Make my photo card</span>
+            </button>
+          </div>
+
           <!-- Photo Grid -->
           <!-- Face-down cards hold the gallery's shape until the photos arrive.
                They ship in the HTML so the grid is there on the first paint. -->
@@ -872,6 +888,11 @@
           this.bib = '';
           this.bibTimer = null;
           this.finder = document.querySelector('.bib-finder');
+          this.riderPanel = document.querySelector('.rider-panel');
+          // From the year's photos.json: bib -> result, and pairs of bibs
+          // one rider raced under.
+          this.results = {};
+          this.sameRider = [];
           this.fetching = false;
           this.currentPage = 0;
           this.photosPerPage = 50;
@@ -1069,6 +1090,7 @@
           this.currentPage = 0;
           this.currentPhotoIndex = 0;
           this.updateStats();
+          this.updateRider();
           this.timeline.select();
 
           if (this.photos.length === 0) {
@@ -1121,6 +1143,153 @@
           if (!this.bib) return;
           this.bib = '';
           this.updateBibUrl();
+          this.updateRider();
+        }
+
+        // "2nd of 9 in Master Men 35+" and "42:00 over 6 laps", or what is
+        // known when the rider did not finish. Empty without a result.
+        riderResult(bib) {
+          const result = this.results[bib];
+          if (!result) return { headline: '', detail: '' };
+          if (result.status === 'DNF') {
+            return { headline: `Raced ${result.race}`, detail: 'Did not finish' };
+          }
+          if (!result.place) return { headline: '', detail: '' };
+          return {
+            headline: `${ordinal(result.place)} of ${result.field} in ${result.race}`,
+            detail: `${result.time} over ${result.laps} laps`,
+          };
+        }
+
+        // Which lap a photo caught the searched rider on, worked out from
+        // their start, finishing time and laps: an even split, so a frame
+        // right at the line can land a lap early or late.
+        lapFor(photo) {
+          const result = this.results[this.bib];
+          if (!result || !result.laps) return '';
+          const start = Date.parse(result.start);
+          const taken = Date.parse(photo.date_taken);
+          const total = clockSeconds(result.time) * 1000;
+          if (taken < start) return 'Start';
+          if (taken > start + total) return 'Finished';
+          const lap = Math.floor((taken - start) / (total / result.laps)) + 1;
+          return `Lap ${Math.min(result.laps, lap)}`;
+        }
+
+        // The rider's other bib, when they raced twice.
+        otherBib(bib) {
+          const pair = this.sameRider.find(bibs => bibs.includes(bib));
+          return pair ? pair.find(other => other !== bib) : '';
+        }
+
+        // Riders tagged in the same frames, most shared first.
+        racedWith(bib) {
+          const other = this.otherBib(bib);
+          const counts = new Map();
+          this.photos.forEach(photo => {
+            Object.keys(photo.bibs || {}).forEach(tagged => {
+              if (tagged === bib || tagged === other) return;
+              counts.set(tagged, (counts.get(tagged) || 0) + 1);
+            });
+          });
+          return Array.from(counts)
+            .sort((a, b) => b[1] - a[1] || Number(a[0]) - Number(b[0]))
+            .slice(0, 4);
+        }
+
+        updateRider() {
+          const panel = this.riderPanel;
+          if (!panel) return;
+          panel.hidden = !this.bib || this.photos.length === 0;
+          if (panel.hidden) return;
+
+          const { headline, detail } = this.riderResult(this.bib);
+          panel.querySelector('.rider-bib').textContent = this.bib;
+          panel.querySelector('.rider-result').textContent = headline || `Bib ${this.bib}`;
+          panel.querySelector('.rider-detail').textContent = detail;
+
+          const links = panel.querySelector('.rider-links');
+          links.textContent = '';
+          const link = (bib, text) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'rider-link';
+            button.innerHTML = text;
+            button.addEventListener('click', () => this.setBib(bib));
+            return button;
+          };
+
+          const other = this.otherBib(this.bib);
+          if (other && this.results[other]) {
+            const row = document.createElement('p');
+            row.className = 'rider-links-row';
+            row.appendChild(
+              link(other, `Also raced ${this.results[other].race} as <b>${other}</b>`)
+            );
+            links.appendChild(row);
+          }
+
+          const rivals = this.racedWith(this.bib);
+          if (rivals.length) {
+            const row = document.createElement('p');
+            row.className = 'rider-links-row';
+            const label = document.createElement('span');
+            label.className = 'rider-links-label';
+            label.textContent = 'In the frame with';
+            row.appendChild(label);
+            rivals.forEach(([bib, shared]) => {
+              row.appendChild(
+                link(bib, `<b>${bib}</b> ${shared === 1 ? '1 photo' : `${shared} photos`}`)
+              );
+            });
+            links.appendChild(row);
+          }
+        }
+
+        // Up to three of the rider's photos for the card, spread over the
+        // race, from frames where the number was read when there are enough.
+        cardPhotos() {
+          const read = this.photos.filter(photo => photo.bibs[this.bib] === 'number');
+          const pool = read.length >= 3 ? read : this.photos;
+          if (pool.length <= 3) return pool;
+          return [pool[0], pool[Math.floor(pool.length / 2)], pool[pool.length - 1]];
+        }
+
+        async makeCard() {
+          const button = this.riderPanel.querySelector('.rider-card-btn');
+          const label = button.querySelector('span');
+          button.disabled = true;
+          label.textContent = 'Making your card…';
+          try {
+            const photos = this.cardPhotos();
+            const credits = [...new Set(photos.map(photo => photo.photographer).filter(Boolean))];
+            const { headline, detail } = this.riderResult(this.bib);
+            const blob = await drawRiderCard({
+              year: this.year,
+              bib: this.bib,
+              headline,
+              detail,
+              credits,
+              sources: photos.map(photo => `${this.basePath}high-res/${photo.filename}`),
+            });
+            const name = `Prologue${this.year}_bib${this.bib}.jpg`;
+            const file = new File([blob], name, { type: 'image/jpeg' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({ files: [file], title: `Prologue Cross ${this.year}` });
+            } else {
+              const anchor = document.createElement('a');
+              anchor.href = URL.createObjectURL(blob);
+              anchor.download = name;
+              anchor.click();
+              setTimeout(() => URL.revokeObjectURL(anchor.href), 10000);
+            }
+          } catch (error) {
+            // Closing the share sheet is a choice, not a failure.
+            if (error.name !== 'AbortError') console.warn('Photo card failed', error);
+          } finally {
+            button.disabled = false;
+            label.textContent = 'Make my photo card';
+          }
         }
 
         // The address carries the bib, so a rider's photos can be shared.
@@ -1161,6 +1330,12 @@
             this.setBib('');
             this.bibInput.focus();
           });
+
+          if (this.riderPanel) {
+            this.riderPanel
+              .querySelector('.rider-card-btn')
+              .addEventListener('click', () => this.makeCard());
+          }
         }
 
         showNoBib() {
@@ -1243,6 +1418,8 @@
               this.allPhotos.sort((a, b) => Date.parse(a.date_taken) - Date.parse(b.date_taken));
             }
             this.photographers = data.photographers || [];
+            this.results = data.results || {};
+            this.sameRider = data.same_rider || [];
             this.photos = this.photosInRace(this.raceStart);
           } finally {
             clearTimeout(deadline);
@@ -1341,6 +1518,14 @@
               tag.textContent = 'Likely you';
               tag.title = 'Matched by kit: the number is not visible in this photo';
               photoItem.appendChild(tag);
+            }
+
+            const lap = this.bib ? this.lapFor(photo) : '';
+            if (lap) {
+              const mark = document.createElement('span');
+              mark.className = 'photo-lap';
+              mark.textContent = lap;
+              photoItem.appendChild(mark);
             }
 
             photoItem.addEventListener('click', () => this.openLightbox(photoIndex));
@@ -1496,6 +1681,139 @@
         }).formatToParts(new Date(time));
         const part = type => parts.find(p => p.type === type).value;
         return `${part('hour')}:${part('minute')} ${part('dayPeriod').toLowerCase()}`;
+      }
+
+      // 1 -> "1st", 22 -> "22nd", 13 -> "13th".
+      function ordinal(n) {
+        const tens = n % 100;
+        const suffix =
+          tens >= 11 && tens <= 13 ? 'th' : { 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th';
+        return `${n}${suffix}`;
+      }
+
+      // "42:16" or "1:02:07" -> seconds.
+      function clockSeconds(text) {
+        return text.split(':').reduce((total, part) => total * 60 + Number(part), 0);
+      }
+
+      // The rider's photo card: a 1080x1920 story image on the felt, with the
+      // bib pinned at the top, their result, three of their photos as prints
+      // and the photographers' credit. Resolves to a JPEG blob.
+      async function drawRiderCard({ year, bib, headline, detail, credits, sources }) {
+        const W = 1080;
+        const H = 1920;
+        const ink = '#111823';
+        const stock = '#f7f2e7';
+        const gilt = '#c8a24a';
+        const canvas = document.createElement('canvas');
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext('2d');
+
+        if (document.fonts) {
+          await Promise.all(
+            [
+              'italic 400 60px "Bodoni Moda"',
+              '800 150px "Libre Franklin"',
+              '600 52px "Barlow Condensed"',
+            ].map(font => document.fonts.load(font).catch(() => null))
+          );
+        }
+        const images = await Promise.all(
+          sources.map(
+            src =>
+              new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+              })
+          )
+        );
+
+        ctx.fillStyle = '#14392c';
+        ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = gilt;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(34, 34, W - 68, H - 68);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = stock;
+        ctx.font = 'italic 400 60px "Bodoni Moda", Georgia, serif';
+        ctx.fillText(`Prologue Cross ${year}`, W / 2, 150);
+
+        // The bib: white, heavy digits, a pin hole in each corner.
+        const bw = 400;
+        const bh = 230;
+        const bx = (W - bw) / 2;
+        const by = 200;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(bx, by, bw, bh);
+        ctx.fillStyle = 'rgba(17, 24, 35, 0.45)';
+        [
+          [bx + 22, by + 22],
+          [bx + bw - 22, by + 22],
+          [bx + 22, by + bh - 22],
+          [bx + bw - 22, by + bh - 22],
+        ].forEach(([x, y]) => {
+          ctx.beginPath();
+          ctx.arc(x, y, 7, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.fillStyle = ink;
+        ctx.font = '800 150px "Libre Franklin", "Helvetica Neue", Arial, sans-serif';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(bib, W / 2, by + bh / 2 + 6);
+        ctx.textBaseline = 'alphabetic';
+
+        ctx.fillStyle = stock;
+        ctx.font = '600 52px "Barlow Condensed", "Arial Narrow", sans-serif';
+        if (headline) ctx.fillText(headline, W / 2, 520);
+        ctx.fillStyle = gilt;
+        ctx.font = '600 44px "Barlow Condensed", "Arial Narrow", sans-serif';
+        if (detail) ctx.fillText(detail, W / 2, 580);
+
+        // Each photo is a print: a stock border round a cover-cropped frame.
+        const print = (img, x, y, w, h) => {
+          ctx.fillStyle = stock;
+          ctx.fillRect(x - 10, y - 10, w + 20, h + 20);
+          const scale = Math.max(w / img.width, h / img.height);
+          const sw = w / scale;
+          const sh = h / scale;
+          ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
+        };
+        const top = 650;
+        const bottom = 1720;
+        if (images.length === 1) {
+          print(images[0], 70, top, W - 140, bottom - top);
+        } else {
+          const big = images.length === 2 ? 520 : 660;
+          print(images[0], 70, top, W - 140, big);
+          const rest = images.slice(1);
+          const gap = 30;
+          const w = (W - 140 - gap * (rest.length - 1)) / rest.length;
+          rest.forEach((img, i) =>
+            print(img, 70 + i * (w + gap), top + big + gap, w, bottom - top - big - gap)
+          );
+        }
+
+        ctx.fillStyle = stock;
+        ctx.font = 'italic 400 34px "Bodoni Moda", Georgia, serif';
+        if (credits.length) {
+          const names = new Intl.ListFormat('en', { type: 'conjunction' }).format(credits);
+          ctx.fillText(`Photos by ${names}`, W / 2, 1800);
+        }
+        ctx.fillStyle = gilt;
+        ctx.font = '600 34px "Barlow Condensed", "Arial Narrow", sans-serif';
+        ctx.fillText('prologuecross.ca/photos', W / 2, 1852);
+
+        return new Promise((resolve, reject) =>
+          canvas.toBlob(
+            blob => (blob ? resolve(blob) : reject(new Error('Card could not be drawn'))),
+            'image/jpeg',
+            0.9
+          )
+        );
       }
 
       // The race's full name, as the schedule gives it.
