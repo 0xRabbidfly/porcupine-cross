@@ -1953,6 +1953,230 @@ footer {
   }
 }
 
+/* Race-day timeline: the day's photos seen edge-on, like a deck on the felt.
+   Each frame is one translucent cream line, so a burst stacks up bright and a
+   break in racing is bare table. */
+.day-timeline {
+  max-width: 980px;
+  margin: 4px auto 26px;
+  text-align: left;
+}
+
+.day-timeline[hidden] {
+  display: none;
+}
+
+.day-timeline-labels {
+  position: relative;
+  height: 38px;
+}
+
+.day-timeline-label {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 6px 6px;
+  border-left: 1px solid var(--pc-gilt);
+  font-family: var(--pc-data);
+  font-size: 0.8rem;
+  line-height: 1.1;
+  color: var(--pc-ink-soft);
+  white-space: nowrap;
+}
+
+.day-timeline-label b {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--pc-blood);
+}
+
+.day-timeline-track {
+  --pc-peek-shadow: 0 10px 24px rgba(10, 15, 23, 0.35);
+  position: relative;
+  height: 68px;
+  background: var(--pc-felt);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.45),
+    0 0 0 1px var(--pc-felt-deep),
+    0 0 0 3px rgba(200, 162, 74, 0.45);
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.day-timeline-track:focus {
+  outline: none;
+}
+
+.day-timeline-track:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 6px;
+}
+
+.day-timeline-marks {
+  position: absolute;
+  inset: 9px 0;
+  width: 100%;
+  height: calc(100% - 18px);
+  overflow: visible;
+}
+
+.day-timeline-ticks line {
+  stroke: var(--pc-stock);
+  stroke-width: 1px;
+  stroke-opacity: 0.42;
+  vector-effect: non-scaling-stroke;
+}
+
+.day-timeline-ticks line.is-dim {
+  stroke-opacity: 0.07;
+}
+
+.day-timeline-window {
+  fill: var(--pc-stock);
+  fill-opacity: 0;
+}
+
+.day-timeline.is-filtered .day-timeline-window {
+  fill-opacity: 0.11;
+}
+
+.day-timeline-playhead {
+  position: absolute;
+  top: -7px;
+  bottom: -7px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--pc-gilt);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.day-timeline-playhead[hidden],
+.day-timeline-peek[hidden] {
+  display: none;
+}
+
+/* The preview is a card peeled off the deck at that moment. */
+.day-timeline-peek {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 184px;
+  padding: 6px 6px 8px;
+  background: var(--pc-stock);
+  border: 1px solid rgba(17, 24, 35, 0.45);
+  border-radius: 8px;
+  box-shadow: var(--pc-peek-shadow);
+  font-family: var(--pc-data);
+  text-align: left;
+  color: var(--pc-ink);
+  cursor: pointer;
+}
+
+.day-timeline-peek:focus {
+  outline: none;
+  box-shadow: var(--pc-peek-shadow);
+}
+
+.day-timeline-peek img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  background: var(--pc-stock-shade);
+}
+
+.day-timeline-peek-time {
+  font-family: var(--pc-numeral);
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.day-timeline-peek-race {
+  font-size: 0.76rem;
+  line-height: 1.2;
+  color: var(--pc-ink-soft);
+}
+
+.day-timeline figcaption {
+  margin-top: 12px;
+  font-family: var(--pc-body);
+  font-size: 0.86rem;
+  color: var(--pc-ink-soft);
+}
+
+@media (max-width: 600px) {
+  .day-timeline-labels {
+    height: 34px;
+  }
+
+  .day-timeline-label {
+    font-size: 0.7rem;
+    padding-left: 4px;
+  }
+
+  .day-timeline-label b {
+    font-size: 0.72rem;
+  }
+
+  .day-timeline-track {
+    height: 58px;
+  }
+
+  .day-timeline-peek {
+    width: 172px;
+  }
+}
+
+/* The photographers' byline, set like a credit under a picture spread. */
+.photos-credit {
+  font-family: var(--pc-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1rem;
+  text-align: center;
+  color: var(--pc-ink);
+  margin: -1.2rem auto 2rem;
+}
+
+.photos-credit[hidden] {
+  display: none;
+}
+
+.lightbox-info h3 {
+  text-transform: none;
+  letter-spacing: 0.03em;
+}
+
+.lightbox-when,
+.lightbox-credit {
+  margin: 2px 0 0;
+  font-family: var(--pc-body);
+  font-size: 0.85rem;
+  color: var(--pc-stock-shade);
+}
+
+.lightbox-credit {
+  font-family: var(--pc-display);
+  font-style: italic;
+  color: var(--pc-gilt);
+  margin-bottom: 8px;
+}
+
+.lightbox-when:empty,
+.lightbox-credit:empty {
+  display: none;
+}
+
 .gallery-stats {
   font-family: var(--pc-data);
   font-size: 0.78rem;

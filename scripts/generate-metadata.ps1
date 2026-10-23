@@ -10,7 +10,8 @@
 # Usage, from the repo root:
 #   pwsh scripts/generate-metadata.ps1 -Year 2026 -EventDate 2026-10-18 `
 #       -HighResPath "D:\Prologue CX 2026\high-res" `
-#       -ThumbnailPath "D:\Prologue CX 2026\thumbnails"
+#       -ThumbnailPath "D:\Prologue CX 2026\thumbnails" `
+#       -Photographers @{ 'R6II' = 'Jamie Gonzalez'; 'IMG_' = 'Marija Gonzalez Najera' }
 #
 # Defaults write into photos/event-<Year>/ in the repo, which is also where the
 # files need to sit before they go up to the server.
@@ -27,7 +28,12 @@ param(
 
     [string]$HighResPath,
     [string]$ThumbnailPath,
-    [string]$OutputJsonPath
+    [string]$OutputJsonPath,
+
+    # Who shot what, keyed by filename prefix. Each camera names its files its
+    # own way, so the prefix is the most reliable credit there is: one of the
+    # two 2026 cameras exported with its EXIF artist field blanked.
+    [hashtable]$Photographers = @{}
 )
 
 $ErrorActionPreference = 'Stop'
@@ -80,6 +86,17 @@ foreach ($thumbnail in $thumbnailFiles) { $thumbnailsByName[$thumbnail.BaseName]
 $photos = @()
 $photoId = 1
 $missingThumbnails = @()
+$uncredited = @()
+$creditCounts = [ordered]@{}
+
+function Get-Photographer($name) {
+    foreach ($prefix in $Photographers.Keys) {
+        if ($name.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            return $Photographers[$prefix]
+        }
+    }
+    return $null
+}
 
 foreach ($highResFile in $highResFiles) {
     $thumbnailFile = $thumbnailsByName[$highResFile.BaseName]
@@ -92,7 +109,7 @@ foreach ($highResFile in $highResFiles) {
     $takenUtc = $highResFile.CreationTimeUtc
     if ($highResFile.LastWriteTimeUtc -lt $takenUtc) { $takenUtc = $highResFile.LastWriteTimeUtc }
 
-    $photos += [ordered]@{
+    $photo = [ordered]@{
         id            = 'photo_' + $photoId.ToString('000')
         filename      = $highResFile.Name
         thumbnail_url = "/photos/event-$Year/thumbnails/" + $thumbnailFile.Name
@@ -100,6 +117,14 @@ foreach ($highResFile in $highResFiles) {
         size_bytes    = $highResFile.Length
         date_taken    = $takenUtc.ToString('yyyy-MM-ddTHH:mm:ssZ')
     }
+    $photographer = Get-Photographer $highResFile.Name
+    if ($photographer) {
+        $photo.photographer = $photographer
+        $creditCounts[$photographer] = 1 + [int]$creditCounts[$photographer]
+    } elseif ($Photographers.Count) {
+        $uncredited += $highResFile.Name
+    }
+    $photos += $photo
     $photoId++
 
     if ($photoId % 50 -eq 0) { Write-Host "  Processed $photoId photos..." -ForegroundColor DarkGray }
@@ -118,6 +143,9 @@ foreach ($name in $missingThumbnails) {
 foreach ($name in $orphanThumbnails) {
     Write-Host "  Warning: thumbnail $name has no high-res photo" -ForegroundColor Yellow
 }
+foreach ($name in $uncredited) {
+    Write-Host "  Warning: no -Photographers prefix matches $name - photo uncredited" -ForegroundColor Yellow
+}
 
 if ($photos.Count -eq 0) {
     Write-Host "ERROR: no photo matched a thumbnail; nothing written." -ForegroundColor Red
@@ -135,6 +163,9 @@ $metadata = [ordered]@{
     version   = '1.0'
     total     = $photos.Count
     date      = $EventDate
+    # Busiest photographer first, which is the order the gallery credits them in.
+    photographers = @($creditCounts.GetEnumerator() | Sort-Object Value -Descending |
+        ForEach-Object { [ordered]@{ name = $_.Key; photos = $_.Value } })
     photos    = $photos
     generated = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
 }

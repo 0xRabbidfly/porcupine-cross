@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261022" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261022" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261022" />
+    <link rel="stylesheet" href="style.css?v=20261022-2" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261022-2" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261022-2" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -611,10 +611,10 @@
 
     <!-- PROLOGUE DECK -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:opsz,wght@6..96,700..900&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261022" />
+    <link rel="stylesheet" href="css/deck.css?v=20261022-2" />
   </head>
   <body>
     <header>
@@ -683,6 +683,8 @@
             Browse and download professional photos from the Prologue Cyclocross 2026 event. Click
             any photo to view and download the high-resolution version.
           </p>
+          <!-- Filled from the year's photos.json, which credits each photo. -->
+          <p class="photos-credit" id="gallery-credit" hidden></p>
         </div>
 
         <!-- Photo Gallery -->
@@ -720,6 +722,7 @@
               type="button"
               class="gallery-race-btn"
               data-start="2026-10-18T09:00:00-04:00"
+              data-short="Men C"
               aria-pressed="false"
             >
               <b>9:00</b> Men C &middot; Masters 55+
@@ -728,6 +731,7 @@
               type="button"
               class="gallery-race-btn"
               data-start="2026-10-18T10:00:00-04:00"
+              data-short="Youth"
               aria-pressed="false"
             >
               <b>10:00</b> U17 &middot; U15 &middot; U13
@@ -736,6 +740,7 @@
               type="button"
               class="gallery-race-btn"
               data-start="2026-10-18T11:00:00-04:00"
+              data-short="Men B"
               aria-pressed="false"
             >
               <b>11:00</b> Men B &middot; Masters 35+
@@ -744,6 +749,7 @@
               type="button"
               class="gallery-race-btn"
               data-start="2026-10-18T12:30:00-04:00"
+              data-short="Kids"
               aria-pressed="false"
             >
               <b>12:30</b> Kids Try-a-Race
@@ -752,6 +758,7 @@
               type="button"
               class="gallery-race-btn"
               data-start="2026-10-18T13:15:00-04:00"
+              data-short="Women"
               aria-pressed="false"
             >
               <b>1:15</b> Women A &middot; B &middot; Masters
@@ -760,11 +767,47 @@
               type="button"
               class="gallery-race-btn"
               data-start="2026-10-18T14:20:00-04:00"
+              data-short="Men A"
               aria-pressed="false"
             >
               <b>2:20</b> Men A &middot; Single Speed
             </button>
           </div>
+
+          <!-- Race-day timeline: every photo is one mark on the felt, placed at the
+               moment it was taken. Built from photos.json for years with a race
+               schedule; hidden otherwise. -->
+          <figure class="day-timeline" data-year="2026" hidden>
+            <div class="day-timeline-labels" aria-hidden="true"></div>
+            <div
+              class="day-timeline-track"
+              role="slider"
+              tabindex="0"
+              aria-label="Race day, one photo at a time"
+              aria-valuemin="0"
+              aria-valuemax="0"
+              aria-valuenow="0"
+            >
+              <svg
+                class="day-timeline-marks"
+                viewBox="0 0 1000 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <rect class="day-timeline-window" x="0" y="0" width="1000" height="100" />
+                <g class="day-timeline-ticks"></g>
+              </svg>
+              <div class="day-timeline-playhead" hidden></div>
+              <button type="button" class="day-timeline-peek" tabindex="-1" hidden>
+                <img alt="" />
+                <span class="day-timeline-peek-time"></span>
+                <span class="day-timeline-peek-race"></span>
+              </button>
+            </div>
+            <figcaption>
+              Every mark is a photo. Run along the day to find a moment, then open it.
+            </figcaption>
+          </figure>
 
           <!-- Gallery Stats -->
           <div class="gallery-stats">
@@ -821,6 +864,8 @@
               <img id="lightbox-image" src="" alt="" />
               <div class="lightbox-info">
                 <h3 id="lightbox-title"></h3>
+                <p id="lightbox-when" class="lightbox-when"></p>
+                <p id="lightbox-credit" class="lightbox-credit"></p>
                 <div class="lightbox-actions">
                   <a id="lightbox-download" href="" download class="download-btn">
                     <i class="fas fa-download"></i> Download High-Res
@@ -854,6 +899,7 @@
           // which is the year narrowed to the selected race.
           this.allPhotos = [];
           this.photos = [];
+          this.photographers = [];
           this.raceStart = '';
           this.currentPage = 0;
           this.photosPerPage = 50;
@@ -861,8 +907,13 @@
           this.year = year;
           this.basePath = `/photos/event-${year}/`;
           this.isLoading = false;
-          this.hasMorePhotos = true;
+          // Nothing to page through until the first page is drawn. On a tall
+          // screen the scroll sentinel is in view before photos.json lands,
+          // and paging then drew page two over the face-down cards, losing
+          // the first twelve photos.
+          this.hasMorePhotos = false;
           this.intersectionObserver = null;
+          this.timeline = new DayTimeline(this);
           this.init();
         }
 
@@ -889,6 +940,8 @@
 
           this.updateRaceCounts();
           this.updateStats();
+          this.updateCredit();
+          this.timeline.render();
 
           if (failure) {
             this.showLoadError();
@@ -910,10 +963,13 @@
           this.basePath = `/photos/event-${year}/`;
           this.allPhotos = [];
           this.photos = [];
+          this.photographers = [];
           this.currentPage = 0;
           this.currentPhotoIndex = 0;
-          this.hasMorePhotos = true;
+          this.hasMorePhotos = false;
           this.selectRaceButton('');
+          this.updateCredit();
+          this.timeline.render();
           this.showSkeletons();
           this.load();
         }
@@ -930,18 +986,51 @@
 
         // A race owns every photo from its start until the next race starts.
         // Photos taken before the first start belong to the first window.
+        raceWindow(start) {
+          const starts = this.raceButtons().map(button => Date.parse(button.dataset.start));
+          const index = starts.indexOf(Date.parse(start));
+          return {
+            from: index === 0 ? -Infinity : starts[index],
+            until: index + 1 < starts.length ? starts[index + 1] : Infinity,
+          };
+        }
+
         photosInRace(start) {
           if (!start) return this.allPhotos;
 
-          const starts = this.raceButtons().map(button => Date.parse(button.dataset.start));
-          const index = starts.indexOf(Date.parse(start));
-          const from = index === 0 ? -Infinity : starts[index];
-          const until = index + 1 < starts.length ? starts[index + 1] : Infinity;
-
+          const { from, until } = this.raceWindow(start);
           return this.allPhotos.filter(photo => {
             const taken = Date.parse(photo.date_taken);
             return taken >= from && taken < until;
           });
+        }
+
+        // The race button whose window holds the photo, or null in a year
+        // without a race schedule.
+        raceFor(photo) {
+          const taken = Date.parse(photo.date_taken);
+          return (
+            this.raceButtons().find(button => {
+              const { from, until } = this.raceWindow(button.dataset.start);
+              return taken >= from && taken < until;
+            }) || null
+          );
+        }
+
+        // "11:18 am, 18 minutes in": when the photo was taken, as a racer
+        // would place it. Empty in a year without a race schedule, whose
+        // timestamps were never checked against the clock.
+        describeMoment(photo) {
+          const race = this.raceFor(photo);
+          if (!race) return '';
+
+          const taken = Date.parse(photo.date_taken);
+          const minutes = Math.floor((taken - Date.parse(race.dataset.start)) / 60000);
+          let into = `${minutes} minutes in`;
+          if (minutes < 0) into = 'before the start';
+          else if (minutes === 0) into = 'at the start';
+          else if (minutes === 1) into = '1 minute in';
+          return `${formatClock(taken)}, ${into}`;
         }
 
         selectRaceButton(start) {
@@ -952,6 +1041,26 @@
           document.querySelectorAll('.gallery-race-btn').forEach(button => {
             button.setAttribute('aria-pressed', String(button.dataset.start === start));
           });
+          if (this.timeline) this.timeline.select();
+        }
+
+        updateCredit() {
+          const credit = document.getElementById('gallery-credit');
+          const names = this.photographers.map(photographer => photographer.name);
+          credit.hidden = names.length === 0;
+          credit.textContent = names.length
+            ? `Photographed by ${new Intl.ListFormat('en', { type: 'conjunction' }).format(names)}`
+            : '';
+        }
+
+        // Opened from the timeline: stay in the selected race when the photo
+        // is in it, otherwise move to the race it belongs to.
+        openPhoto(photo) {
+          if (!this.photos.includes(photo)) {
+            const race = this.raceFor(photo);
+            this.setRace(race ? race.dataset.start : '');
+          }
+          this.openLightbox(this.photos.indexOf(photo));
         }
 
         setRace(start) {
@@ -1027,6 +1136,13 @@
             }
             const data = await response.json();
             this.allPhotos = data.photos || [];
+            // A year with a race schedule had its clocks checked, so its
+            // photos tell the day in order. Two cameras' files sort apart by
+            // name, which would put one photographer's whole day first.
+            if (this.raceButtons().length) {
+              this.allPhotos.sort((a, b) => Date.parse(a.date_taken) - Date.parse(b.date_taken));
+            }
+            this.photographers = data.photographers || [];
             this.photos = this.photosInRace(this.raceStart);
           } finally {
             clearTimeout(deadline);
@@ -1175,11 +1291,25 @@
           const lightboxImage = document.getElementById('lightbox-image');
           const lightboxTitle = document.getElementById('lightbox-title');
           const lightboxDownload = document.getElementById('lightbox-download');
+          const race = this.raceFor(photo);
+          const title = race ? raceName(race) : `Prologue Cyclocross ${this.year}`;
 
           lightboxImage.src = this.basePath + 'high-res/' + photo.filename;
-          lightboxTitle.textContent = `Photo ${photo.id}`;
+          lightboxImage.alt = `${title} race photo`;
+          lightboxTitle.textContent = title;
+          document.getElementById('lightbox-when').textContent = this.describeMoment(photo);
+          document.getElementById('lightbox-credit').textContent = photo.photographer
+            ? `Photo by ${photo.photographer}`
+            : '';
           lightboxDownload.href = this.basePath + 'high-res/' + photo.filename;
-          lightboxDownload.download = photo.filename;
+          // The photographer's name travels with the file once it leaves the site.
+          lightboxDownload.download = [
+            `Prologue${this.year}`,
+            photo.photographer && photo.photographer.replace(/[^A-Za-z]/g, ''),
+            photo.filename,
+          ]
+            .filter(Boolean)
+            .join('_');
 
           lightbox.style.display = 'flex';
           document.body.style.overflow = 'hidden';
@@ -1238,6 +1368,251 @@
                   break;
               }
             }
+          });
+        }
+      }
+
+      // Race-day clock time, "11:18 am", in the time zone the race ran in.
+      function formatClock(time) {
+        const parts = new Intl.DateTimeFormat('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          timeZone: 'America/Toronto',
+        }).formatToParts(new Date(time));
+        const part = type => parts.find(p => p.type === type).value;
+        return `${part('hour')}:${part('minute')} ${part('dayPeriod').toLowerCase()}`;
+      }
+
+      // A chip's race name without its start time or photo count.
+      function raceName(button) {
+        const label = button.cloneNode(true);
+        label.querySelectorAll('b, .race-count').forEach(node => node.remove());
+        return label.textContent.replace(/\s+/g, ' ').trim();
+      }
+
+      // The race day edge-on: one mark per photo at the moment it was taken.
+      // Moving along it previews the nearest photo; choosing opens it.
+      class DayTimeline {
+        constructor(gallery) {
+          this.gallery = gallery;
+          this.root = document.querySelector('.day-timeline');
+          this.photos = [];
+          this.times = [];
+          this.index = 0;
+          this.dragging = false;
+          if (!this.root) return;
+
+          this.track = this.root.querySelector('.day-timeline-track');
+          this.labels = this.root.querySelector('.day-timeline-labels');
+          this.ticks = this.root.querySelector('.day-timeline-ticks');
+          this.window = this.root.querySelector('.day-timeline-window');
+          this.playhead = this.root.querySelector('.day-timeline-playhead');
+          this.peek = this.root.querySelector('.day-timeline-peek');
+          this.peekImage = this.peek.querySelector('img');
+          this.peekTime = this.root.querySelector('.day-timeline-peek-time');
+          this.peekRace = this.root.querySelector('.day-timeline-peek-race');
+          this.bind();
+        }
+
+        // Position on the 0-1000 drawing for a moment in the day.
+        x(time) {
+          return ((time - this.from) / (this.until - this.from)) * 1000;
+        }
+
+        render() {
+          if (!this.root) return;
+          const gallery = this.gallery;
+          const races = gallery.raceButtons().filter(button => !button.hidden);
+          const show =
+            this.root.dataset.year === gallery.year &&
+            races.length > 0 &&
+            gallery.allPhotos.length > 0;
+
+          this.root.hidden = !show;
+          this.hidePeek();
+          if (!show) return;
+
+          this.photos = gallery.allPhotos;
+          this.times = this.photos.map(photo => Date.parse(photo.date_taken));
+          const firstStart = Date.parse(races[0].dataset.start);
+          // Five minutes of felt either side, so the first and last marks
+          // are not lost against the edge.
+          this.from = Math.min(this.times[0], firstStart) - 5 * 60000;
+          this.until = this.times[this.times.length - 1] + 5 * 60000;
+
+          this.labels.textContent = '';
+          races.forEach(button => {
+            const label = document.createElement('span');
+            label.className = 'day-timeline-label';
+            label.style.left = `${this.x(Date.parse(button.dataset.start)) / 10}%`;
+            const time = document.createElement('b');
+            time.textContent = button.querySelector('b').textContent;
+            label.append(time, button.dataset.short);
+            this.labels.appendChild(label);
+          });
+
+          // One line per photo, translucent, so a burst of frames stacks up
+          // brighter than a lone shot.
+          const svg = 'http://www.w3.org/2000/svg';
+          this.ticks.textContent = '';
+          this.times.forEach(time => {
+            const line = document.createElementNS(svg, 'line');
+            const x = this.x(time).toFixed(1);
+            line.setAttribute('x1', x);
+            line.setAttribute('x2', x);
+            line.setAttribute('y1', '0');
+            line.setAttribute('y2', '100');
+            this.ticks.appendChild(line);
+          });
+
+          this.index = Math.min(this.index, this.photos.length - 1);
+          this.track.setAttribute('aria-valuemax', String(this.photos.length - 1));
+          this.select();
+        }
+
+        // Light the selected race's photos and its stretch of the day; the
+        // rest of the day stays on the table, dimmed.
+        select() {
+          if (!this.root || this.root.hidden) return;
+
+          const start = this.gallery.raceStart;
+          const inRace = new Set(this.gallery.photosInRace(start));
+          Array.from(this.ticks.children).forEach((line, i) => {
+            line.classList.toggle('is-dim', !inRace.has(this.photos[i]));
+          });
+
+          const { from, until } = start ? this.gallery.raceWindow(start) : {};
+          const left = start ? Math.max(0, this.x(from)) : 0;
+          const right = start ? Math.min(1000, this.x(until)) : 1000;
+          this.window.setAttribute('x', String(left));
+          this.window.setAttribute('width', String(Math.max(0, right - left)));
+          this.root.classList.toggle('is-filtered', Boolean(start));
+        }
+
+        nearest(time) {
+          let low = 0;
+          let high = this.times.length - 1;
+          while (low < high) {
+            const mid = (low + high) >> 1;
+            if (this.times[mid] < time) low = mid + 1;
+            else high = mid;
+          }
+          if (low > 0 && time - this.times[low - 1] < this.times[low] - time) return low - 1;
+          return low;
+        }
+
+        indexAt(clientX) {
+          const box = this.track.getBoundingClientRect();
+          const share = Math.min(1, Math.max(0, (clientX - box.left) / box.width));
+          return this.nearest(this.from + share * (this.until - this.from));
+        }
+
+        show(index) {
+          this.index = index;
+          const photo = this.photos[index];
+          const race = this.gallery.raceFor(photo);
+          const share = this.x(this.times[index]) / 1000;
+          const moment = this.gallery.describeMoment(photo);
+
+          this.playhead.hidden = false;
+          this.playhead.style.left = `${share * 100}%`;
+
+          this.peek.hidden = false;
+          const trackWidth = this.track.clientWidth;
+          const peekWidth = this.peek.offsetWidth;
+          const centre = share * trackWidth - peekWidth / 2;
+          this.peek.style.left = `${Math.min(Math.max(0, centre), trackWidth - peekWidth)}px`;
+          this.peekImage.src = `${this.gallery.basePath}thumbnails/${photo.filename}`;
+          this.peekTime.textContent = moment;
+          this.peekRace.textContent = race ? raceName(race) : '';
+
+          this.track.setAttribute('aria-valuenow', String(index));
+          this.track.setAttribute(
+            'aria-valuetext',
+            `${moment}, ${race ? raceName(race) : ''}, photo ${index + 1} of ${this.photos.length}`
+          );
+        }
+
+        hidePeek() {
+          if (!this.root) return;
+          this.playhead.hidden = true;
+          this.peek.hidden = true;
+        }
+
+        open() {
+          this.gallery.openPhoto(this.photos[this.index]);
+        }
+
+        bind() {
+          const onPeek = event => this.peek.contains(event.target);
+
+          this.track.addEventListener('pointerdown', event => {
+            if (onPeek(event) || !this.photos.length) return;
+            this.dragging = true;
+            if (this.track.setPointerCapture) this.track.setPointerCapture(event.pointerId);
+            this.show(this.indexAt(event.clientX));
+          });
+
+          this.track.addEventListener('pointermove', event => {
+            if (!this.photos.length) return;
+            if (this.dragging || (event.pointerType === 'mouse' && !onPeek(event))) {
+              this.show(this.indexAt(event.clientX));
+            }
+          });
+
+          // A mouse picks the moment it lets go on. A finger has no hover, so
+          // the preview stays put and the photo opens from the preview card.
+          this.track.addEventListener('pointerup', event => {
+            const wasDragging = this.dragging;
+            this.dragging = false;
+            if (wasDragging && event.pointerType === 'mouse') this.open();
+          });
+
+          this.track.addEventListener('pointercancel', () => {
+            this.dragging = false;
+          });
+
+          this.track.addEventListener('pointerleave', event => {
+            if (event.pointerType === 'mouse' && document.activeElement !== this.track) {
+              this.hidePeek();
+            }
+          });
+
+          // Pressing the preview would move focus off the track, and the
+          // track's blur hides the preview before the click can land on it.
+          this.peek.addEventListener('pointerdown', event => event.preventDefault());
+          this.peek.addEventListener('click', () => this.open());
+
+          this.track.addEventListener('focus', () => {
+            if (this.photos.length) this.show(this.index);
+          });
+          this.track.addEventListener('blur', () => this.hidePeek());
+
+          this.track.addEventListener('keydown', event => {
+            // With the lightbox open its own arrow keys are in charge.
+            const lightboxOpen = document.getElementById('lightbox').style.display === 'flex';
+            if (!this.photos.length || lightboxOpen) return;
+            const last = this.photos.length - 1;
+            const steps = {
+              ArrowRight: 1,
+              ArrowUp: 1,
+              ArrowLeft: -1,
+              ArrowDown: -1,
+              PageUp: 10,
+              PageDown: -10,
+            };
+            let next = null;
+            if (event.key in steps) next = this.index + steps[event.key];
+            else if (event.key === 'Home') next = 0;
+            else if (event.key === 'End') next = last;
+            else if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              this.open();
+              return;
+            }
+            if (next === null) return;
+            event.preventDefault();
+            this.show(Math.min(last, Math.max(0, next)));
           });
         }
       }

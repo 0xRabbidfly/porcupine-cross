@@ -153,20 +153,25 @@ describe('photos gallery race filter', () => {
     ['menA-late', '15:30'],
   ];
   const sample = {
+    photographers: [
+      { name: 'Jamie Gonzalez', photos: 5 },
+      { name: 'Marija Gonzalez Najera', photos: 5 },
+    ],
     photos: shots.map(([name, time], i) => ({
       id: `photo_${i + 1}`,
       filename: `${name}.jpg`,
       date_taken: at(time),
+      photographer: i % 2 ? 'Marija Gonzalez Najera' : 'Jamie Gonzalez',
     })),
   };
 
-  function boot() {
+  function boot(data = sample) {
     const dom = new JSDOM(html, {
       runScripts: 'dangerously',
       url: 'https://example.test/photos.html',
       virtualConsole: new VirtualConsole(),
       beforeParse(win) {
-        win.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => sample });
+        win.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => data });
         win.IntersectionObserver = class {
           observe() {}
           disconnect() {}
@@ -297,5 +302,175 @@ describe('photos gallery race filter', () => {
 
     expect(win.document.querySelector('.gallery-races[data-year="2026"]').hidden).toBe(true);
     expect(shown(win)).toHaveLength(shots.length);
+  });
+
+  test('a scroll sentinel already in view does not skip the first photos', async () => {
+    let release;
+    let seeSentinel;
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: 'https://example.test/photos.html',
+      virtualConsole: new VirtualConsole(),
+      beforeParse(w) {
+        w.fetch = () =>
+          new Promise(resolve => {
+            release = () => resolve({ ok: true, status: 200, json: async () => sample });
+          });
+        w.IntersectionObserver = class {
+          constructor(callback) {
+            seeSentinel = () => callback([{ isIntersecting: true }]);
+          }
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    const win = dom.window;
+    win.document.dispatchEvent(new win.Event('DOMContentLoaded'));
+
+    // A tall screen: the sentinel is visible while photos.json is in flight,
+    // and the photos land before the paging delay runs out.
+    seeSentinel();
+    release();
+    await new Promise(resolve => setTimeout(resolve, 400));
+
+    expect(win.document.querySelectorAll('#photo-grid .photo-skeleton')).toHaveLength(0);
+    expect(shown(win)).toEqual(shots.map(([name]) => name));
+  });
+
+  test('photos run in the order they were taken, whatever order the file lists them', async () => {
+    const win = boot({ ...sample, photos: [...sample.photos].reverse() });
+    await settle();
+
+    expect(shown(win)).toEqual(shots.map(([name]) => name));
+  });
+
+  describe('credits', () => {
+    test('the header credits the year’s photographers', async () => {
+      const win = boot();
+      await settle();
+
+      const credit = win.document.getElementById('gallery-credit');
+      expect(credit.hidden).toBe(false);
+      expect(credit.textContent).toBe('Photographed by Jamie Gonzalez and Marija Gonzalez Najera');
+    });
+
+    test('a year whose photos.json names nobody shows no credit line', async () => {
+      const win = boot({ photos: sample.photos });
+      await settle();
+
+      expect(win.document.getElementById('gallery-credit').hidden).toBe(true);
+    });
+
+    test('the lightbox says which race, when, and who took it', async () => {
+      const win = boot();
+      await settle();
+
+      chip(win, '11:00').click();
+      win.document.querySelector('#photo-grid .photo-item').click();
+      const text = id => win.document.getElementById(id).textContent;
+
+      expect(text('lightbox-title')).toBe('Men B · Masters 35+');
+      expect(text('lightbox-when')).toBe('11:30 am, 30 minutes in');
+      expect(text('lightbox-credit')).toBe('Photo by Jamie Gonzalez');
+    });
+
+    test('a download carries the photographer’s name', async () => {
+      const win = boot();
+      await settle();
+
+      win.document.querySelector('#photo-grid .photo-item').click();
+      expect(win.document.getElementById('lightbox-download').download).toBe(
+        'Prologue2026_JamieGonzalez_warmup.jpg'
+      );
+    });
+  });
+
+  describe('race-day timeline', () => {
+    const track = win => win.document.querySelector('.day-timeline-track');
+    const ticks = win => Array.from(win.document.querySelectorAll('.day-timeline-ticks line'));
+    const key = (win, name) =>
+      track(win).dispatchEvent(new win.KeyboardEvent('keydown', { key: name, bubbles: true }));
+
+    test('draws one mark per photo and labels each race that has photos', async () => {
+      const win = boot();
+      await settle();
+
+      expect(win.document.querySelector('.day-timeline').hidden).toBe(false);
+      expect(ticks(win)).toHaveLength(shots.length);
+      const labels = Array.from(win.document.querySelectorAll('.day-timeline-label')).map(
+        label => label.textContent
+      );
+      expect(labels).toEqual([
+        '9:00Men C',
+        '10:00Youth',
+        '11:00Men B',
+        '12:30Kids',
+        '1:15Women',
+        '2:20Men A',
+      ]);
+    });
+
+    test('marks sit in time order from left to right', async () => {
+      const win = boot();
+      await settle();
+
+      const xs = ticks(win).map(line => Number(line.getAttribute('x1')));
+      expect([...xs].sort((a, b) => a - b)).toEqual(xs);
+      expect(xs[0]).toBeGreaterThan(0);
+      expect(xs[xs.length - 1]).toBeLessThan(1000);
+    });
+
+    test('choosing a race dims the rest of the day', async () => {
+      const win = boot();
+      await settle();
+
+      chip(win, '14:20').click();
+      const dim = ticks(win).map(line => line.classList.contains('is-dim'));
+      expect(dim.filter(d => !d)).toHaveLength(2);
+      expect(win.document.querySelector('.day-timeline').classList.contains('is-filtered')).toBe(
+        true
+      );
+    });
+
+    test('arrow keys step photo by photo and say where they are', async () => {
+      const win = boot();
+      await settle();
+
+      track(win).focus();
+      key(win, 'ArrowRight');
+      key(win, 'ArrowRight');
+
+      expect(track(win).getAttribute('aria-valuenow')).toBe('2');
+      expect(track(win).getAttribute('aria-valuetext')).toBe(
+        '9:59 am, 59 minutes in, Men C · Masters 55+, photo 3 of 10'
+      );
+      expect(win.document.querySelector('.day-timeline-peek').hidden).toBe(false);
+    });
+
+    test('Enter opens the photo and moves to its race if another is selected', async () => {
+      const win = boot();
+      await settle();
+
+      chip(win, '14:20').click();
+      track(win).focus();
+      key(win, 'Home');
+      key(win, 'Enter');
+
+      expect(win.document.getElementById('lightbox').style.display).toBe('flex');
+      expect(win.document.getElementById('lightbox-image').src).toMatch(/warmup\.jpg$/);
+      expect(chip(win, '09:00').getAttribute('aria-pressed')).toBe('true');
+    });
+
+    test('a year without a race schedule has no timeline', async () => {
+      const win = boot();
+      await settle();
+
+      win.document.querySelector('.gallery-year-btn[data-year="2025"]').click();
+      await settle();
+
+      expect(win.document.querySelector('.day-timeline').hidden).toBe(true);
+    });
   });
 });
