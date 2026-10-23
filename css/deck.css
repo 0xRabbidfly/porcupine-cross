@@ -2086,7 +2086,7 @@ footer {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 4px 16px;
   max-width: 980px;
   margin: 0 auto 18px !important;
@@ -2103,6 +2103,132 @@ footer {
 
 .gallery-hint[hidden] {
   display: none;
+}
+
+.gallery-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  margin: 0;
+}
+
+/* The bib finder is a race number: white, heavy black digits, and a hole
+   for a safety pin in each corner. */
+.bib-finder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.bib-finder[hidden] {
+  display: none;
+}
+
+.bib-finder label {
+  font-family: var(--pc-data);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--pc-ink);
+}
+
+.bib-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bib-field input {
+  width: 4ch;
+  box-sizing: content-box;
+  padding: 8px 16px 7px;
+  font-family: var(--pc-numeral);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  color: var(--pc-ink);
+  background-color: #fff;
+  background-image:
+    radial-gradient(circle, rgba(17, 24, 35, 0.42) 1.4px, transparent 2px),
+    radial-gradient(circle, rgba(17, 24, 35, 0.42) 1.4px, transparent 2px),
+    radial-gradient(circle, rgba(17, 24, 35, 0.42) 1.4px, transparent 2px),
+    radial-gradient(circle, rgba(17, 24, 35, 0.42) 1.4px, transparent 2px);
+  background-size: 8px 8px;
+  background-repeat: no-repeat;
+  background-position:
+    3px 3px,
+    calc(100% - 3px) 3px,
+    3px calc(100% - 3px),
+    calc(100% - 3px) calc(100% - 3px);
+  border: 1px solid rgba(17, 24, 35, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 7px 14px -9px rgba(17, 24, 35, 0.6);
+}
+
+.bib-field input::placeholder {
+  font-family: var(--pc-data);
+  font-weight: 500;
+  color: rgba(17, 24, 35, 0.4);
+}
+
+.bib-field input:focus {
+  outline: none;
+  border-color: var(--pc-ink);
+}
+
+.bib-field input:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 2px;
+}
+
+.bib-clear {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  font-size: 1rem;
+  color: var(--pc-ink-soft);
+  cursor: pointer;
+}
+
+.bib-clear[hidden] {
+  display: none;
+}
+
+.bib-clear:hover {
+  color: var(--pc-ink);
+  background: rgba(17, 24, 35, 0.07);
+}
+
+.bib-clear:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.bib-clear:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+}
+
+/* On a print the kit matched but the number is hidden. */
+.photo-tag {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 2px 7px;
+  font-family: var(--pc-data);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--pc-ink);
+  background: rgba(247, 242, 231, 0.92);
+  border-radius: 3px;
+  pointer-events: none;
 }
 
 /* Phones hold six tabs across: All narrows to a word and the per-race counts
@@ -2146,8 +2272,20 @@ footer {
      long name does not push the grid down a line. */
   .gallery-stats {
     flex-direction: column;
-    gap: 1px;
+    align-items: stretch;
+    gap: 10px;
     font-size: 0.84rem !important;
+  }
+
+  /* On a phone the finder leads: it is the reason most riders come. */
+  .bib-finder {
+    order: -1;
+    justify-content: center;
+  }
+
+  .gallery-status {
+    flex-direction: column;
+    gap: 1px;
   }
 }
 

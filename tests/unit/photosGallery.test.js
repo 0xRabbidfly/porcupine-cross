@@ -488,3 +488,177 @@ describe('photos gallery race filter', () => {
     });
   });
 });
+
+describe('photos gallery bib finder', () => {
+  const html = read('photos.html');
+
+  const at = hhmm => {
+    const [h, m] = hhmm.split(':').map(Number);
+    return new Date(Date.UTC(2026, 9, 18, h + 4, m)).toISOString();
+  };
+  // Bib 204 rides Men B: read in two photos, matched by kit in one.
+  const shots = [
+    ['menC', '09:05', undefined],
+    ['menB-1', '11:10', { 204: 'number' }],
+    ['menB-2', '11:20', { 204: 'kit' }],
+    ['menB-3', '11:30', { 5: 'number' }],
+    ['menB-4', '11:40', { 204: 'number', 5: 'kit' }],
+    ['women', '13:40', undefined],
+  ];
+  const tagged = {
+    photos: shots.map(([name, time, bibs], i) => ({
+      id: `photo_${i + 1}`,
+      filename: `${name}.jpg`,
+      date_taken: at(time),
+      ...(bibs && { bibs }),
+    })),
+  };
+
+  function boot(data = tagged, query = '') {
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: `https://example.test/photos.html${query}`,
+      virtualConsole: new VirtualConsole(),
+      beforeParse(win) {
+        win.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => data });
+        win.IntersectionObserver = class {
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+  }
+
+  const settle = (ms = 50) => new Promise(resolve => setTimeout(resolve, ms));
+  const shown = win =>
+    Array.from(win.document.querySelectorAll('#photo-grid .photo-item img')).map(img =>
+      img.src.split('/').pop().replace('.jpg', '')
+    );
+  const finder = win => win.document.querySelector('.bib-finder');
+  const input = win => win.document.getElementById('bib-input');
+  const count = win => win.document.getElementById('photo-count').textContent;
+  const pressed = win =>
+    win.document.querySelector('.gallery-race-btn[aria-pressed="true"]').dataset.start;
+  const search = (win, value) => {
+    input(win).value = value;
+    finder(win).dispatchEvent(new win.Event('submit', { cancelable: true }));
+  };
+
+  test('shows only for a year whose photos carry bib tags', async () => {
+    const win = boot();
+    await settle();
+    expect(finder(win).hidden).toBe(false);
+
+    win.document.querySelector('.gallery-year-btn[data-year="2025"]').click();
+    await settle();
+    expect(finder(win).hidden).toBe(true);
+
+    const untagged = boot({ photos: tagged.photos.map(({ bibs: _bibs, ...photo }) => photo) });
+    await settle();
+    expect(finder(untagged).hidden).toBe(true);
+  });
+
+  test("a bib shows that rider's photos in order and lights their race", async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+
+    expect(shown(win)).toEqual(['menB-1', 'menB-2', 'menB-4']);
+    expect(pressed(win)).toBe('2026-10-18T11:00:00-04:00');
+    expect(count(win)).toBe('3 photos of bib 204, 1 matched by kit');
+  });
+
+  test('a photo matched by kit says so, a photo with the number read does not', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+
+    const tags = Array.from(win.document.querySelectorAll('#photo-grid .photo-item')).map(item => {
+      const tag = item.querySelector('.photo-tag');
+      return tag ? tag.textContent : null;
+    });
+    expect(tags).toEqual([null, 'Likely you', null]);
+  });
+
+  test('typing waits for the whole number and ignores anything but digits', async () => {
+    const win = boot();
+    await settle();
+    input(win).value = '2';
+    input(win).dispatchEvent(new win.Event('input'));
+    input(win).value = '2o4';
+    input(win).dispatchEvent(new win.Event('input'));
+    expect(input(win).value).toBe('24');
+    input(win).value = '204';
+    input(win).dispatchEvent(new win.Event('input'));
+    // Nothing has narrowed while the number was still being typed.
+    expect(shown(win)).toHaveLength(shots.length);
+
+    await settle(600);
+    expect(shown(win)).toEqual(['menB-1', 'menB-2', 'menB-4']);
+  });
+
+  test('the address carries the bib, and a link with one opens on that rider', async () => {
+    const win = boot();
+    await settle();
+    search(win, '0204');
+    expect(win.location.search).toBe('?bib=204');
+    expect(input(win).value).toBe('204');
+
+    win.document.querySelector('.bib-clear').click();
+    expect(win.location.search).toBe('');
+    // Clearing goes back to the race that was lit for the rider.
+    expect(shown(win)).toEqual(['menB-1', 'menB-2', 'menB-3', 'menB-4']);
+
+    const linked = boot(tagged, '?bib=5');
+    await settle();
+    expect(shown(linked)).toEqual(['menB-3', 'menB-4']);
+    expect(input(linked).value).toBe('5');
+  });
+
+  test('a bib with no photos says what to try, and offers the whole gallery', async () => {
+    const win = boot();
+    await settle();
+    search(win, '57');
+
+    const grid = win.document.getElementById('photo-grid');
+    expect(grid.textContent).toContain('No photos found for bib 57');
+    expect(grid.textContent).toContain('The youth and kids races are not tagged.');
+    expect(count(win)).toBe('No photos of bib 57');
+
+    grid.querySelector('.gallery-retry').click();
+    expect(shown(win)).toHaveLength(shots.length);
+    expect(input(win).value).toBe('');
+    expect(pressed(win)).toBe('');
+  });
+
+  test("choosing a race leaves bib search, even the rider's own race", async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+
+    win.document.querySelector('.gallery-race-btn[data-start="2026-10-18T11:00:00-04:00"]').click();
+    expect(shown(win)).toEqual(['menB-1', 'menB-2', 'menB-3', 'menB-4']);
+    expect(input(win).value).toBe('');
+    expect(win.location.search).toBe('');
+    expect(count(win)).toBe('4 photos from Men B and Masters 35+');
+  });
+
+  test("the timeline lights only the rider's marks, and the lightbox steps through them", async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+
+    const lit = Array.from(win.document.querySelectorAll('.day-timeline-ticks line')).map(
+      line => !line.classList.contains('is-dim')
+    );
+    expect(lit).toEqual([false, true, true, false, true, false]);
+
+    win.document.querySelector('#photo-grid .photo-item').click();
+    win.document.getElementById('lightbox-next').click();
+    win.document.getElementById('lightbox-next').click();
+    expect(win.document.getElementById('lightbox-image').src).toMatch(/menB-4\.jpg$/);
+  });
+});

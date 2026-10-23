@@ -15,6 +15,12 @@
 #
 # Defaults write into photos/event-<Year>/ in the repo, which is also where the
 # files need to sit before they go up to the server.
+#
+# Bib tags, when the year has them, sit beside photos.json as bibs.json:
+#   { "R6II0603.jpg": { "5": "number" }, "IMG_8071.jpg": { "204": "kit" } }
+# "number" means the bib was read in the photo; "kit" means the number is hidden
+# and the rider was matched by kit to a photo where it was read. They are merged
+# into each photo here, so regenerating photos.json never drops them.
 
 [CmdletBinding()]
 param(
@@ -33,7 +39,9 @@ param(
     # Who shot what, keyed by filename prefix. Each camera names its files its
     # own way, so the prefix is the most reliable credit there is: one of the
     # two 2026 cameras exported with its EXIF artist field blanked.
-    [hashtable]$Photographers = @{}
+    [hashtable]$Photographers = @{},
+
+    [string]$BibsPath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -42,12 +50,19 @@ $eventRoot = Join-Path (Join-Path (Split-Path $PSScriptRoot -Parent) 'photos') "
 if (-not $HighResPath) { $HighResPath = Join-Path $eventRoot 'high-res' }
 if (-not $ThumbnailPath) { $ThumbnailPath = Join-Path $eventRoot 'thumbnails' }
 if (-not $OutputJsonPath) { $OutputJsonPath = Join-Path $eventRoot 'photos.json' }
+if (-not $BibsPath) { $BibsPath = Join-Path $eventRoot 'bibs.json' }
+
+$bibs = @{}
+if (Test-Path $BibsPath) {
+    $bibs = Get-Content $BibsPath -Raw | ConvertFrom-Json -AsHashtable
+}
 
 Write-Host "===== Prologue Cross Metadata Generator ====="
 Write-Host "Year:       $Year"
 Write-Host "High-res:   $HighResPath"
 Write-Host "Thumbnails: $ThumbnailPath"
 Write-Host "Output:     $OutputJsonPath"
+Write-Host "Bib tags:   $(if ($bibs.Count) { "$BibsPath ($($bibs.Count) photos)" } else { 'none' })"
 Write-Host ""
 
 foreach ($pair in @(@('High-res', $HighResPath), @('Thumbnail', $ThumbnailPath))) {
@@ -124,6 +139,7 @@ foreach ($highResFile in $highResFiles) {
     } elseif ($Photographers.Count) {
         $uncredited += $highResFile.Name
     }
+    if ($bibs.ContainsKey($highResFile.Name)) { $photo.bibs = $bibs[$highResFile.Name] }
     $photos += $photo
     $photoId++
 
@@ -142,6 +158,9 @@ foreach ($name in $missingThumbnails) {
 }
 foreach ($name in $orphanThumbnails) {
     Write-Host "  Warning: thumbnail $name has no high-res photo" -ForegroundColor Yellow
+}
+foreach ($name in $bibs.Keys | Where-Object { -not ($highResFiles.Name -contains $_) }) {
+    Write-Host "  Warning: bibs.json tags $name, which is not in high-res" -ForegroundColor Yellow
 }
 foreach ($name in $uncredited) {
     Write-Host "  Warning: no -Photographers prefix matches $name - photo uncredited" -ForegroundColor Yellow
@@ -174,7 +193,7 @@ New-Item -ItemType Directory -Force -Path (Split-Path $OutputJsonPath -Parent) |
 
 # UTF-8 without a BOM: the 2025 file carries one, and JSON.parse chokes on it
 # in some readers even though the gallery's fetch happens to cope.
-$json = $metadata | ConvertTo-Json -Depth 4
+$json = $metadata | ConvertTo-Json -Depth 6
 [System.IO.File]::WriteAllText($OutputJsonPath, $json, (New-Object System.Text.UTF8Encoding $false))
 
 Write-Host ""
