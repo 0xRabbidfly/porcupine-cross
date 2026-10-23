@@ -229,7 +229,9 @@ describe('photos gallery race filter', () => {
     chip(win, '10:00').click();
     expect(shown(win)).toEqual(['youth']);
     expect(chip(win, '10:00').getAttribute('aria-pressed')).toBe('true');
-    expect(win.document.getElementById('photo-count').textContent).toBe('1 Photos Available');
+    expect(win.document.getElementById('photo-count').textContent).toBe(
+      '1 photo from U17, U15 and U13'
+    );
 
     chip(win, '11:00').click();
     expect(shown(win)).toEqual(['menB', 'menB-gap']);
@@ -371,7 +373,7 @@ describe('photos gallery race filter', () => {
       win.document.querySelector('#photo-grid .photo-item').click();
       const text = id => win.document.getElementById(id).textContent;
 
-      expect(text('lightbox-title')).toBe('Men B · Masters 35+');
+      expect(text('lightbox-title')).toBe('Men B and Masters 35+');
       expect(text('lightbox-when')).toBe('11:30 am, 30 minutes in');
       expect(text('lightbox-credit')).toBe('Photo by Jamie Gonzalez');
     });
@@ -393,23 +395,37 @@ describe('photos gallery race filter', () => {
     const key = (win, name) =>
       track(win).dispatchEvent(new win.KeyboardEvent('keydown', { key: name, bubbles: true }));
 
-    test('draws one mark per photo and labels each race that has photos', async () => {
+    test('draws one mark per photo, each race’s marks under its own tab', async () => {
       const win = boot();
       await settle();
 
-      expect(win.document.querySelector('.day-timeline').hidden).toBe(false);
+      expect(win.document.querySelector('.race-deck').hidden).toBe(false);
       expect(ticks(win)).toHaveLength(shots.length);
-      const labels = Array.from(win.document.querySelectorAll('.day-timeline-label')).map(
-        label => label.textContent
+
+      // Six races with photos share the strip in equal columns, in start order.
+      const column = name => {
+        const i = shots.findIndex(([shot]) => shot === name);
+        return Math.floor(Number(ticks(win)[i].getAttribute('x1')) / (1000 / 6));
+      };
+      expect(column('warmup')).toBe(0);
+      expect(column('menC-late')).toBe(0);
+      expect(column('youth')).toBe(1);
+      expect(column('menB-gap')).toBe(2);
+      expect(column('kids')).toBe(3);
+      expect(column('women')).toBe(4);
+      expect(column('menA-late')).toBe(5);
+    });
+
+    test('the page says what the grid is showing, not how to use the site', async () => {
+      const win = boot();
+      await settle();
+
+      expect(win.document.getElementById('gallery-description')).toBeNull();
+      expect(win.document.getElementById('photo-count').textContent).toBe('10 photos');
+      chip(win, '14:20').click();
+      expect(win.document.getElementById('photo-count').textContent).toBe(
+        '2 photos from Men A and Single Speed'
       );
-      expect(labels).toEqual([
-        '9:00Men C',
-        '10:00Youth',
-        '11:00Men B',
-        '12:30Kids',
-        '1:15Women',
-        '2:20Men A',
-      ]);
     });
 
     test('marks sit in time order from left to right', async () => {
@@ -429,9 +445,7 @@ describe('photos gallery race filter', () => {
       chip(win, '14:20').click();
       const dim = ticks(win).map(line => line.classList.contains('is-dim'));
       expect(dim.filter(d => !d)).toHaveLength(2);
-      expect(win.document.querySelector('.day-timeline').classList.contains('is-filtered')).toBe(
-        true
-      );
+      expect(win.document.querySelector('.race-deck').classList.contains('is-filtered')).toBe(true);
     });
 
     test('arrow keys step photo by photo and say where they are', async () => {
@@ -444,7 +458,7 @@ describe('photos gallery race filter', () => {
 
       expect(track(win).getAttribute('aria-valuenow')).toBe('2');
       expect(track(win).getAttribute('aria-valuetext')).toBe(
-        '9:59 am, 59 minutes in, Men C · Masters 55+, photo 3 of 10'
+        '9:59 am, 59 minutes in, Men C and Masters 55+, photo 3 of 10'
       );
       expect(win.document.querySelector('.day-timeline-peek').hidden).toBe(false);
     });
@@ -470,7 +484,7 @@ describe('photos gallery race filter', () => {
       win.document.querySelector('.gallery-year-btn[data-year="2025"]').click();
       await settle();
 
-      expect(win.document.querySelector('.day-timeline').hidden).toBe(true);
+      expect(win.document.querySelector('.race-deck').hidden).toBe(true);
     });
   });
 });

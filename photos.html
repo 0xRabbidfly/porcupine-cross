@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261022-2" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261022-2" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261022-2" />
+    <link rel="stylesheet" href="style.css?v=20261022-3" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261022-3" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261022-3" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -614,7 +614,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261022-2" />
+    <link rel="stylesheet" href="css/deck.css?v=20261022-3" />
   </head>
   <body>
     <header>
@@ -679,10 +679,6 @@
         <!-- Page Header -->
         <div class="photos-page-header">
           <h1><span id="gallery-title">2026 Event Photos</span></h1>
-          <p class="photos-page-description" id="gallery-description">
-            Browse and download professional photos from the Prologue Cyclocross 2026 event. Click
-            any photo to view and download the high-resolution version.
-          </p>
           <!-- Filled from the year's photos.json, which credits each photo. -->
           <p class="photos-credit" id="gallery-credit" hidden></p>
         </div>
@@ -711,79 +707,88 @@
             </button>
           </div>
 
-          <!-- Race Filter: each race runs from its start to the next start. The
-               times are the schedule on index.html, and a test holds them to it.
-               A race nobody photographed hides its chip once the photos load. -->
-          <div class="gallery-races" role="group" aria-label="Filter by race" data-year="2026">
-            <button type="button" class="gallery-race-btn" data-start="" aria-pressed="true">
-              All races
-            </button>
-            <button
-              type="button"
-              class="gallery-race-btn"
-              data-start="2026-10-18T09:00:00-04:00"
-              data-short="Men C"
-              aria-pressed="false"
-            >
-              <b>9:00</b> Men C &middot; Masters 55+
-            </button>
-            <button
-              type="button"
-              class="gallery-race-btn"
-              data-start="2026-10-18T10:00:00-04:00"
-              data-short="Youth"
-              aria-pressed="false"
-            >
-              <b>10:00</b> U17 &middot; U15 &middot; U13
-            </button>
-            <button
-              type="button"
-              class="gallery-race-btn"
-              data-start="2026-10-18T11:00:00-04:00"
-              data-short="Men B"
-              aria-pressed="false"
-            >
-              <b>11:00</b> Men B &middot; Masters 35+
-            </button>
-            <button
-              type="button"
-              class="gallery-race-btn"
-              data-start="2026-10-18T12:30:00-04:00"
-              data-short="Kids"
-              aria-pressed="false"
-            >
-              <b>12:30</b> Kids Try-a-Race
-            </button>
-            <button
-              type="button"
-              class="gallery-race-btn"
-              data-start="2026-10-18T13:15:00-04:00"
-              data-short="Women"
-              aria-pressed="false"
-            >
-              <b>1:15</b> Women A &middot; B &middot; Masters
-            </button>
-            <button
-              type="button"
-              class="gallery-race-btn"
-              data-start="2026-10-18T14:20:00-04:00"
-              data-short="Men A"
-              aria-pressed="false"
-            >
-              <b>2:20</b> Men A &middot; Single Speed
-            </button>
-          </div>
+          <!-- Race deck: a tab per race, and under the tabs a mark for every photo,
+               each race's marks under its own tab. A race runs from its start to
+               the next start; the times are the schedule on index.html, and a test
+               holds them to it. A race nobody photographed hides its tab once the
+               photos load. -->
+          <div class="race-deck" data-year="2026" hidden>
+            <div class="gallery-races" role="group" aria-label="Filter by race" data-year="2026">
+              <button
+                type="button"
+                class="gallery-race-btn race-all"
+                data-start=""
+                aria-pressed="true"
+              >
+                <b>All</b>
+              </button>
+              <button
+                type="button"
+                class="gallery-race-btn"
+                data-start="2026-10-18T09:00:00-04:00"
+                data-short="Men C"
+                data-name="Men C and Masters 55+"
+                aria-pressed="false"
+              >
+                <b>9:00</b> Men C
+              </button>
+              <button
+                type="button"
+                class="gallery-race-btn"
+                data-start="2026-10-18T10:00:00-04:00"
+                data-short="Youth"
+                data-name="U17, U15 and U13"
+                aria-pressed="false"
+              >
+                <b>10:00</b> Youth
+              </button>
+              <button
+                type="button"
+                class="gallery-race-btn"
+                data-start="2026-10-18T11:00:00-04:00"
+                data-short="Men B"
+                data-name="Men B and Masters 35+"
+                aria-pressed="false"
+              >
+                <b>11:00</b> Men B
+              </button>
+              <button
+                type="button"
+                class="gallery-race-btn"
+                data-start="2026-10-18T12:30:00-04:00"
+                data-short="Kids"
+                data-name="Kids Try-a-Race"
+                aria-pressed="false"
+              >
+                <b>12:30</b> Kids
+              </button>
+              <button
+                type="button"
+                class="gallery-race-btn"
+                data-start="2026-10-18T13:15:00-04:00"
+                data-short="Women"
+                data-name="Women A, Women B and Masters"
+                aria-pressed="false"
+              >
+                <b>1:15</b> Women
+              </button>
+              <button
+                type="button"
+                class="gallery-race-btn"
+                data-start="2026-10-18T14:20:00-04:00"
+                data-short="Men A"
+                data-name="Men A and Single Speed"
+                aria-pressed="false"
+              >
+                <b>2:20</b> Men A
+              </button>
+            </div>
 
-          <!-- Race-day timeline: every photo is one mark on the felt, placed at the
-               moment it was taken. Built from photos.json for years with a race
-               schedule; hidden otherwise. -->
-          <figure class="day-timeline" data-year="2026" hidden>
-            <div class="day-timeline-labels" aria-hidden="true"></div>
             <div
               class="day-timeline-track"
               role="slider"
               tabindex="0"
-              aria-label="Race day, one photo at a time"
+              aria-label="Photos in the order they were taken"
               aria-valuemin="0"
               aria-valuemax="0"
               aria-valuenow="0"
@@ -794,7 +799,7 @@
                 preserveAspectRatio="none"
                 aria-hidden="true"
               >
-                <rect class="day-timeline-window" x="0" y="0" width="1000" height="100" />
+                <rect class="day-timeline-window" x="0" y="0" width="0" height="100" />
                 <g class="day-timeline-ticks"></g>
               </svg>
               <div class="day-timeline-playhead" hidden></div>
@@ -804,16 +809,12 @@
                 <span class="day-timeline-peek-race"></span>
               </button>
             </div>
-            <figcaption>
-              Every mark is a photo. Run along the day to find a moment, then open it.
-            </figcaption>
-          </figure>
+          </div>
 
           <!-- Gallery Stats -->
           <div class="gallery-stats">
             <span id="photo-count">Loading...</span>
-            <span class="separator">•</span>
-            <span id="loaded-count">0 loaded</span>
+            <span class="gallery-hint" hidden>Slide along the strip to preview a photo</span>
           </div>
 
           <!-- AI Face Finder (Coming Soon) -->
@@ -901,6 +902,7 @@
           this.photos = [];
           this.photographers = [];
           this.raceStart = '';
+          this.fetching = false;
           this.currentPage = 0;
           this.photosPerPage = 50;
           this.currentPhotoIndex = 0;
@@ -926,6 +928,8 @@
 
         async load() {
           let failure = null;
+          this.fetching = true;
+          this.timeline.render();
 
           try {
             await this.loadPhotos();
@@ -937,6 +941,7 @@
             // someone whose connection dropped is just wrong.
             failure = error.missingGallery ? null : error;
           }
+          this.fetching = false;
 
           this.updateRaceCounts();
           this.updateStats();
@@ -1185,12 +1190,14 @@
           });
         }
 
+        // "197 photos from Men C and Masters 55+", or the year's total.
         updateStats() {
           const count = this.photos.length;
-          document.getElementById('photo-count').textContent =
-            count > 0 ? `${count} Photos Available` : 'No photos yet';
-          document.getElementById('loaded-count').textContent =
-            `${Math.min(this.photosPerPage, count)} loaded`;
+          const race = this.raceButtons().find(button => button.dataset.start === this.raceStart);
+          let text = count === 1 ? '1 photo' : `${count} photos`;
+          if (race) text += ` from ${raceName(race)}`;
+          if (this.allPhotos.length === 0) text = 'No photos yet';
+          document.getElementById('photo-count').textContent = text;
         }
 
         renderPhotos() {
@@ -1228,9 +1235,6 @@
             photoItem.addEventListener('click', () => this.openLightbox(photoIndex));
             grid.appendChild(photoItem);
           });
-
-          // Update loaded count
-          document.getElementById('loaded-count').textContent = `${photosToShow.length} loaded`;
 
           // Check if we have more photos to load
           this.hasMorePhotos = endIndex < this.photos.length;
@@ -1383,27 +1387,29 @@
         return `${part('hour')}:${part('minute')} ${part('dayPeriod').toLowerCase()}`;
       }
 
-      // A chip's race name without its start time or photo count.
+      // The race's full name, as the schedule gives it.
       function raceName(button) {
-        const label = button.cloneNode(true);
-        label.querySelectorAll('b, .race-count').forEach(node => node.remove());
-        return label.textContent.replace(/\s+/g, ' ').trim();
+        return button.dataset.name || button.textContent.replace(/\s+/g, ' ').trim();
       }
 
-      // The race day edge-on: one mark per photo at the moment it was taken.
-      // Moving along it previews the nearest photo; choosing opens it.
+      // The race deck: a tab per race, and under the tabs one mark per photo,
+      // each race's photos spread across the column under its own tab in the
+      // order they were taken. Moving along the marks previews the nearest
+      // photo; choosing opens it.
       class DayTimeline {
         constructor(gallery) {
           this.gallery = gallery;
-          this.root = document.querySelector('.day-timeline');
+          this.root = document.querySelector('.race-deck');
+          this.hint = document.querySelector('.gallery-hint');
           this.photos = [];
           this.times = [];
+          this.xs = [];
+          this.columns = [];
           this.index = 0;
           this.dragging = false;
           if (!this.root) return;
 
           this.track = this.root.querySelector('.day-timeline-track');
-          this.labels = this.root.querySelector('.day-timeline-labels');
           this.ticks = this.root.querySelector('.day-timeline-ticks');
           this.window = this.root.querySelector('.day-timeline-window');
           this.playhead = this.root.querySelector('.day-timeline-playhead');
@@ -1414,52 +1420,60 @@
           this.bind();
         }
 
-        // Position on the 0-1000 drawing for a moment in the day.
-        x(time) {
-          return ((time - this.from) / (this.until - this.from)) * 1000;
-        }
-
         render() {
           if (!this.root) return;
           const gallery = this.gallery;
           const races = gallery.raceButtons().filter(button => !button.hidden);
+          // Shown while the year's photos are on their way, so the deck holds
+          // its place instead of pushing the grid down when they land.
           const show =
             this.root.dataset.year === gallery.year &&
             races.length > 0 &&
-            gallery.allPhotos.length > 0;
+            (gallery.fetching || gallery.allPhotos.length > 0);
 
           this.root.hidden = !show;
+          if (this.hint) this.hint.hidden = !show || gallery.allPhotos.length === 0;
           this.hidePeek();
-          if (!show) return;
-
-          this.photos = gallery.allPhotos;
+          this.photos = show ? gallery.allPhotos : [];
           this.times = this.photos.map(photo => Date.parse(photo.date_taken));
-          const firstStart = Date.parse(races[0].dataset.start);
-          // Five minutes of felt either side, so the first and last marks
-          // are not lost against the edge.
-          this.from = Math.min(this.times[0], firstStart) - 5 * 60000;
-          this.until = this.times[this.times.length - 1] + 5 * 60000;
+          this.ticks.textContent = '';
+          if (!show || !this.photos.length) return;
 
-          this.labels.textContent = '';
-          races.forEach(button => {
-            const label = document.createElement('span');
-            label.className = 'day-timeline-label';
-            label.style.left = `${this.x(Date.parse(button.dataset.start)) / 10}%`;
-            const time = document.createElement('b');
-            time.textContent = button.querySelector('b').textContent;
-            label.append(time, button.dataset.short);
-            this.labels.appendChild(label);
+          // Photos are in time order and races are back-to-back windows, so
+          // each race's photos are one unbroken run.
+          this.columns = races.map((button, i) => {
+            const inRace = new Set(gallery.photosInRace(button.dataset.start));
+            const first = this.photos.findIndex(photo => inRace.has(photo));
+            const end = first + inRace.size;
+            return {
+              button,
+              first,
+              end,
+              left: (i * 1000) / races.length,
+              width: 1000 / races.length,
+              earliest: this.times[first],
+              latest: this.times[end - 1],
+            };
+          });
+
+          // Inset from the column edges so neighbouring races do not touch.
+          const inset = 0.08;
+          this.xs = this.times.map(() => 0);
+          this.columns.forEach(column => {
+            const span = column.latest - column.earliest;
+            for (let i = column.first; i < column.end; i++) {
+              const along = span ? (this.times[i] - column.earliest) / span : 0.5;
+              this.xs[i] = column.left + column.width * (inset + along * (1 - 2 * inset));
+            }
           });
 
           // One line per photo, translucent, so a burst of frames stacks up
           // brighter than a lone shot.
           const svg = 'http://www.w3.org/2000/svg';
-          this.ticks.textContent = '';
-          this.times.forEach(time => {
+          this.xs.forEach(x => {
             const line = document.createElementNS(svg, 'line');
-            const x = this.x(time).toFixed(1);
-            line.setAttribute('x1', x);
-            line.setAttribute('x2', x);
+            line.setAttribute('x1', x.toFixed(1));
+            line.setAttribute('x2', x.toFixed(1));
             line.setAttribute('y1', '0');
             line.setAttribute('y2', '100');
             this.ticks.appendChild(line);
@@ -1470,48 +1484,40 @@
           this.select();
         }
 
-        // Light the selected race's photos and its stretch of the day; the
-        // rest of the day stays on the table, dimmed.
+        // Light the selected race's marks and its column; the rest of the
+        // day stays on the table, dimmed.
         select() {
           if (!this.root || this.root.hidden) return;
 
           const start = this.gallery.raceStart;
-          const inRace = new Set(this.gallery.photosInRace(start));
+          const column = this.columns.find(c => c.button.dataset.start === start);
           Array.from(this.ticks.children).forEach((line, i) => {
-            line.classList.toggle('is-dim', !inRace.has(this.photos[i]));
+            line.classList.toggle('is-dim', Boolean(column) && (i < column.first || i >= column.end));
           });
-
-          const { from, until } = start ? this.gallery.raceWindow(start) : {};
-          const left = start ? Math.max(0, this.x(from)) : 0;
-          const right = start ? Math.min(1000, this.x(until)) : 1000;
-          this.window.setAttribute('x', String(left));
-          this.window.setAttribute('width', String(Math.max(0, right - left)));
-          this.root.classList.toggle('is-filtered', Boolean(start));
+          this.window.setAttribute('x', column ? String(column.left) : '0');
+          this.window.setAttribute('width', column ? String(column.width) : '0');
+          this.root.classList.toggle('is-filtered', Boolean(column));
         }
 
-        nearest(time) {
-          let low = 0;
-          let high = this.times.length - 1;
-          while (low < high) {
-            const mid = (low + high) >> 1;
-            if (this.times[mid] < time) low = mid + 1;
-            else high = mid;
-          }
-          if (low > 0 && time - this.times[low - 1] < this.times[low] - time) return low - 1;
-          return low;
-        }
-
+        // The photo nearest a point along the strip, within the race whose
+        // column the point falls in.
         indexAt(clientX) {
           const box = this.track.getBoundingClientRect();
-          const share = Math.min(1, Math.max(0, (clientX - box.left) / box.width));
-          return this.nearest(this.from + share * (this.until - this.from));
+          const x = (Math.min(1, Math.max(0, (clientX - box.left) / box.width)) * 1000);
+          const column =
+            this.columns.find(c => x < c.left + c.width) || this.columns[this.columns.length - 1];
+          let best = column.first;
+          for (let i = column.first; i < column.end; i++) {
+            if (Math.abs(this.xs[i] - x) < Math.abs(this.xs[best] - x)) best = i;
+          }
+          return best;
         }
 
         show(index) {
           this.index = index;
           const photo = this.photos[index];
           const race = this.gallery.raceFor(photo);
-          const share = this.x(this.times[index]) / 1000;
+          const share = this.xs[index] / 1000;
           const moment = this.gallery.describeMoment(photo);
 
           this.playhead.hidden = false;
@@ -1623,8 +1629,6 @@
         });
 
         document.getElementById('gallery-title').textContent = `${year} Event Photos`;
-        document.getElementById('gallery-description').textContent =
-          `Browse and download professional photos from the Prologue Cyclocross ${year} event. Click any photo to view and download the high-resolution version.`;
 
         gallery.setYear(year);
       }

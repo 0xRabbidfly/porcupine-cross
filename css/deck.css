@@ -1798,25 +1798,61 @@ footer {
   margin: 0 0 0.4em;
 }
 
-.photos-page-description {
-  font-family: var(--pc-body);
+/* The photos page header is the title and who took the pictures; the
+   controls below it do the explaining. */
+.photos-page-header {
+  margin-bottom: 1.1rem !important;
+}
+
+/* The photographers' byline, set like a credit under a picture spread. */
+.photos-credit {
+  font-family: var(--pc-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.45;
   text-align: center;
-  max-width: 56ch;
-  margin: 0 auto 2rem;
   color: var(--pc-ink-soft);
+  margin: 0 auto;
+  max-width: 60ch;
+  text-wrap: balance;
+}
+
+.photos-credit[hidden] {
+  display: none;
+}
+
+/* Year switch: one small joined control, quiet next to the race deck. */
+.gallery-years {
+  gap: 0 !important;
+  margin: 0 0 18px !important;
 }
 
 .gallery-year-btn {
-  font-family: var(--pc-data) !important;
-  font-size: 0.9rem !important;
+  font-family: var(--pc-numeral) !important;
+  font-size: 0.82rem !important;
   font-weight: 700 !important;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   background: transparent !important;
   color: var(--pc-ink-soft) !important;
-  border: 1px solid rgba(17, 24, 35, 0.3) !important;
-  border-radius: 3px !important;
-  padding: 8px 18px !important;
+  border: 1px solid rgba(17, 24, 35, 0.28) !important;
+  border-radius: 0 !important;
+  padding: 6px 16px !important;
   cursor: pointer;
+}
+
+.gallery-year-btn:first-child {
+  border-radius: 999px 0 0 999px !important;
+}
+
+.gallery-year-btn:last-child {
+  border-radius: 0 999px 999px 0 !important;
+  margin-left: -1px;
+}
+
+.gallery-year-btn:hover {
+  transform: none !important;
+  color: var(--pc-ink) !important;
 }
 
 .gallery-year-btn[aria-selected='true'] {
@@ -1825,183 +1861,124 @@ footer {
   border-color: var(--pc-ink) !important;
 }
 
-/* Race filter: a row of start-time chips under the year tabs. The time is set
-   like a card index, the count like a pip. */
-.gallery-races {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+/* Race deck: the card table. A row of tabs, one per race, and under them the
+   day's photos seen edge-on, one cream line each, every race's lines in the
+   column under its own tab. Choosing a race pulls its tab out like a card
+   and lights its column; the rest of the day stays on the felt, dimmed. */
+.race-deck {
+  --all-width: 76px;
+  position: relative;
   max-width: 980px;
-  margin: 18px auto 14px;
+  margin: 0 auto 12px;
+  padding: 6px 6px 10px;
+  background: var(--pc-felt);
+  border-radius: 12px;
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.45),
+    0 0 0 1px var(--pc-felt-deep),
+    0 0 0 3px rgba(200, 162, 74, 0.45);
+  --pc-peek-shadow: 0 10px 24px rgba(10, 15, 23, 0.35);
 }
 
-.gallery-races[hidden],
-.gallery-race-btn[hidden] {
+.race-deck[hidden] {
   display: none;
 }
 
+.gallery-races {
+  display: grid;
+  grid-template-columns: var(--all-width);
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+}
+
 .gallery-race-btn {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.45em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 52px;
+  padding: 7px 4px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
   font-family: var(--pc-data);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--pc-ink);
-  background: var(--pc-stock);
-  border: 1px solid var(--pc-hairline);
-  border-radius: 999px;
-  padding: 7px 14px;
-  cursor: pointer;
+  line-height: 1.15;
+  color: rgba(247, 242, 231, 0.78);
   white-space: nowrap;
+  cursor: pointer;
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.gallery-race-btn[hidden] {
+  display: none;
 }
 
 .gallery-race-btn b {
   font-family: var(--pc-numeral);
   font-weight: 800;
-  color: var(--pc-blood);
+  font-size: 0.95rem;
+  color: var(--pc-gilt);
 }
 
 .gallery-race-btn .race-count {
   font-size: 0.74rem;
-  font-weight: 700;
-  color: var(--pc-ink-soft);
-  background: var(--pc-stock-shade);
-  border-radius: 999px;
-  padding: 1px 7px;
+  font-weight: 500;
+  color: rgba(247, 242, 231, 0.5);
 }
 
 .gallery-race-btn .race-count:empty {
   display: none;
 }
 
-.gallery-race-btn:hover {
-  border-color: var(--pc-gilt);
-  transform: translateY(-1px);
+.gallery-race-btn.race-all b {
+  font-family: var(--pc-data);
+  font-weight: 700;
+  color: var(--pc-stock);
 }
 
-/* style.css rings every focused button in red; a chip shows its state by fill. */
+.gallery-race-btn:hover {
+  color: var(--pc-stock);
+  background: rgba(247, 242, 231, 0.07);
+}
+
+/* style.css rings every focused button in red; a tab shows its state by fill. */
 .gallery-race-btn:focus {
   box-shadow: none;
-}
-
-.gallery-race-btn:focus:not(:focus-visible) {
   outline: none;
 }
 
 .gallery-race-btn:focus-visible {
   outline: 2px solid var(--pc-gilt);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 .gallery-race-btn[aria-pressed='true'] {
-  background: var(--pc-felt);
-  border-color: var(--pc-gilt);
-  color: var(--pc-stock);
+  background: var(--pc-stock);
+  color: var(--pc-ink);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
 }
 
 .gallery-race-btn[aria-pressed='true'] b {
-  color: var(--pc-gilt);
-}
-
-.gallery-race-btn[aria-pressed='true'] .race-count {
-  background: rgba(247, 242, 231, 0.16);
-  color: var(--pc-stock);
-}
-
-/* On a phone the chips run as one swipeable strip instead of five rows. The
-   page container is a grid item, which grows to fit its widest content unless
-   told otherwise, and the strip would widen the whole page instead of scrolling.
-   Its width also has to include its padding, or the card overhangs a phone by
-   the padding's worth and the page scrolls sideways. */
-@media (max-width: 600px) {
-  .photos-page-container {
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .gallery-races {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding: 4px 4px 6px;
-  }
-
-  .gallery-races::-webkit-scrollbar {
-    display: none;
-  }
-
-  .gallery-race-btn {
-    flex: 0 0 auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gallery-race-btn {
-    transition: none;
-  }
-
-  .gallery-race-btn:hover {
-    transform: none;
-  }
-}
-
-/* Race-day timeline: the day's photos seen edge-on, like a deck on the felt.
-   Each frame is one translucent cream line, so a burst stacks up bright and a
-   break in racing is bare table. */
-.day-timeline {
-  max-width: 980px;
-  margin: 4px auto 26px;
-  text-align: left;
-}
-
-.day-timeline[hidden] {
-  display: none;
-}
-
-.day-timeline-labels {
-  position: relative;
-  height: 38px;
-}
-
-.day-timeline-label {
-  position: absolute;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 0 0 6px 6px;
-  border-left: 1px solid var(--pc-gilt);
-  font-family: var(--pc-data);
-  font-size: 0.8rem;
-  line-height: 1.1;
-  color: var(--pc-ink-soft);
-  white-space: nowrap;
-}
-
-.day-timeline-label b {
-  font-family: var(--pc-numeral);
-  font-weight: 800;
-  font-size: 0.82rem;
   color: var(--pc-blood);
 }
 
+.gallery-race-btn.race-all[aria-pressed='true'] b {
+  color: var(--pc-ink);
+}
+
+.gallery-race-btn[aria-pressed='true'] .race-count {
+  color: var(--pc-ink-soft);
+}
+
 .day-timeline-track {
-  --pc-peek-shadow: 0 10px 24px rgba(10, 15, 23, 0.35);
   position: relative;
-  height: 68px;
-  background: var(--pc-felt);
-  border-radius: 10px;
-  box-shadow:
-    inset 0 2px 10px rgba(0, 0, 0, 0.45),
-    0 0 0 1px var(--pc-felt-deep),
-    0 0 0 3px rgba(200, 162, 74, 0.45);
+  height: 46px;
+  margin: 8px 0 0 var(--all-width);
   cursor: crosshair;
   touch-action: pan-y;
 }
@@ -2012,21 +1989,22 @@ footer {
 
 .day-timeline-track:focus-visible {
   outline: 2px solid var(--pc-gilt);
-  outline-offset: 6px;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 .day-timeline-marks {
   position: absolute;
-  inset: 9px 0;
+  inset: 0;
   width: 100%;
-  height: calc(100% - 18px);
+  height: 100%;
   overflow: visible;
 }
 
 .day-timeline-ticks line {
   stroke: var(--pc-stock);
   stroke-width: 1px;
-  stroke-opacity: 0.42;
+  stroke-opacity: 0.34;
   vector-effect: non-scaling-stroke;
 }
 
@@ -2036,17 +2014,13 @@ footer {
 
 .day-timeline-window {
   fill: var(--pc-stock);
-  fill-opacity: 0;
-}
-
-.day-timeline.is-filtered .day-timeline-window {
-  fill-opacity: 0.11;
+  fill-opacity: 0.1;
 }
 
 .day-timeline-playhead {
   position: absolute;
-  top: -7px;
-  bottom: -7px;
+  top: -5px;
+  bottom: -5px;
   width: 2px;
   margin-left: -1px;
   background: var(--pc-gilt);
@@ -2107,54 +2081,80 @@ footer {
   color: var(--pc-ink-soft);
 }
 
-.day-timeline figcaption {
-  margin-top: 12px;
+/* What the grid below is showing, and how to use the strip. */
+.gallery-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+  max-width: 980px;
+  margin: 0 auto 18px !important;
   font-family: var(--pc-body);
-  font-size: 0.86rem;
-  color: var(--pc-ink-soft);
+  font-size: 0.92rem !important;
+  text-align: left !important;
+  color: var(--pc-ink-soft) !important;
 }
 
+#photo-count {
+  font-weight: 600;
+  color: var(--pc-ink);
+}
+
+.gallery-hint[hidden] {
+  display: none;
+}
+
+/* Phones hold six tabs across: All narrows to a word and the per-race counts
+   give way to the line under the deck. */
 @media (max-width: 600px) {
-  .day-timeline-labels {
-    height: 34px;
+  .photos-page-container {
+    min-width: 0;
+    box-sizing: border-box;
   }
 
-  .day-timeline-label {
-    font-size: 0.7rem;
-    padding-left: 4px;
+  .race-deck {
+    --all-width: 44px;
+    padding: 5px 4px 8px;
+    margin-inline: -6px;
   }
 
-  .day-timeline-label b {
-    font-size: 0.72rem;
+  .gallery-race-btn {
+    min-height: 48px;
+    padding: 6px 1px;
+    font-size: 0.76rem;
+    border-radius: 7px;
+  }
+
+  .gallery-race-btn b {
+    font-size: 0.8rem;
+  }
+
+  .gallery-race-btn:not(.race-all) .race-count {
+    display: none;
   }
 
   .day-timeline-track {
-    height: 58px;
+    height: 40px;
   }
 
   .day-timeline-peek {
     width: 172px;
   }
+
+  /* Count and hint always on their own lines, so choosing a race with a
+     long name does not push the grid down a line. */
+  .gallery-stats {
+    flex-direction: column;
+    gap: 1px;
+    font-size: 0.84rem !important;
+  }
 }
 
-/* The photographers' byline, set like a credit under a picture spread. */
-.photos-credit {
-  font-family: var(--pc-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.1rem;
-  text-align: center;
-  color: var(--pc-ink);
-  margin: -1.2rem auto 2rem;
-}
-
-.photos-credit[hidden] {
-  display: none;
-}
-
-.lightbox-info h3 {
-  text-transform: none;
-  letter-spacing: 0.03em;
+@media (prefers-reduced-motion: reduce) {
+  .gallery-race-btn {
+    transition: none;
+  }
 }
 
 .lightbox-when,
@@ -2175,14 +2175,6 @@ footer {
 .lightbox-when:empty,
 .lightbox-credit:empty {
   display: none;
-}
-
-.gallery-stats {
-  font-family: var(--pc-data);
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--pc-ink-soft);
 }
 
 .back-to-home {
@@ -2224,8 +2216,7 @@ footer {
 .lightbox-info h3 {
   font-family: var(--pc-data) !important;
   font-weight: 600 !important;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: var(--pc-stock) !important;
 }
 
