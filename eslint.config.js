@@ -38,6 +38,7 @@ export default [
 
         // Other Browser APIs
         Promise: 'readonly',
+        fetch: 'readonly',
         ResizeObserver: 'readonly',
         IntersectionObserver: 'readonly',
         HTMLElement: 'readonly',

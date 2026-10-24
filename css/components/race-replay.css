@@ -1,0 +1,448 @@
+/* Race replay: the course map on the felt, the riders as their own photos,
+   the standings beside the map, and the podium to finish. Colours and type
+   come from the deck tokens in deck.css. */
+
+.race-replay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: var(--pc-felt-deep, #0b2119);
+  color: var(--pc-stock, #f7f2e7);
+}
+
+.race-replay[hidden] {
+  display: none;
+}
+
+.replay-frame {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 16px max(12px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.replay-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.replay-title {
+  margin: 0;
+  font-family: var(--pc-display) !important;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 600 !important;
+  letter-spacing: 0;
+  color: var(--pc-stock) !important;
+}
+
+.replay-clock {
+  margin: 0 0 0 auto;
+  font-family: var(--pc-data);
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--pc-gilt);
+}
+
+.replay-time {
+  display: inline-block;
+  min-width: 4.5ch;
+  margin-left: 6px;
+  color: var(--pc-stock);
+}
+
+.replay-close {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-gilt);
+  font-size: 2.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.replay-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 16px;
+  min-height: 0;
+}
+
+.replay-stage {
+  min-height: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(200, 162, 74, 0.5),
+    0 18px 34px -18px rgba(0, 0, 0, 0.9);
+}
+
+.replay-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--pc-felt-deep, #0b2119);
+}
+
+.replay-dim {
+  fill: rgba(6, 10, 16, 0.42);
+}
+
+.replay-course {
+  fill: none;
+  stroke: rgba(240, 232, 60, 0.85);
+  stroke-width: 7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* The start and finish line: a checkered bar across the course. */
+.replay-line rect {
+  fill: #fff;
+  stroke: #111823;
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+}
+
+.replay-rider {
+  transition: opacity 0.6s ease;
+}
+
+.replay-rider.is-gone {
+  opacity: 0;
+}
+
+.replay-ring {
+  fill: var(--pc-stock);
+  stroke: #111823;
+  stroke-width: 2;
+}
+
+.replay-rider.is-leader .replay-ring {
+  fill: var(--pc-gilt);
+  stroke: var(--pc-gilt);
+  stroke-width: 4;
+}
+
+.replay-tag {
+  fill: #fff;
+  stroke: rgba(17, 24, 35, 0.4);
+}
+
+.replay-bib {
+  font-family: var(--pc-numeral);
+  font-size: 14px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: #111823;
+}
+
+.replay-standings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.replay-row {
+  display: grid;
+  grid-template-columns: 1.6em 30px 2.6em 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-bottom: 1px solid rgba(247, 242, 231, 0.1);
+  font-family: var(--pc-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.replay-row:first-child {
+  background: rgba(200, 162, 74, 0.16);
+  border-radius: 4px;
+}
+
+.replay-pos {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+  color: var(--pc-gilt);
+}
+
+.replay-row img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.replay-row-bib {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+}
+
+.replay-gap {
+  justify-self: end;
+  font-size: 0.92rem;
+  color: rgba(247, 242, 231, 0.75);
+}
+
+.replay-row.is-finished .replay-gap::before {
+  content: '\2691';
+  margin-right: 5px;
+  color: var(--pc-gilt);
+}
+
+.replay-row.is-out {
+  opacity: 0.45;
+}
+
+.replay-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 10px;
+}
+
+.replay-play {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--pc-gilt);
+  color: #111823;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.replay-scrub {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--pc-gilt);
+}
+
+.replay-speed {
+  display: flex;
+  flex: none;
+  gap: 4px;
+}
+
+.replay-speed button {
+  padding: 6px 9px;
+  border: 1px solid rgba(247, 242, 231, 0.3);
+  border-radius: 999px;
+  background: none;
+  color: var(--pc-stock);
+  font-family: var(--pc-data);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.replay-speed button[aria-pressed='true'] {
+  background: var(--pc-stock);
+  color: #111823;
+  border-color: var(--pc-stock);
+}
+
+.race-replay button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.race-replay button:focus-visible,
+.replay-scrub:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 2px;
+}
+
+/* The podium: second, first, third on rising steps. */
+.replay-podium {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 20px 16px;
+  background: rgba(11, 33, 25, 0.96);
+}
+
+.replay-podium[hidden] {
+  display: none;
+}
+
+.podium-title {
+  margin: 0;
+  font-family: var(--pc-display) !important;
+  font-size: 1.8rem;
+  font-style: italic;
+  font-weight: 600 !important;
+  color: var(--pc-stock) !important;
+}
+
+.podium-steps {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.podium-step {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  animation: podium-rise 0.7s cubic-bezier(0.16, 0.9, 0.24, 1) both;
+}
+
+.podium-1 {
+  animation-delay: 0.5s;
+}
+
+.podium-3 {
+  animation-delay: 0.25s;
+}
+
+.podium-step img {
+  width: 100%;
+  max-width: 210px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: 6px solid var(--pc-stock);
+  border-radius: 3px;
+  box-shadow: 0 16px 28px -14px rgba(0, 0, 0, 0.95);
+}
+
+.podium-step figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 8px 0 6px;
+  font-family: var(--pc-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.podium-bib {
+  font-family: var(--pc-numeral);
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.podium-time {
+  color: var(--pc-gilt);
+  font-weight: 700;
+}
+
+.podium-block {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  background: var(--pc-stock);
+  border-radius: 3px 3px 0 0;
+  color: #111823;
+  font-family: var(--pc-numeral);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.podium-1 .podium-block {
+  height: 96px;
+  background: var(--pc-gilt);
+}
+
+.podium-2 .podium-block {
+  height: 66px;
+}
+
+.podium-3 .podium-block {
+  height: 44px;
+}
+
+.podium-again {
+  padding: 10px 22px;
+  border: 2px solid var(--pc-gilt);
+  border-radius: 999px;
+  background: none;
+  color: var(--pc-stock);
+  font-family: var(--pc-data);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@keyframes podium-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .replay-frame {
+    padding-inline: 10px;
+  }
+
+  .replay-title {
+    font-size: 1.1rem;
+  }
+
+  .replay-clock {
+    font-size: 0.95rem;
+  }
+
+  /* The map takes the width at its own shape; the standings scroll in what
+     is left. */
+  .replay-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .replay-map {
+    height: auto;
+    max-height: 56vh;
+  }
+
+  .replay-row {
+    padding-block: 3px;
+  }
+
+  .podium-steps {
+    gap: 8px;
+  }
+
+  .podium-bib {
+    font-size: 1.05rem;
+  }
+
+  .podium-time {
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .podium-step {
+    animation: none;
+  }
+
+  .replay-rider {
+    transition: none;
+  }
+}

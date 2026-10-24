@@ -7,6 +7,7 @@ import AudioManager from './components/audioManager.js';
 import HeroCardRotator from './components/heroCardRotator.js';
 import MobileMenu from './components/mobileMenu.js';
 import RegisterPhase from './components/registerPhase.js';
+import RaceReplay from './components/raceReplay.js';
 import SmolderchadEasterEgg from './components/smolderchadEasterEgg.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
@@ -62,6 +63,9 @@ class App {
 
       // Initialize register phase switch
       this.components.registerPhase = RegisterPhase.create();
+
+      // Initialize the race replay, on a page that has one
+      this.components.raceReplay = RaceReplay.create();
 
       // Initialize Hero Animation
       this.initHeroAnimation();

@@ -58,9 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-2" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-2" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-2" />
+    <link rel="stylesheet" href="style.css?v=20261024-3" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-3" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-3" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-3" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -467,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-2" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-3" />
   </head>
   <body>
     <header>
@@ -727,7 +728,7 @@
 
           <!-- The results, each rider linked to their photos: the selected
                race's, or every race's under All. Bib numbers only, never names. -->
-          <details class="race-results" hidden>
+          <details class="race-results" data-replays="Cat A" hidden>
             <summary>
               <span class="race-results-title">Results</span>
               <span class="race-results-hint">Pick a rider to see their photos</span>
@@ -768,6 +769,10 @@
         </div>
       </div>
     </main>
+
+    <!-- Race replay: a category's race on the course map, lap by lap, opened
+         by a [data-replay] button on the results board. -->
+    <div class="race-replay" data-src="/photos/event-2026/replay/replay.json" hidden></div>
 
     <!-- Lightbox Modal -->
     <div id="lightbox" class="lightbox" style="display: none">
@@ -1361,6 +1366,8 @@
 
           const { riders } = shown;
           const winner = riders[0];
+          // Categories with a lap-by-lap replay (js/components/raceReplay.js).
+          const replays = (board.dataset.replays || '').split(',').filter(Boolean);
           const rows = riders
             .map(rider => {
               const photos = tagged.get(rider.bib) || [];
@@ -1388,6 +1395,7 @@
                 <span class="sr-only">Category</span>
                 <select class="standings-select">${options}</select>
               </label>
+              ${replays.includes(shown.race) ? `<button type="button" class="standings-replay" data-replay="${shown.race}"><i class="fas fa-play" aria-hidden="true"></i> Watch the race</button>` : ''}
               ${closestFinish(riders)}
             </div>
             <table class="standings-table">
