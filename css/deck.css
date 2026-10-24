@@ -2734,6 +2734,70 @@ footer {
   border-color: var(--pc-ink);
 }
 
+/* The rider's laps, across the panel under the result. */
+.rider-laps {
+  grid-column: 1 / -1;
+  overflow-x: auto;
+}
+
+.rider-laps[hidden] {
+  display: none;
+}
+
+.rider-laps-table {
+  border-collapse: collapse;
+  font-family: var(--pc-data);
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--pc-ink);
+}
+
+.rider-laps-table caption {
+  padding-bottom: 4px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.rider-laps-table th,
+.rider-laps-table td {
+  padding: 3px 9px;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(17, 24, 35, 0.1);
+}
+
+.rider-laps-table th[scope='row'] {
+  padding-left: 0;
+  font-weight: 600;
+  text-align: left;
+  color: var(--pc-ink-soft);
+}
+
+.rider-laps-table thead th {
+  font-weight: 600;
+  color: var(--pc-ink-soft);
+}
+
+.rider-laps-table td.is-best {
+  background: rgba(200, 162, 74, 0.25);
+  font-weight: 700;
+}
+
+.rider-lap-time {
+  font-family: var(--pc-numeral);
+  font-weight: 600;
+}
+
+.rider-lap-star {
+  color: var(--pc-blood);
+}
+
+.standings-fastest {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--pc-ink-soft);
+}
+
 /* Which lap the photo caught the rider on. */
 .photo-lap {
   position: absolute;

@@ -1081,3 +1081,105 @@ describe('photos gallery results board', () => {
     expect(thumb.getAttribute('src')).toMatch(/thumbnails\/menB\.jpg$/);
   });
 });
+
+describe('photos gallery laps', () => {
+  const html = read('photos.html');
+  const photos = {
+    photos: [
+      {
+        id: 'photo_1',
+        filename: 'menA.jpg',
+        date_taken: '2026-10-18T18:30:00Z',
+        bibs: { 55: 'number' },
+      },
+    ],
+    results: {
+      55: {
+        race: 'Cat A',
+        place: 1,
+        field: 2,
+        laps: 3,
+        time: '19:00',
+        start: '2026-10-18T14:20:00-04:00',
+      },
+      21: {
+        race: 'Cat A',
+        place: 2,
+        field: 2,
+        laps: 3,
+        time: '19:10',
+        start: '2026-10-18T14:20:00-04:00',
+      },
+    },
+  };
+  const replay = {
+    course: { map: {}, route: [] },
+    races: {
+      'Cat A': {
+        riders: [
+          { bib: '55', laps: [400, 370, 370], ranks: [2, 1, 2] },
+          { bib: '21', laps: [390, 395, 365], ranks: [1, 2, 1] },
+        ],
+        fastest: { bib: '21', lap: 3, time: 365 },
+      },
+    },
+  };
+
+  function boot() {
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: 'https://example.test/photos.html',
+      virtualConsole: new VirtualConsole(),
+      beforeParse(win) {
+        win.fetch = url =>
+          Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => (String(url).includes('replay') ? replay : photos),
+          });
+        win.IntersectionObserver = class {
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+  }
+  const settle = () => new Promise(resolve => setTimeout(resolve, 80));
+  const squash = node => node.textContent.replace(/\s+/g, ' ').trim();
+
+  test('the leaderboard names the race fastest lap', async () => {
+    const win = boot();
+    await settle();
+    const select = win.document.querySelector('.standings-select');
+    select.value = 'Cat A';
+    select.dispatchEvent(new win.Event('change', { bubbles: true }));
+    expect(squash(win.document.querySelector('.standings-fastest'))).toBe(
+      'Fastest lap: 21, 6:05 on lap 3'
+    );
+  });
+
+  test("a rider's panel lists each lap's time, lap rank and place", async () => {
+    const win = boot();
+    await settle();
+    win.document.getElementById('bib-input').value = '55';
+    win.document
+      .querySelector('.bib-finder')
+      .dispatchEvent(new win.Event('submit', { cancelable: true }));
+    const table = win.document.querySelector('.rider-laps-table');
+    const row = name =>
+      Array.from(table.querySelectorAll('tbody tr'))
+        .find(tr => tr.querySelector('th').textContent === name)
+        .querySelectorAll('td');
+    expect(Array.from(row('Time')).map(squash)).toEqual(['6:40', '6:10', '6:10']);
+    expect(Array.from(row('Lap rank')).map(squash)).toEqual(['2nd', '1st', '2nd']);
+    // 21 leads after lap one; 55 is ahead at 770s to 785s, and 1140s to 1150s.
+    expect(Array.from(row('Place')).map(squash)).toEqual(['2nd', '1st', '1st']);
+    // The best laps are lit; the race's fastest was 21's, so no star here.
+    expect(row('Time')[1].classList).toContain('is-best');
+    expect(row('Time')[0].classList).not.toContain('is-best');
+    expect(table.querySelector('.rider-lap-star')).toBeNull();
+  });
+});

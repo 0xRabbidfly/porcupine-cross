@@ -96,16 +96,16 @@
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 
     <!-- EXISTING STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-7" />
+    <link rel="stylesheet" href="style.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-8" />
     <!-- Add FontAwesome for icons -->
     <link
       rel="stylesheet"
@@ -121,7 +121,7 @@
     />
 
     <!-- PROLOGUE DECK — loaded last, owns the skin -->
-    <link rel="stylesheet" href="css/deck.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-8" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -160,8 +160,8 @@
           data-rank="7"
           data-suit="&#9827;"
           data-flip-at="2026-10-18T16:00:00-04:00"
-          ><i class="fas fa-flag-checkered menu-icon"></i><span data-phase="pre">Register</span
-          ><span data-phase="post" hidden>Results</span></a
+          ><i class="fas fa-flag-checkered menu-icon"></i
+          ><span data-phase="pre" hidden>Register</span><span data-phase="post">Results</span></a
         >
         <a href="photos.html" data-rank="J" data-suit="&#9829;"
           ><i class="fas fa-camera menu-icon"></i>Photos</a
@@ -728,11 +728,13 @@
 
       <!-- Card 7 is the event's: Register until the race is run, then Results.
            The flip time is race day's finish; for a new event, change it here
-           and on the nav's 7 card on every page. #register still lands here. -->
+           and on the nav's 7 card on every page. #register still lands here.
+           Results shows without the script; the script brings Register back
+           before the next race day. -->
       <section id="results" data-rank="7" data-suit="&#9827;">
         <span id="register" class="section-alias" aria-hidden="true"></span>
         <div class="register-phase" data-flip-at="2026-10-18T16:00:00-04:00">
-          <div data-phase="pre">
+          <div data-phase="pre" hidden>
             <h2><span class="ace-icon">♠</span>Deal Yourself In</h2>
             <div class="register-content">
               <div class="register-hero">
@@ -798,7 +800,7 @@
               </div>
             </div>
           </div>
-          <div data-phase="post" hidden>
+          <div data-phase="post">
             <h2><span class="ace-icon">♣</span>Results</h2>
             <div class="results-table">
               <a
@@ -966,7 +968,7 @@
     <script type="module" src="js/animationBridge.js"></script>
 
     <!-- Load our modular JavaScript -->
-    <script type="module" src="js/main.js?v=20261024-7"></script>
+    <script type="module" src="js/main.js?v=20261024-8"></script>
 
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>

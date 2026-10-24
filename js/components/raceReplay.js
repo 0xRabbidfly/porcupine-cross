@@ -355,6 +355,7 @@ class RaceReplay {
               <img alt="" />
               <p><b class="replay-zoom-bib"></b> <span class="replay-zoom-text"></span></p>
             </div>
+            <div class="replay-info" role="region" aria-label="The followed rider's laps" hidden></div>
           </div>
           <ol class="replay-standings" aria-label="Standings: pick a rider to follow"></ol>
         </div>
@@ -546,6 +547,7 @@ class RaceReplay {
     );
 
     if (this.zoomBib) this.showZoom(this.zoomBib);
+    if (this.followed) this.updateInfo();
 
     const over = this.t >= race.end + PODIUM_DELAY_S;
     if (over !== this.podiumShown) this.showPodium(over);
@@ -568,6 +570,70 @@ class RaceReplay {
     if (this.followed) {
       this.container.querySelector('.replay-riders').appendChild(this.markers.get(this.followed));
     }
+    this.infoKey = '';
+    this.updateInfo();
+  }
+
+  // The followed rider's laps, in a card on the map: each lap's time and where
+  // it ranked in the race once they have ridden it, the lap they are on lit,
+  // and a star on the race's fastest lap.
+  updateInfo() {
+    const info = this.container.querySelector('.replay-info');
+    const row = this.followed && (this.rowsNow || []).find(r => r.rider.bib === this.followed);
+    if (!info) return;
+    info.hidden = !row;
+    if (!row) return;
+    const { rider } = row;
+    const done = row.finished || row.out ? rider.laps.length : Math.floor(row.progress);
+    // Redraw only when a lap is crossed, not every frame.
+    const key = `${rider.bib}:${done}`;
+    if (key === this.infoKey) return;
+    this.infoKey = key;
+
+    const fastest = this.race.fastest;
+    const ranks = rider.ranks || [];
+    const cols = rider.laps
+      .map((time, k) => {
+        const ridden = k < done;
+        const now = k === done ? ' is-now' : '';
+        const star =
+          ridden && fastest && fastest.bib === rider.bib && fastest.lap === k + 1
+            ? '<span class="replay-info-star" title="Fastest lap of the race">★</span>'
+            : '';
+        return `<td class="${now.trim()}">${ridden ? `${clock(time)}${star}` : ''}</td>`;
+      })
+      .join('');
+    const rankCols = rider.laps
+      .map(
+        (_, k) =>
+          `<td class="${k === done ? 'is-now' : ''}">${k < done && ranks[k] ? ordinal(ranks[k]) : ''}</td>`
+      )
+      .join('');
+    const face = rider.photo
+      ? `<img src="${this.base}${rider.photo}" alt="" />`
+      : '<span class="replay-row-noface" aria-hidden="true">#</span>';
+    let status = done
+      ? `Lap ${Math.min(done + 1, rider.laps.length)} of ${rider.laps.length}`
+      : 'Lap 1';
+    if (row.finished) status = `${ordinal(rider.place)}, ${clock(row.at)}`;
+    if (row.out) status = 'Did not finish';
+    info.innerHTML = `
+      <div class="replay-info-head">
+        ${face}
+        <b class="replay-info-bib">${rider.bib}</b>
+        <span class="replay-info-status">${status}</span>
+        <button type="button" class="replay-info-close" aria-label="Stop following bib ${rider.bib}">&times;</button>
+      </div>
+      <table class="replay-info-table">
+        <thead><tr><th scope="row">Lap</th>${rider.laps.map((_, k) => `<th scope="col">${k + 1}</th>`).join('')}</tr></thead>
+        <tbody>
+          <tr><th scope="row">Time</th>${cols}</tr>
+          <tr><th scope="row" title="Where the lap's time ranked in the race">Rank</th>${rankCols}</tr>
+        </tbody>
+      </table>`;
+    info
+      .querySelector('.replay-info-close')
+      .addEventListener('click', () => this.follow(rider.bib));
   }
 
   // The rider's photo large, beside their marker: above it when there is

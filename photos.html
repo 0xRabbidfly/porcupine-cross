@@ -58,11 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-7" />
-    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-7" />
+    <link rel="stylesheet" href="style.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-8" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -469,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-8" />
   </head>
   <body>
     <header>
@@ -507,8 +506,8 @@
           data-rank="7"
           data-suit="&#9827;"
           data-flip-at="2026-10-18T16:00:00-04:00"
-          ><i class="fas fa-flag-checkered menu-icon"></i><span data-phase="pre">Register</span
-          ><span data-phase="post" hidden>Results</span></a
+          ><i class="fas fa-flag-checkered menu-icon"></i
+          ><span data-phase="pre" hidden>Register</span><span data-phase="post">Results</span></a
         >
         <a href="photos.html" aria-current="page" data-rank="J" data-suit="&#9829;"
           ><i class="fas fa-camera menu-icon"></i>Photos</a
@@ -763,30 +762,8 @@
                 <small class="rider-zip-size"></small>
               </button>
             </div>
+            <div class="rider-laps" hidden></div>
           </div>
-
-          <!-- The replay teaser: Cat A riders looping the course map, and the way
-               into the replays. A link carrying data-replay: the photos page opens
-               the replay in place, elsewhere it goes there with ?replay=. -->
-          <a
-            class="replay-teaser"
-            href="photos.html?replay=Cat%20A"
-            data-replay="Cat A"
-            data-src="/photos/event-2026/replay/replay.json"
-          >
-            <div class="teaser-stage" aria-hidden="true"><span class="teaser-lap"></span></div>
-            <div class="teaser-copy">
-              <span class="teaser-new">New</span>
-              <h3 class="teaser-title">Watch every race, lap by lap</h3>
-              <p class="teaser-text">
-                Every rider rides the course map as their own race photo, at the pace of their real
-                lap times. Pick a race, follow a rider, and stay for the podium.
-              </p>
-              <span class="teaser-cta"
-                ><i class="fas fa-play" aria-hidden="true"></i> Watch the races</span
-              >
-            </div>
-          </a>
 
           <!-- The results, each rider linked to their photos: the selected
                race's, or every race's under All. Bib numbers only, never names. -->
@@ -873,7 +850,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-7"></script>
+    <script type="module" src="js/main.js?v=20261024-8"></script>
 
     <!-- Photo Gallery Script -->
     <script>
@@ -894,6 +871,10 @@
           // one rider raced under.
           this.results = {};
           this.sameRider = [];
+          // From the replay's lap data: bib -> {race, laps, ranks, places},
+          // and race -> its fastest lap. Empty in a year without it.
+          this.laps = {};
+          this.fastest = {};
           // The category the results board shows.
           this.standingsRace = '';
           this.fetching = false;
@@ -944,6 +925,7 @@
           this.updateFinder();
           this.updateResults();
           this.timeline.render();
+          this.loadLaps();
 
           if (failure) {
             this.showLoadError();
@@ -978,6 +960,8 @@
           this.hasMorePhotos = false;
           this.results = {};
           this.sameRider = [];
+          this.laps = {};
+          this.fastest = {};
           this.dropBib();
           this.selectRaceButton('');
           this.updateCredit();
@@ -1154,6 +1138,38 @@
           this.updateRider();
         }
 
+        // Every rider's laps from the replay data, which only a year with a
+        // replay has: each lap's time, its rank among the category's times
+        // for that lap, and the rider's place as they crossed the line.
+        async loadLaps() {
+          const year = this.year;
+          try {
+            const response = await fetch(`${this.basePath}replay/replay.json`);
+            if (!response.ok) return;
+            const data = await response.json();
+            if (year !== this.year || !data.races) return;
+            Object.entries(data.races).forEach(([race, { riders, fastest }]) => {
+              const ends = rider =>
+                rider.laps.map((_, k) => rider.laps.slice(0, k + 1).reduce((a, b) => a + b, 0));
+              const crossed = riders.map(rider => ({ rider, ends: ends(rider) }));
+              crossed.forEach(({ rider, ends: own }) => {
+                const places = own.map((end, k) => {
+                  const ahead = crossed.filter(
+                    other => other.ends.length > k && other.ends[k] < end
+                  );
+                  return ahead.length + 1;
+                });
+                this.laps[rider.bib] = { race, laps: rider.laps, ranks: rider.ranks || [], places };
+              });
+              if (fastest) this.fastest[race] = fastest;
+            });
+            this.updateResults();
+            this.updateRider();
+          } catch (error) {
+            console.warn('Lap data failed to load', error);
+          }
+        }
+
         // "2nd of 9 in Master Men 35+" and "42:00 over 6 laps", or what is
         // known when the rider did not finish. Empty without a result.
         riderResult(bib) {
@@ -1257,6 +1273,40 @@
             });
             links.appendChild(row);
           }
+
+          this.updateLaps();
+        }
+
+        // The rider's laps across the panel: time, lap rank and place, the
+        // best lap lit, and a star on it when it was the race's fastest.
+        updateLaps() {
+          const box = this.riderPanel.querySelector('.rider-laps');
+          const mine = this.laps[this.bib];
+          box.hidden = !mine;
+          if (!mine) return;
+          const best = Math.min(...mine.laps);
+          const fastest = this.fastest[mine.race];
+          const cells = (fn, cls = '') =>
+            mine.laps
+              .map((time, k) => {
+                const lit = time === best ? ' is-best' : '';
+                return `<td class="${cls}${lit}">${fn(time, k)}</td>`;
+              })
+              .join('');
+          const star = k =>
+            fastest && fastest.bib === this.bib && fastest.lap === k + 1
+              ? ' <span class="rider-lap-star" title="Fastest lap of the race">★</span>'
+              : '';
+          box.innerHTML = `
+            <table class="rider-laps-table">
+              <caption>Lap by lap</caption>
+              <thead><tr><th scope="row">Lap</th>${mine.laps.map((_, k) => `<th scope="col">${k + 1}</th>`).join('')}</tr></thead>
+              <tbody>
+                <tr><th scope="row">Time</th>${cells((time, k) => `${formatLap(time)}${star(k)}`, 'rider-lap-time')}</tr>
+                <tr><th scope="row" title="Where the lap's time ranked in the race">Lap rank</th>${cells((_, k) => (mine.ranks[k] ? ordinal(mine.ranks[k]) : ''))}</tr>
+                <tr><th scope="row" title="Place in the race on crossing the line">Place</th>${cells((_, k) => ordinal(mine.places[k]))}</tr>
+              </tbody>
+            </table>`;
         }
 
         // Three of the rider's photos for the card: the frames they fill
@@ -1465,6 +1515,11 @@
               </label>
               ${replays.includes(shown.race) ? `<button type="button" class="standings-replay" data-replay="${shown.race}"><i class="fas fa-play" aria-hidden="true"></i> Watch the race</button>` : ''}
               ${closestFinish(riders)}
+              ${
+                this.fastest[shown.race]
+                  ? `<p class="standings-fastest">Fastest lap: <button type="button" class="rider-link" data-bib="${this.fastest[shown.race].bib}"><b>${this.fastest[shown.race].bib}</b></button>, ${formatLap(this.fastest[shown.race].time)} on lap ${this.fastest[shown.race].lap}</p>`
+                  : ''
+              }
             </div>
             <table class="standings-table">
               <thead><tr><th>Place</th><th>Bib</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
@@ -1959,6 +2014,11 @@
           ((photo.sizes && photo.sizes[bib]) || 0) * (photo.bibs[bib] === 'number' ? 1 : 0.8);
         const read = photo => (photo.bibs[bib] === 'number' ? 0 : 1);
         return (a, b) => score(b) - score(a) || read(a) - read(b);
+      }
+
+      // 385 -> "6:25".
+      function formatLap(seconds) {
+        return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
       }
 
       // 34123456 -> "34 MB".

@@ -34,11 +34,12 @@ const race = {
       title: 'Men Cat A',
       laps: 2,
       riders: [
-        { bib: '55', place: 1, laps: [100, 100], photo: '55.jpg' },
-        { bib: '21', place: 2, laps: [110, 100], photo: '21.jpg' },
+        { bib: '55', place: 1, laps: [100, 100], ranks: [1, 1], photo: '55.jpg' },
+        { bib: '21', place: 2, laps: [110, 100], ranks: [2, 1], photo: '21.jpg' },
         { bib: '36', status: 'DNF', laps: [120, 150], photo: '36.jpg' },
       ],
       podium: { 55: 'podium-55.jpg', 21: 'podium-21.jpg' },
+      fastest: { bib: '55', lap: 2, time: 100 },
     },
   },
 };
@@ -268,6 +269,31 @@ describe('RaceReplay', () => {
 
     container().querySelector('.replay-close').click();
     expect(window.location.search).toBe('');
+  });
+
+  test('following a rider shows their laps, filling in as they cross the line', async () => {
+    await open();
+    container().querySelector('.replay-row[data-bib="55"] .replay-follow').click();
+    const info = () => container().querySelector('.replay-info');
+    const cells = name =>
+      Array.from(info().querySelectorAll('tbody tr'))
+        .find(tr => tr.querySelector('th').textContent === name)
+        .querySelectorAll('td');
+    expect(info().hidden).toBe(false);
+    expect(info().querySelector('.replay-info-bib').textContent).toBe('55');
+
+    replay.seek(150);
+    expect(Array.from(cells('Time')).map(td => td.textContent)).toEqual(['1:40', '']);
+    expect(Array.from(cells('Rank')).map(td => td.textContent)).toEqual(['1st', '']);
+    expect(cells('Time')[1].classList).toContain('is-now');
+
+    replay.seek(250);
+    expect(Array.from(cells('Time')).map(td => td.textContent)).toEqual(['1:40', '1:40★']);
+    expect(info().querySelector('.replay-info-status').textContent).toBe('1st, 3:20');
+
+    info().querySelector('.replay-info-close').click();
+    expect(info().hidden).toBe(true);
+    expect(container().querySelectorAll('.is-followed')).toHaveLength(0);
   });
 
   test('Escape closes it, stops the clock and hands focus back', async () => {

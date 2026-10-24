@@ -384,6 +384,108 @@
   }
 }
 
+/* The followed rider's laps, a card in the map's top corner. */
+.replay-info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  max-width: calc(100% - 20px);
+  padding: 8px 10px 6px;
+  overflow-x: auto;
+  background: rgba(247, 242, 231, 0.95);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 2px #ffd75a,
+    0 14px 26px -12px rgba(0, 0, 0, 0.95);
+  color: #111823;
+}
+
+.replay-info[hidden] {
+  display: none;
+}
+
+.replay-info-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-family: var(--pc-data);
+}
+
+.replay-info-head img,
+.replay-info-head .replay-row-noface {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.replay-info-bib {
+  font-family: var(--pc-numeral);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.replay-info-status {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(17, 24, 35, 0.7);
+}
+
+.replay-info-close {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #111823;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.replay-info-table {
+  border-collapse: collapse;
+  font-family: var(--pc-data);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.replay-info-table th,
+.replay-info-table td {
+  min-width: 2.6em;
+  padding: 2px 5px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.replay-info-table th[scope='row'] {
+  min-width: 0;
+  padding-left: 0;
+  text-align: left;
+  color: rgba(17, 24, 35, 0.6);
+}
+
+.replay-info-table thead th {
+  font-weight: 600;
+  color: rgba(17, 24, 35, 0.6);
+}
+
+.replay-info-table td {
+  font-weight: 700;
+}
+
+.replay-info-table .is-now {
+  background: rgba(200, 162, 74, 0.3);
+}
+
+.replay-info-star {
+  margin-left: 2px;
+  color: var(--pc-blood, #b3261e);
+}
+
 /* Paused, a rider can be picked out: their row and marker light up and their
    photo comes up large. */
 .race-replay.is-paused .replay-rider {
@@ -680,6 +782,23 @@
 
   .replay-speed button {
     padding: 6px 7px;
+  }
+
+  .replay-info {
+    top: 6px;
+    left: 6px;
+    max-width: calc(100% - 12px);
+    padding: 6px 8px 4px;
+  }
+
+  .replay-info-table {
+    font-size: 0.74rem;
+  }
+
+  .replay-info-table th,
+  .replay-info-table td {
+    min-width: 2.3em;
+    padding: 1px 3px;
   }
 
   .replay-zoom {
