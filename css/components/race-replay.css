@@ -233,18 +233,45 @@
   background: rgba(200, 162, 74, 0.22);
 }
 
+/* Drawn 25% larger, on a gold disc with a bright ring, with two waves
+   spreading out from it, so the eye finds them in a pack. */
+.replay-glow,
+.replay-halo {
+  opacity: 0;
+}
+
+.replay-rider.is-followed .replay-glow {
+  opacity: 1;
+  fill: rgba(255, 214, 90, 0.5);
+  stroke: #ffd75a;
+  stroke-width: 5;
+}
+
+.replay-rider.is-followed {
+  filter: drop-shadow(0 0 7px rgba(255, 214, 90, 0.95));
+}
+
+.replay-rider.is-followed .replay-ring {
+  fill: #ffd75a;
+  stroke: #fff;
+  stroke-width: 3;
+}
+
 .replay-halo {
   fill: none;
-  stroke: var(--pc-gilt);
-  stroke-width: 4;
-  opacity: 0;
+  stroke: #ffe08a;
+  stroke-width: 7;
 }
 
 .replay-rider.is-followed .replay-halo {
   opacity: 1;
   transform-box: fill-box;
   transform-origin: center;
-  animation: replay-halo 1.4s ease-out infinite;
+  animation: replay-halo 1.6s ease-out infinite;
+}
+
+.replay-rider.is-followed .replay-halo-late {
+  animation-delay: 0.8s;
 }
 
 .replay-rider.is-followed.is-gone {
@@ -254,11 +281,11 @@
 @keyframes replay-halo {
   0% {
     stroke-opacity: 1;
-    transform: scale(0.85);
+    transform: scale(1);
   }
   100% {
     stroke-opacity: 0;
-    transform: scale(1.5);
+    transform: scale(2.1);
   }
 }
 

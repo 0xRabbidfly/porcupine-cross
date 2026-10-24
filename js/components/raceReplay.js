@@ -351,7 +351,9 @@ class RaceReplay {
       g.setAttribute('class', 'replay-rider');
       g.dataset.bib = rider.bib;
       g.innerHTML = `
-        <circle class="replay-halo" r="${RADIUS + 11}" />
+        <circle class="replay-glow" r="${RADIUS + 9}" />
+        <circle class="replay-halo" r="${RADIUS + 9}" />
+        <circle class="replay-halo replay-halo-late" r="${RADIUS + 9}" />
         <circle class="replay-ring" r="${RADIUS + 3}" />
         <image href="${this.base}${rider.photo}" x="${-RADIUS}" y="${-RADIUS}" width="${RADIUS * 2}" height="${RADIUS * 2}"
                clip-path="url(#replay-face)" preserveAspectRatio="xMidYMid slice" />
@@ -460,7 +462,9 @@ class RaceReplay {
       const [x, y] = pointAt(race.measured, row.progress);
       marker.setAttribute(
         'transform',
-        `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${this.markerScale})`
+        `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${
+          this.markerScale * (row.rider.bib === this.followed ? 1.25 : 1)
+        })`
       );
       marker.classList.toggle('is-leader', row === leader && !row.finished);
       marker.classList.toggle('is-gone', row.finished || row.out);

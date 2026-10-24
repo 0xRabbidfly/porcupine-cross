@@ -58,10 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-4" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-4" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-4" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-4" />
+    <link rel="stylesheet" href="style.css?v=20261024-5" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-5" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-5" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-5" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -468,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-4" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-5" />
   </head>
   <body>
     <header>
@@ -635,6 +635,16 @@
                 aria-pressed="false"
               >
                 <b>2:20</b> Men A
+                <!-- Opens the Cat A replay (and selects the race). Hidden from
+                     assistive tech: the results bar has the same button. -->
+                <span
+                  class="race-watch"
+                  data-replay="Cat A"
+                  title="Watch the Cat A race"
+                  aria-hidden="true"
+                >
+                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
+                </span>
               </button>
             </div>
 
@@ -807,7 +817,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-4"></script>
+    <script type="module" src="js/main.js?v=20261024-5"></script>
 
     <!-- Photo Gallery Script -->
     <script>
