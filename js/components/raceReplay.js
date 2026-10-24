@@ -8,7 +8,7 @@
  * timing put them each time they crossed the line, and close to it between.
  *
  * Opened by any `[data-replay="<category>"]` button on the page, or by a link
- * with `?replay=<category>`. The data is a JSON file named by the container's
+ * with `?replay=<category>`, and `&follow=<bib>` to follow a rider. The data is a JSON file named by the container's
  * `data-src`: the course once, as a path in the map's pixels, and each race's
  * riders with their lap times by bib number. Bib numbers only. A rider with no
  * photo rides as their number.
@@ -176,8 +176,18 @@ class RaceReplay {
   init() {
     document.addEventListener('click', this.onClick);
     // A shared link opens straight onto its race.
-    const linked = new URLSearchParams(window.location.search).get('replay');
-    if (linked) this.open(linked).catch(error => console.warn('Replay failed to open', error));
+    // A shared link opens straight onto its race, following a rider when it
+    // names one: ?replay=Cat%20A&follow=55.
+    const params = new URLSearchParams(window.location.search);
+    const linked = params.get('replay');
+    if (linked) {
+      this.open(linked)
+        .then(() => {
+          const bib = params.get('follow');
+          if (bib && this.markers && this.markers.has(bib)) this.follow(bib);
+        })
+        .catch(error => console.warn('Replay failed to open', error));
+    }
     return this;
   }
 
@@ -246,6 +256,7 @@ class RaceReplay {
     const url = new URL(window.location.href);
     if (url.searchParams.has('replay')) {
       url.searchParams.delete('replay');
+      url.searchParams.delete('follow');
       window.history.replaceState(null, '', url);
     }
     if (this.opener && this.opener.isConnected) this.opener.focus();

@@ -349,6 +349,17 @@ describe('RaceReplay', () => {
     expect(container().querySelector('.podium-1 .podium-nophoto').textContent).toBe('127');
   });
 
+  test('a link with &follow= opens the race following that rider', async () => {
+    replay.destroy();
+    window.history.replaceState(null, '', '/photos.html?replay=Cat%20A&follow=21');
+    replay = RaceReplay.create();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(replay.followed).toBe('21');
+    expect(container().querySelector('.replay-info').hidden).toBe(false);
+    container().querySelector('.replay-close').click();
+    expect(window.location.search).toBe('');
+  });
+
   test('a link with ?replay= opens on that race, and closing drops it from the address', async () => {
     replay.destroy();
     window.history.replaceState(null, '', '/photos.html?replay=Cat%20B');
