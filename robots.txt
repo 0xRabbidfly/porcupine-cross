@@ -20,6 +20,8 @@ Disallow: /photos.html?bib=
 Disallow: /*?bib=
 Disallow: /photos/*.json$
 Disallow: /photos/event-*/replay/
+Disallow: /photos/event-*/cards/
+Disallow: /photos/event-*/campaign-*/
 
 # Block any admin or private areas (if they exist later)
 Disallow: /admin/
