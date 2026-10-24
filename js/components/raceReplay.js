@@ -16,7 +16,7 @@
  */
 
 const SVG = 'http://www.w3.org/2000/svg';
-const SPEEDS = [30, 60, 120];
+const SPEEDS = [10, 30, 60, 120];
 const RADIUS = 22;
 // The race clock holds at the finish this long before the podium comes up.
 const PODIUM_DELAY_S = 4;
@@ -62,6 +62,13 @@ export function pointAt(route, share) {
   const [x0, y0] = route.points[i - 1];
   const [x1, y1] = route.points[i];
   return [x0 + (x1 - x0) * k, y0 + (y1 - y0) * k];
+}
+
+/** 1 -> "1st", 22 -> "22nd", 13 -> "13th". */
+export function ordinal(n) {
+  const tens = n % 100;
+  const suffix = tens >= 11 && tens <= 13 ? 'th' : { 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th';
+  return `${n}${suffix}`;
 }
 
 /** 73 -> "1:13", 3725 -> "1:02:05". */
@@ -159,6 +166,8 @@ class RaceReplay {
   onClick(event) {
     const button = event.target.closest('[data-replay]');
     if (button) {
+      // A button on a <details> summary opens the replay, not the details.
+      event.preventDefault();
       this.opener = button;
       this.open(button.dataset.replay);
     }
@@ -222,6 +231,7 @@ class RaceReplay {
     if (this.t >= this.race.end + PODIUM_DELAY_S) this.seek(0);
     this.playing = true;
     this.lastStamp = null;
+    this.hideZoom();
     this.updatePlayButton();
     if (!this.frame) this.frame = requestAnimationFrame(this.tick);
   }
@@ -271,6 +281,7 @@ class RaceReplay {
     const button = this.container.querySelector('.replay-play');
     if (!button) return;
     button.setAttribute('aria-label', this.playing ? 'Pause' : 'Play');
+    this.container.classList.toggle('is-paused', !this.playing);
     button.querySelector('i').className = `fas ${this.playing ? 'fa-pause' : 'fa-play'}`;
   }
 
@@ -315,8 +326,12 @@ class RaceReplay {
               </g>
               <g class="replay-riders"></g>
             </svg>
+            <div class="replay-zoom" hidden>
+              <img alt="" />
+              <p><b class="replay-zoom-bib"></b> <span class="replay-zoom-text"></span></p>
+            </div>
           </div>
-          <ol class="replay-standings" aria-label="Standings"></ol>
+          <ol class="replay-standings" aria-label="Standings: pick a rider to follow"></ol>
         </div>
         <div class="replay-controls">
           <button type="button" class="replay-play" aria-label="Pause"><i class="fas fa-pause" aria-hidden="true"></i></button>
@@ -336,6 +351,7 @@ class RaceReplay {
       g.setAttribute('class', 'replay-rider');
       g.dataset.bib = rider.bib;
       g.innerHTML = `
+        <circle class="replay-halo" r="${RADIUS + 11}" />
         <circle class="replay-ring" r="${RADIUS + 3}" />
         <image href="${this.base}${rider.photo}" x="${-RADIUS}" y="${-RADIUS}" width="${RADIUS * 2}" height="${RADIUS * 2}"
                clip-path="url(#replay-face)" preserveAspectRatio="xMidYMid slice" />
@@ -350,11 +366,15 @@ class RaceReplay {
     race.riders.forEach(rider => {
       const li = document.createElement('li');
       li.className = 'replay-row';
+      li.dataset.bib = rider.bib;
       li.innerHTML = `
-        <span class="replay-pos"></span>
-        <img src="${this.base}${rider.photo}" alt="" />
-        <b class="replay-row-bib">${rider.bib}</b>
-        <span class="replay-gap"></span>`;
+        <button type="button" class="replay-follow" aria-pressed="false" aria-label="Follow bib ${rider.bib}">
+          <span class="replay-pos"></span>
+          <img src="${this.base}${rider.photo}" alt="" />
+          <b class="replay-row-bib">${rider.bib}</b>
+          <span class="replay-row-lap"></span>
+          <span class="replay-gap"></span>
+        </button>`;
       standings.appendChild(li);
       this.rows.set(rider.bib, li);
     });
@@ -369,6 +389,42 @@ class RaceReplay {
     this.container.querySelectorAll('.replay-speed button').forEach(button => {
       button.addEventListener('click', () => this.setSpeed(Number(button.dataset.speed)));
     });
+
+    // A click on a rider, in the standings or on the map, follows them. Paused,
+    // pointing at one shows their photo large; on a touch screen, a tap on the
+    // map does.
+    const bibOf = event => {
+      const hit = event.target.closest('.replay-rider, .replay-row');
+      return hit ? hit.dataset.bib : null;
+    };
+    [riders, standings].forEach(layer => {
+      layer.addEventListener('pointerover', event => {
+        const bib = bibOf(event);
+        if (bib && !this.playing && event.pointerType !== 'touch') this.showZoom(bib);
+      });
+      layer.addEventListener('pointerout', event => {
+        if (event.pointerType === 'touch') return;
+        const into = event.relatedTarget;
+        const next = into && into.closest ? into.closest('.replay-rider, .replay-row') : null;
+        if (!next || next.dataset.bib !== this.zoomBib) this.hideZoom();
+      });
+    });
+    standings.addEventListener('click', event => {
+      const bib = bibOf(event);
+      if (bib) this.follow(bib);
+    });
+    riders.addEventListener('pointerup', event => {
+      const bib = bibOf(event);
+      if (!bib) return;
+      if (event.pointerType === 'touch' && !this.playing) {
+        if (bib === this.zoomBib) this.hideZoom();
+        else this.showZoom(bib);
+      } else {
+        this.follow(bib);
+      }
+    });
+    this.zoomBib = null;
+    this.followed = null;
     this.order = '';
     this.podiumShown = false;
     this.fitView();
@@ -416,9 +472,14 @@ class RaceReplay {
           ? clock(row.at)
           : row.gap || clock(row.at)
         : row.gap;
+      li.querySelector('.replay-row-lap').textContent =
+        row.finished || row.out
+          ? ''
+          : `Lap ${Math.min(Math.floor(row.progress) + 1, row.rider.laps.length)}`;
       li.classList.toggle('is-out', row.out);
       li.classList.toggle('is-finished', row.finished);
     });
+    this.rowsNow = rows;
 
     // Re-order only when the order changes: leaders drawn last, on top.
     const order = rows.map(row => row.rider.bib).join(',');
@@ -428,6 +489,8 @@ class RaceReplay {
       const layer = this.container.querySelector('.replay-riders');
       rows.forEach(row => list.appendChild(this.rows.get(row.rider.bib)));
       [...rows].reverse().forEach(row => layer.appendChild(this.markers.get(row.rider.bib)));
+      // The followed rider rides on top of everyone.
+      if (this.followed) layer.appendChild(this.markers.get(this.followed));
     }
 
     const lap = Math.min(Math.floor(leader.progress) + 1, race.laps);
@@ -439,8 +502,68 @@ class RaceReplay {
       Math.round(Math.min(this.t, race.end))
     );
 
+    if (this.zoomBib) this.showZoom(this.zoomBib);
+
     const over = this.t >= race.end + PODIUM_DELAY_S;
     if (over !== this.podiumShown) this.showPodium(over);
+  }
+
+  // One rider at a time wears a halo on the map and is lit in the standings;
+  // picking them again lets them go.
+  follow(bib) {
+    this.followed = this.followed === bib ? null : bib;
+    this.markers.forEach((marker, key) => {
+      marker.classList.toggle('is-followed', key === this.followed);
+    });
+    this.rows.forEach((li, key) => {
+      li.classList.toggle('is-followed', key === this.followed);
+      li.querySelector('.replay-follow').setAttribute(
+        'aria-pressed',
+        String(key === this.followed)
+      );
+    });
+    if (this.followed) {
+      this.container.querySelector('.replay-riders').appendChild(this.markers.get(this.followed));
+    }
+  }
+
+  // The rider's photo large, beside their marker: above it when there is
+  // room, kept inside the map. Their place and lap, or how their race ended.
+  showZoom(bib) {
+    const zoom = this.container.querySelector('.replay-zoom');
+    const row = (this.rowsNow || []).find(r => r.rider.bib === bib);
+    if (!zoom || !row) return;
+    this.zoomBib = bib;
+    zoom.querySelector('img').src = `${this.base}${row.rider.photo}`;
+    zoom.querySelector('.replay-zoom-bib').textContent = bib;
+    const lap = Math.min(Math.floor(row.progress) + 1, row.rider.laps.length);
+    let text = `${ordinal(row.position)} on lap ${lap}`;
+    if (row.finished) text = `${ordinal(row.rider.place)}, finished in ${clock(row.at)}`;
+    if (row.out) text = `Did not finish, out after lap ${row.rider.laps.length}`;
+    zoom.querySelector('.replay-zoom-text').textContent = text;
+    zoom.hidden = false;
+    this.markers.forEach((marker, key) => marker.classList.toggle('is-zoomed', key === bib));
+    this.rows.forEach((li, key) => li.classList.toggle('is-zoomed', key === bib));
+
+    const stage = this.container.querySelector('.replay-stage').getBoundingClientRect();
+    const mark = this.markers.get(bib).getBoundingClientRect();
+    const width = zoom.offsetWidth || 190;
+    const height = zoom.offsetHeight || 230;
+    const cx = mark.left + mark.width / 2 - stage.left;
+    let top = mark.top - stage.top - height - 8;
+    if (top < 6) top = mark.bottom - stage.top + 8;
+    top = Math.max(6, Math.min(top, stage.height - height - 6));
+    const left = Math.max(6, Math.min(cx - width / 2, stage.width - width - 6));
+    zoom.style.left = `${left}px`;
+    zoom.style.top = `${top}px`;
+  }
+
+  hideZoom() {
+    this.zoomBib = null;
+    const zoom = this.container.querySelector('.replay-zoom');
+    if (zoom) zoom.hidden = true;
+    if (this.markers) this.markers.forEach(marker => marker.classList.remove('is-zoomed'));
+    if (this.rows) this.rows.forEach(li => li.classList.remove('is-zoomed'));
   }
 
   // The top three on the steps: second, first, third, each on the photo they

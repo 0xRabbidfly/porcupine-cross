@@ -136,7 +136,7 @@ describe('RaceReplay', () => {
     scrub.dispatchEvent(new Event('input'));
     expect(replay.playing).toBe(false);
     expect(container().querySelector('.replay-lap').textContent).toBe('Lap 2 of 2');
-    expect(rows()).toEqual(['1 55', '2 21 +0:10', '3 36 +0:20']);
+    expect(rows()).toEqual(['1 55 Lap 2', '2 21 Lap 2 +0:10', '3 36 Lap 2 +0:20']);
     // 55 is half way round lap two: the far corner of the square.
     expect(container().querySelector('[data-bib="55"]').getAttribute('transform')).toMatch(
       /^translate\(100\.0 100\.0\)/
@@ -154,6 +154,69 @@ describe('RaceReplay', () => {
       '/photos/event-2026/replay/podium-55.jpg'
     );
     expect(podium.querySelector('.podium-2 .podium-time').textContent).toBe('+0:10');
+  });
+
+  test('a button on a closed results bar opens the replay, not the bar', async () => {
+    document.body.insertAdjacentHTML(
+      'afterbegin',
+      '<details><summary>Results <button type="button" data-replay="Cat A">Watch</button></summary></details>'
+    );
+    document.querySelector('summary [data-replay]').click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(document.querySelector('details').open).toBe(false);
+    expect(container().hidden).toBe(false);
+  });
+
+  test('offers a slow 10x speed among the speeds', async () => {
+    await open();
+    const speeds = Array.from(container().querySelectorAll('.replay-speed button')).map(
+      button => button.textContent
+    );
+    expect(speeds).toEqual(['10×', '30×', '60×', '120×']);
+    container().querySelector('[data-speed="10"]').click();
+    frames.shift()(1000);
+    frames.shift()(1100);
+    expect(replay.t).toBeCloseTo(1);
+  });
+
+  test('picking a rider in the standings follows them with a halo, and again lets go', async () => {
+    await open();
+    const row = () => container().querySelector('.replay-row[data-bib="21"]');
+    row().querySelector('.replay-follow').click();
+    expect(container().querySelector('.replay-rider[data-bib="21"]').classList).toContain(
+      'is-followed'
+    );
+    expect(row().classList).toContain('is-followed');
+    expect(row().querySelector('.replay-follow').getAttribute('aria-pressed')).toBe('true');
+    // Followed riders ride on top of the others.
+    expect(container().querySelector('.replay-riders').lastElementChild.dataset.bib).toBe('21');
+
+    row().querySelector('.replay-follow').click();
+    expect(container().querySelectorAll('.is-followed')).toHaveLength(0);
+  });
+
+  test('paused, pointing at a rider shows their photo large; playing, it does not', async () => {
+    await open();
+    const point = bib =>
+      container()
+        .querySelector(`.replay-rider[data-bib="${bib}"] image`)
+        .dispatchEvent(new MouseEvent('pointerover', { bubbles: true }));
+    const zoom = () => container().querySelector('.replay-zoom');
+
+    point('55');
+    expect(zoom().hidden).toBe(true);
+
+    container().querySelector('.replay-play').click();
+    replay.seek(150);
+    point('55');
+    expect(zoom().hidden).toBe(false);
+    expect(zoom().querySelector('img').getAttribute('src')).toBe(
+      '/photos/event-2026/replay/55.jpg'
+    );
+    expect(zoom().textContent.replace(/\s+/g, ' ').trim()).toBe('55 1st on lap 2');
+
+    container().querySelector('.replay-play').click();
+    expect(zoom().hidden).toBe(true);
   });
 
   test('Escape closes it, stops the clock and hands focus back', async () => {
