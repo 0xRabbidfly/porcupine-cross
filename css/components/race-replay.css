@@ -94,6 +94,28 @@
   margin-left: 4px;
 }
 
+/* The race's lap record, beside the title. */
+.replay-record {
+  margin-left: 14px;
+  padding: 3px 10px;
+  font-family: var(--pc-data);
+  font-size: 0.9rem;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--pc-stock);
+  background: rgba(200, 162, 74, 0.2);
+  border: 1px solid rgba(200, 162, 74, 0.55);
+  border-radius: 999px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.replay-record b {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+  color: #ffd75a;
+}
+
 .replay-clock {
   margin: 0 0 0 auto;
   font-family: var(--pc-data);
@@ -632,6 +654,21 @@
   display: none;
 }
 
+.podium-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pc-gilt);
+  font-size: 2.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .podium-title {
   margin: 0;
   font-family: var(--pc-display) !important;
@@ -754,8 +791,9 @@
     font-size: 1.1rem;
   }
 
-  /* On a phone the picker is the title. */
-  .replay-title-rest {
+  /* On a phone the picker is the title, and the lap record goes. */
+  .replay-title-rest,
+  .replay-record {
     display: none;
   }
 

@@ -166,6 +166,17 @@ describe('RaceReplay', () => {
       '/photos/event-2026/replay/podium-55.jpg'
     );
     expect(podium.querySelector('.podium-2 .podium-time').textContent).toBe('+0:10');
+
+    // The podium has its own way out.
+    podium.querySelector('.podium-close').click();
+    expect(container().hidden).toBe(true);
+  });
+
+  test("the title bar carries the race's lap record", async () => {
+    await open();
+    expect(container().querySelector('.replay-record').textContent).toBe(
+      'Fastest lap 1:40 by 55 on lap 2'
+    );
   });
 
   test('a button on a closed results bar opens the replay, not the bar', async () => {

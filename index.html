@@ -96,16 +96,17 @@
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 
     <!-- EXISTING STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-8" />
+    <link rel="stylesheet" href="style.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/results-popup.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-9" />
     <!-- Add FontAwesome for icons -->
     <link
       rel="stylesheet"
@@ -121,7 +122,7 @@
     />
 
     <!-- PROLOGUE DECK — loaded last, owns the skin -->
-    <link rel="stylesheet" href="css/deck.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-9" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -944,6 +945,44 @@
       </section>
     </main>
 
+    <!-- After race day, a card dealt to a visitor landing here: the results
+         are in, and the way to the replays, the results and their photos.
+         Once per browser; js/components/resultsPopup.js. -->
+    <div
+      class="results-popup"
+      data-show-after="2026-10-18T16:00:00-04:00"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="results-popup-title"
+      hidden
+    >
+      <div class="results-popup-card">
+        <span class="results-popup-index" aria-hidden="true">A<br />&#9824;</span>
+        <span class="results-popup-index is-foot" aria-hidden="true">A<br />&#9824;</span>
+        <button type="button" class="results-popup-close" data-popup-close aria-label="Close">
+          &times;
+        </button>
+        <div class="results-popup-hand" aria-hidden="true">
+          <img src="/photos/event-2026/replay/podium-21.jpg" alt="" />
+          <img src="/photos/event-2026/replay/podium-55.jpg" alt="" />
+          <img src="/photos/event-2026/replay/podium-24.jpg" alt="" />
+        </div>
+        <h2 id="results-popup-title" class="results-popup-title">The results are in</h2>
+        <p class="results-popup-text">
+          Watch every race of Prologue Cross 2026 again, lap by lap, with each rider on the course
+          as their own race photo. Then find your photos.
+        </p>
+        <div class="results-popup-actions">
+          <a class="results-popup-primary" href="photos.html?replay=Cat%20A">
+            <i class="fas fa-play" aria-hidden="true"></i> Watch the race replays
+          </a>
+          <a class="results-popup-secondary" href="#results">See the results</a>
+          <a class="results-popup-secondary" href="photos.html">Find your photos</a>
+        </div>
+        <button type="button" class="results-popup-later" data-popup-close>Maybe later</button>
+      </div>
+    </div>
+
     <div class="footer-card-logo-container">
       <img
         src="images/prologue-card-black.png"
@@ -968,7 +1007,7 @@
     <script type="module" src="js/animationBridge.js"></script>
 
     <!-- Load our modular JavaScript -->
-    <script type="module" src="js/main.js?v=20261024-8"></script>
+    <script type="module" src="js/main.js?v=20261024-9"></script>
 
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>

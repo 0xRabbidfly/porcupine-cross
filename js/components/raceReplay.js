@@ -332,6 +332,11 @@ class RaceReplay {
                 .join('')}</select>
             </label>
             <span class="replay-title-rest">lap by lap</span>
+            ${
+              race.fastest
+                ? `<span class="replay-record">Fastest lap <b>${clock(race.fastest.time)}</b> by <b>${race.fastest.bib}</b> on lap ${race.fastest.lap}</span>`
+                : ''
+            }
           </h2>
           <p class="replay-clock"><span class="replay-lap"></span> <span class="replay-time"></span></p>
           <button type="button" class="replay-close" aria-label="Close the replay">&times;</button>
@@ -710,9 +715,11 @@ class RaceReplay {
     };
     const order = [top[1], top[0], top[2]].filter(Boolean);
     podium.innerHTML = `
+      <button type="button" class="podium-close" aria-label="Close the replay">&times;</button>
       <h3 class="podium-title">${this.race.title} podium</h3>
       <div class="podium-steps">${order.map(step).join('')}</div>
       <button type="button" class="podium-again">Watch again</button>`;
+    podium.querySelector('.podium-close').addEventListener('click', () => this.close());
     podium.querySelector('.podium-again').addEventListener('click', () => {
       this.seek(0);
       this.play();

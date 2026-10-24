@@ -9,6 +9,7 @@ import MobileMenu from './components/mobileMenu.js';
 import RegisterPhase from './components/registerPhase.js';
 import RaceReplay from './components/raceReplay.js';
 import ReplayTeaser from './components/replayTeaser.js';
+import ResultsPopup from './components/resultsPopup.js';
 import SmolderchadEasterEgg from './components/smolderchadEasterEgg.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
@@ -71,6 +72,9 @@ class App {
 
       // Initialize the race replay teasers
       this.components.replayTeasers = ReplayTeaser.createAll();
+
+      // Deal the results card to a visitor landing after race day
+      this.components.resultsPopup = ResultsPopup.create();
 
       // Initialize Hero Animation
       this.initHeroAnimation();

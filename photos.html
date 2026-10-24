@@ -58,10 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-8" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-8" />
+    <link rel="stylesheet" href="style.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-9" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -468,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-8" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-9" />
   </head>
   <body>
     <header>
@@ -534,7 +534,7 @@
       <div class="photos-page-container" data-rank="J" data-suit="&#9829;">
         <!-- Page Header -->
         <div class="photos-page-header">
-          <h1><span id="gallery-title">2026 Event Photos</span></h1>
+          <h1><span id="gallery-title">2026 Event Photos and Race Replay</span></h1>
           <!-- Filled from the year's photos.json, which credits each photo. -->
           <p class="photos-credit" id="gallery-credit" hidden></p>
         </div>
@@ -775,9 +775,6 @@
             <summary>
               <span class="race-results-title">Results leaderboard and watch the race!</span>
               <span class="race-results-hint">Pick a rider to see their photos</span>
-              <button type="button" class="race-results-watch" data-replay="Cat A">
-                <i class="fas fa-play" aria-hidden="true"></i> Watch the race
-              </button>
             </summary>
             <div class="race-results-body"></div>
           </details>
@@ -818,7 +815,12 @@
 
     <!-- Race replay: a category's race on the course map, lap by lap, opened
          by a [data-replay] button on the results board. -->
-    <div class="race-replay" data-src="/photos/event-2026/replay/replay.json" hidden></div>
+    <div
+      class="race-replay"
+      data-src="/photos/event-2026/replay/replay.json"
+      data-year="2026"
+      hidden
+    ></div>
 
     <!-- Lightbox Modal -->
     <div id="lightbox" class="lightbox" style="display: none">
@@ -850,7 +852,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-8"></script>
+    <script type="module" src="js/main.js?v=20261024-9"></script>
 
     <!-- Photo Gallery Script -->
     <script>
@@ -1482,10 +1484,6 @@
           const winner = riders[0];
           // Categories with a lap-by-lap replay (js/components/raceReplay.js).
           const replays = (board.dataset.replays || '').split(',').filter(Boolean);
-          // The bar's Watch button plays the category on show.
-          if (replays.includes(shown.race)) {
-            board.querySelector('.race-results-watch').dataset.replay = shown.race;
-          }
           const rows = riders
             .map(rider => {
               const photos = tagged.get(rider.bib) || [];
@@ -2480,7 +2478,12 @@
           button.setAttribute('aria-selected', String(button.dataset.year === year));
         });
 
-        document.getElementById('gallery-title').textContent = `${year} Event Photos`;
+        // A year with race replays says so.
+        const replays = document.querySelector('.race-replay[data-year]');
+        document.getElementById('gallery-title').textContent =
+          replays && replays.dataset.year === year
+            ? `${year} Event Photos and Race Replay`
+            : `${year} Event Photos`;
 
         gallery.setYear(year);
       }
