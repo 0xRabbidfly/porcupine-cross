@@ -728,6 +728,23 @@ describe('photos gallery rider panel', () => {
         start: '2026-10-18T14:21:00-04:00',
       },
       5: { race: 'Cat B', status: 'DNF', start: '2026-10-18T11:00:00-04:00', field: 18 },
+      7: {
+        race: 'Master Men 35+',
+        place: 3,
+        field: 9,
+        laps: 5,
+        time: '40:30',
+        start: '2026-10-18T11:01:00-04:00',
+      },
+      8: {
+        race: 'Master Men 35+',
+        place: 4,
+        field: 9,
+        laps: 5,
+        time: '40:33',
+        start: '2026-10-18T11:01:00-04:00',
+      },
+      9: { race: 'Cat B', status: 'DNS', start: '2026-10-18T11:00:00-04:00', field: 18 },
     },
     same_rider: [['204', '289']],
   };
@@ -826,5 +843,192 @@ describe('photos gallery rider panel', () => {
     const button = panel(win).querySelector('.rider-card-btn');
     expect(button.hidden).toBe(false);
     expect(button.textContent.trim()).toBe('Make my photo card');
+  });
+
+  test('offers every photo of the rider as one download', async () => {
+    const win = boot();
+    await settle();
+    search(win, '204');
+    expect(text(win, '.rider-zip-btn')).toBe('Download all 3 photos');
+    search(win, '289');
+    expect(text(win, '.rider-zip-btn')).toBe('Download the photo');
+  });
+
+  test('builds a zip that stores each file with its checksum', () => {
+    const hello = Uint8Array.from('hello', ch => ch.charCodeAt(0));
+    const parts = boot().zipParts([
+      { name: 'a.txt', data: hello, date: new Date(2026, 9, 18, 11, 0, 0) },
+    ]);
+    const bytes = Uint8Array.from(parts.flatMap(part => Array.from(part)));
+    const view = new DataView(bytes.buffer);
+    const u32 = at => view.getUint32(at, true);
+    const ascii = (from, to) => String.fromCharCode(...bytes.subarray(from, to));
+
+    expect(u32(0)).toBe(0x04034b50);
+    expect(u32(14)).toBe(0x3610a686);
+    expect(ascii(30, 35)).toBe('a.txt');
+    expect(ascii(35, 40)).toBe('hello');
+    const end = bytes.length - 22;
+    expect(u32(end)).toBe(0x06054b50);
+    expect(view.getUint16(end + 10, true)).toBe(1);
+    // The directory starts where the one entry ends.
+    expect(u32(end + 16)).toBe(40);
+    expect(u32(40)).toBe(0x02014b50);
+  });
+});
+
+describe('photos gallery results board', () => {
+  const html = read('photos.html');
+  const data = {
+    photos: [
+      {
+        id: 'photo_1',
+        filename: 'menB.jpg',
+        date_taken: '2026-10-18T15:20:00Z',
+        bibs: { 204: 'kit', 5: 'number' },
+      },
+      {
+        id: 'photo_2',
+        filename: 'menB-2.jpg',
+        date_taken: '2026-10-18T15:30:00Z',
+        bibs: { 204: 'number' },
+      },
+    ],
+    results: {
+      204: {
+        race: 'Master Men 35+',
+        place: 1,
+        field: 3,
+        laps: 6,
+        time: '42:00',
+        start: '2026-10-18T11:01:00-04:00',
+      },
+      7: {
+        race: 'Master Men 35+',
+        place: 2,
+        field: 3,
+        laps: 6,
+        time: '43:05',
+        start: '2026-10-18T11:01:00-04:00',
+      },
+      8: {
+        race: 'Master Men 35+',
+        place: 3,
+        field: 3,
+        laps: 5,
+        time: '43:08',
+        start: '2026-10-18T11:01:00-04:00',
+      },
+      5: { race: 'Cat B', status: 'DNF', start: '2026-10-18T11:00:00-04:00', field: 1 },
+      6: {
+        race: 'Cat B',
+        place: 1,
+        field: 1,
+        laps: 6,
+        time: '41:00',
+        start: '2026-10-18T11:00:00-04:00',
+      },
+      9: { race: 'Cat B', status: 'DNS', start: '2026-10-18T11:00:00-04:00', field: 1 },
+      30: {
+        race: 'Cat A',
+        place: 1,
+        field: 1,
+        laps: 9,
+        time: '58:33',
+        start: '2026-10-18T14:20:00-04:00',
+      },
+      31: {
+        race: 'Cat A',
+        place: 2,
+        field: 2,
+        laps: 9,
+        time: '58:40',
+        start: '2026-10-18T14:20:00-04:00',
+      },
+    },
+  };
+
+  function boot() {
+    const dom = new JSDOM(html, {
+      runScripts: 'dangerously',
+      url: 'https://example.test/photos.html',
+      virtualConsole: new VirtualConsole(),
+      beforeParse(win) {
+        win.fetch = () => Promise.resolve({ ok: true, status: 200, json: async () => data });
+        win.IntersectionObserver = class {
+          observe() {}
+          disconnect() {}
+          unobserve() {}
+        };
+      },
+    });
+    dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));
+    return dom.window;
+  }
+  const settle = () => new Promise(resolve => setTimeout(resolve, 50));
+  const board = win => win.document.querySelector('.race-results');
+  const squash = node => node.textContent.replace(/\s+/g, ' ').trim();
+  const headings = win => Array.from(board(win).querySelectorAll('.standings-race')).map(squash);
+  const rows = win =>
+    Array.from(board(win).querySelectorAll('.standings-table tbody tr')).map(squash);
+  const pickRace = (win, start) =>
+    win.document
+      .querySelector(`.gallery-race-btn[data-start="2026-10-18T${start}:00-04:00"]`)
+      .click();
+
+  test('lists every category in start order under All, folded until opened', async () => {
+    const win = boot();
+    await settle();
+    expect(board(win).hidden).toBe(false);
+    expect(board(win).open).toBe(false);
+    expect(squash(board(win).querySelector('.race-results-title'))).toBe('Results');
+    expect(headings(win)).toEqual([
+      'Cat B 1 finished',
+      'Master Men 35+ 3 finished',
+      'Cat A 2 finished',
+    ]);
+  });
+
+  test('narrows to the selected race, with gaps, laps down and no DNS', async () => {
+    const win = boot();
+    await settle();
+    pickRace(win, '11:00');
+    expect(squash(board(win).querySelector('.race-results-title'))).toBe(
+      'Results: Men B and Masters 35+'
+    );
+    expect(headings(win)).toEqual(['Cat B 1 finished', 'Master Men 35+ 3 finished']);
+    expect(rows(win)).toEqual([
+      '1 6 41:00 None',
+      'DNF 5 1',
+      '1 204 42:00 2',
+      '2 7 43:05 +1:05 None',
+      '3 8 43:08 1 lap down None',
+    ]);
+  });
+
+  test('names the closest finish on the same lap, within ten seconds', async () => {
+    const win = boot();
+    await settle();
+    const closest = Array.from(board(win).querySelectorAll('.standings-closest')).map(squash);
+    expect(closest).toEqual(['Closest finish: 30 and 31, 7 seconds apart']);
+  });
+
+  test("a rider's photos open from the board, which steps aside for the rider", async () => {
+    const win = boot();
+    await settle();
+    board(win).querySelector('button[data-bib="204"]').click();
+    expect(win.location.search).toBe('?bib=204');
+    expect(win.document.querySelector('.rider-panel').hidden).toBe(false);
+    expect(board(win).hidden).toBe(true);
+
+    win.document.querySelector('.bib-clear').click();
+    expect(board(win).hidden).toBe(false);
+  });
+
+  test('the thumbnail is a photo where the number was read', async () => {
+    const win = boot();
+    await settle();
+    const thumb = board(win).querySelector('button[data-bib="204"] img');
+    expect(thumb.getAttribute('src')).toMatch(/thumbnails\/menB-2\.jpg$/);
   });
 });

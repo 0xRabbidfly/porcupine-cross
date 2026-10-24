@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261023-3" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261023-3" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261023-3" />
+    <link rel="stylesheet" href="style.css?v=20261023-4" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261023-4" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261023-4" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -467,7 +467,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261023-3" />
+    <link rel="stylesheet" href="css/deck.css?v=20261023-4" />
   </head>
   <body>
     <header>
@@ -712,11 +712,28 @@
               <p class="rider-detail"></p>
               <div class="rider-links"></div>
             </div>
-            <button type="button" class="rider-card-btn">
-              <i class="fas fa-image" aria-hidden="true"></i>
-              <span>Make my photo card</span>
-            </button>
+            <div class="rider-actions">
+              <button type="button" class="rider-card-btn">
+                <i class="fas fa-image" aria-hidden="true"></i>
+                <span>Make my photo card</span>
+              </button>
+              <button type="button" class="rider-zip-btn">
+                <i class="fas fa-download" aria-hidden="true"></i>
+                <span class="rider-zip-label"></span>
+                <small class="rider-zip-size"></small>
+              </button>
+            </div>
           </div>
+
+          <!-- The results, each rider linked to their photos: the selected
+               race's, or every race's under All. Bib numbers only, never names. -->
+          <details class="race-results" hidden>
+            <summary>
+              <span class="race-results-title">Results</span>
+              <span class="race-results-hint">Pick a rider to see their photos</span>
+            </summary>
+            <div class="race-results-body"></div>
+          </details>
 
           <!-- Photo Grid -->
           <!-- Face-down cards hold the gallery's shape until the photos arrive.
@@ -849,6 +866,7 @@
           this.updateStats();
           this.updateCredit();
           this.updateFinder();
+          this.updateResults();
           this.timeline.render();
 
           if (failure) {
@@ -882,10 +900,13 @@
           this.currentPage = 0;
           this.currentPhotoIndex = 0;
           this.hasMorePhotos = false;
+          this.results = {};
+          this.sameRider = [];
           this.dropBib();
           this.selectRaceButton('');
           this.updateCredit();
           this.updateFinder();
+          this.updateResults();
           this.timeline.render();
           this.showSkeletons();
           this.load();
@@ -1001,6 +1022,7 @@
           this.currentPhotoIndex = 0;
           this.updateStats();
           this.updateRider();
+          this.updateResults();
           this.timeline.select();
 
           if (this.photos.length === 0) {
@@ -1114,6 +1136,11 @@
           if (panel.hidden) return;
 
           const { headline, detail } = this.riderResult(this.bib);
+          const count = this.photos.length;
+          const bytes = this.photos.reduce((total, photo) => total + (photo.size_bytes || 0), 0);
+          panel.querySelector('.rider-zip-label').textContent =
+            count === 1 ? 'Download the photo' : `Download all ${count} photos`;
+          panel.querySelector('.rider-zip-size').textContent = bytes ? megabytes(bytes) : '';
           panel.querySelector('.rider-bib').textContent = this.bib;
           panel.querySelector('.rider-result').textContent = headline || `Bib ${this.bib}`;
           panel.querySelector('.rider-detail').textContent = detail;
@@ -1202,6 +1229,155 @@
           }
         }
 
+        // Every photo of the rider in one zip, in the order they were taken,
+        // fetched three at a time with the count on the button.
+        async downloadAll() {
+          const button = this.riderPanel.querySelector('.rider-zip-btn');
+          const label = button.querySelector('.rider-zip-label');
+          const photos = this.photos.slice();
+          const bib = this.bib;
+          const width = String(photos.length).length;
+          const files = [];
+          let next = 0;
+          let done = 0;
+          const fetchNext = async () => {
+            while (next < photos.length) {
+              const index = next++;
+              const photo = photos[index];
+              const response = await fetch(`${this.basePath}high-res/${photo.filename}`);
+              if (!response.ok) throw new Error(`HTTP ${response.status} for ${photo.filename}`);
+              files[index] = {
+                name: `${String(index + 1).padStart(width, '0')}_${this.downloadName(photo)}`,
+                data: new Uint8Array(await response.arrayBuffer()),
+                date: new Date(photo.date_taken),
+              };
+              done += 1;
+              if (this.bib === bib) label.textContent = `Fetching ${done} of ${photos.length}…`;
+            }
+          };
+
+          button.disabled = true;
+          label.textContent = `Fetching 0 of ${photos.length}…`;
+          try {
+            await Promise.all([fetchNext(), fetchNext(), fetchNext()]);
+            const anchor = document.createElement('a');
+            anchor.href = URL.createObjectURL(
+              new Blob(zipParts(files), { type: 'application/zip' })
+            );
+            anchor.download = `Prologue${this.year}_bib${bib}.zip`;
+            anchor.click();
+            setTimeout(() => URL.revokeObjectURL(anchor.href), 60000);
+            this.updateRider();
+          } catch (error) {
+            console.warn('Photo download failed', error);
+            if (this.bib === bib) label.textContent = 'Download stopped. Try again';
+          } finally {
+            button.disabled = false;
+          }
+        }
+
+        // The photographer's name travels with the file once it leaves the site.
+        downloadName(photo) {
+          return [
+            `Prologue${this.year}`,
+            photo.photographer && photo.photographer.replace(/[^A-Za-z]/g, ''),
+            photo.filename,
+          ]
+            .filter(Boolean)
+            .join('_');
+        }
+
+        // The year's results by category, in start order: the selected
+        // race's categories, or all of them under All. Finishers by place,
+        // then the riders who did not finish. Riders who never started are
+        // left out.
+        resultGroups() {
+          const span = this.raceStart ? this.raceWindow(this.raceStart) : null;
+          const byRace = new Map();
+          Object.entries(this.results).forEach(([bib, result]) => {
+            if (result.status === 'DNS') return;
+            const start = Date.parse(result.start);
+            if (span && (start < span.from || start >= span.until)) return;
+            if (!byRace.has(result.race)) byRace.set(result.race, []);
+            byRace.get(result.race).push({ bib, ...result });
+          });
+          return Array.from(byRace, ([race, riders]) => ({
+            race,
+            start: Date.parse(riders[0].start),
+            riders: riders.sort(
+              (a, b) =>
+                (a.place || Infinity) - (b.place || Infinity) || Number(a.bib) - Number(b.bib)
+            ),
+          })).sort((a, b) => a.start - b.start || a.race.localeCompare(b.race));
+        }
+
+        // Shown with the race tabs, folded until asked for, and put away
+        // during a bib search, when the rider panel has the floor.
+        updateResults() {
+          const board = document.querySelector('.race-results');
+          if (!board) return;
+          const groups = this.resultGroups();
+          board.hidden = Boolean(this.bib) || groups.length === 0;
+          if (board.hidden) return;
+
+          const race = this.raceButtons().find(button => button.dataset.start === this.raceStart);
+          board.querySelector('.race-results-title').textContent = race
+            ? `Results: ${raceName(race)}`
+            : 'Results';
+
+          const tagged = new Map();
+          this.allPhotos.forEach(photo => {
+            Object.keys(photo.bibs || {}).forEach(bib => {
+              if (!tagged.has(bib)) tagged.set(bib, []);
+              tagged.get(bib).push(photo);
+            });
+          });
+
+          board.querySelector('.race-results-body').innerHTML = groups
+            .map(({ race: category, riders }) => {
+              const winner = riders[0];
+              const rows = riders
+                .map(rider => {
+                  const photos = tagged.get(rider.bib) || [];
+                  const thumb =
+                    photos.find(photo => photo.bibs[rider.bib] === 'number') || photos[0];
+                  const cell = thumb
+                    ? `<button type="button" data-bib="${rider.bib}" aria-label="${photos.length} photos of bib ${rider.bib}">
+                         <img src="${this.basePath}thumbnails/${thumb.filename}" alt="" loading="lazy" />
+                         <span>${photos.length}</span>
+                       </button>`
+                    : '<span class="standings-none">None</span>';
+                  const podium = rider.place && rider.place <= 3 ? ' is-podium' : '';
+                  return `<tr${thumb ? ` class="is-linked" data-bib="${rider.bib}"` : ''}>
+                      <td class="standings-place${podium}">${rider.place || rider.status}</td>
+                      <td class="standings-bib">${rider.bib}</td>
+                      <td class="standings-time">${rider.time || ''}</td>
+                      <td class="standings-gap">${gapText(rider, winner)}</td>
+                      <td class="standings-photos">${cell}</td>
+                    </tr>`;
+                })
+                .join('');
+              const finished = riders.filter(rider => rider.place).length;
+              return `<div class="standings-group">
+                  <h3 class="standings-race">${category} <span>${finished} finished</span></h3>
+                  ${closestFinish(riders)}
+                  <table class="standings-table">
+                    <thead><tr><th>Place</th><th>Bib</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                  </table>
+                </div>`;
+            })
+            .join('');
+        }
+
+        // From the results to a rider's photos, with their panel in view.
+        pickRider(bib) {
+          this.setBib(bib);
+          if (this.riderPanel && !this.riderPanel.hidden && this.riderPanel.scrollIntoView) {
+            this.riderPanel.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          }
+        }
+
         // The address carries the bib, so a rider's photos can be shared.
         updateBibUrl() {
           const url = new URL(window.location.href);
@@ -1245,6 +1421,17 @@
             this.riderPanel
               .querySelector('.rider-card-btn')
               .addEventListener('click', () => this.makeCard());
+            this.riderPanel
+              .querySelector('.rider-zip-btn')
+              .addEventListener('click', () => this.downloadAll());
+          }
+
+          const board = document.querySelector('.race-results-body');
+          if (board) {
+            board.addEventListener('click', event => {
+              const row = event.target.closest('[data-bib]');
+              if (row) this.pickRider(row.dataset.bib);
+            });
           }
         }
 
@@ -1512,14 +1699,7 @@
             ? `Photo by ${photo.photographer}`
             : '';
           lightboxDownload.href = this.basePath + 'high-res/' + photo.filename;
-          // The photographer's name travels with the file once it leaves the site.
-          lightboxDownload.download = [
-            `Prologue${this.year}`,
-            photo.photographer && photo.photographer.replace(/[^A-Za-z]/g, ''),
-            photo.filename,
-          ]
-            .filter(Boolean)
-            .join('_');
+          lightboxDownload.download = this.downloadName(photo);
 
           lightbox.style.display = 'flex';
           document.body.style.overflow = 'hidden';
@@ -1623,6 +1803,130 @@
       // "42:16" or "1:02:07" -> seconds.
       function clockSeconds(text) {
         return text.split(':').reduce((total, part) => total * 60 + Number(part), 0);
+      }
+
+      // 73 -> "1:13", 3725 -> "1:02:05".
+      function formatDuration(seconds) {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = String(seconds % 60).padStart(2, '0');
+        return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
+      }
+
+      // "+0:13" behind the winner, or "1 lap down". Empty for the winner and
+      // for a rider who did not finish.
+      function gapText(rider, winner) {
+        if (rider === winner || !rider.place) return '';
+        const down = winner.laps - rider.laps;
+        if (down > 0) return down === 1 ? '1 lap down' : `${down} laps down`;
+        return `+${formatDuration(clockSeconds(rider.time) - clockSeconds(winner.time))}`;
+      }
+
+      // The tightest finish between two riders on the same lap, when it was
+      // within ten seconds: the race worth looking at the photos of.
+      function closestFinish(riders) {
+        let best = null;
+        riders.forEach((rider, i) => {
+          const ahead = riders[i - 1];
+          if (!ahead || !rider.place || !ahead.place || rider.laps !== ahead.laps) return;
+          const gap = clockSeconds(rider.time) - clockSeconds(ahead.time);
+          if (gap <= 10 && (!best || gap < best.gap)) best = { ahead, rider, gap };
+        });
+        if (!best) return '';
+        const apart =
+          best.gap === 0
+            ? 'on the same time'
+            : best.gap === 1
+              ? '1 second apart'
+              : `${best.gap} seconds apart`;
+        const bib = b =>
+          `<button type="button" class="rider-link" data-bib="${b}"><b>${b}</b></button>`;
+        return `<p class="standings-closest">Closest finish: ${bib(best.ahead.bib)} and ${bib(best.rider.bib)}, ${apart}</p>`;
+      }
+
+      // 34123456 -> "34 MB".
+      function megabytes(bytes) {
+        return `${Math.max(1, Math.round(bytes / 1e6))} MB`;
+      }
+
+      // A zip with each file stored as it is: JPEGs are already compressed,
+      // so storing them costs nothing and needs no library. ASCII names, and
+      // under 4 GB in all. Returns the parts, for a Blob.
+      function zipParts(files) {
+        const table = Array.from({ length: 256 }, (_, n) => {
+          let c = n;
+          for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+          return c >>> 0;
+        });
+        const crc32 = bytes => {
+          let c = 0xffffffff;
+          for (let i = 0; i < bytes.length; i++) c = table[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
+          return (c ^ 0xffffffff) >>> 0;
+        };
+        // Little-endian fields, each [byte width, value].
+        const record = fields => {
+          const view = new DataView(new ArrayBuffer(fields.reduce((n, [w]) => n + w, 0)));
+          let at = 0;
+          fields.forEach(([w, value]) => {
+            if (w === 2) view.setUint16(at, value, true);
+            else view.setUint32(at, value, true);
+            at += w;
+          });
+          return new Uint8Array(view.buffer);
+        };
+
+        const entries = [];
+        const directory = [];
+        let offset = 0;
+        files.forEach(({ name, data, date = new Date() }) => {
+          const nameBytes = Uint8Array.from(name, ch => ch.charCodeAt(0) & 0x7f);
+          const time =
+            (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1);
+          const day =
+            ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+          // Version needed, flags, method (stored), time, date, CRC, both
+          // sizes, name length, extra length: the same in both headers.
+          const common = [
+            [2, 20],
+            [2, 0],
+            [2, 0],
+            [2, time],
+            [2, day],
+            [4, crc32(data)],
+            [4, data.length],
+            [4, data.length],
+            [2, nameBytes.length],
+            [2, 0],
+          ];
+          const local = record([[4, 0x04034b50], ...common]);
+          entries.push(local, nameBytes, data);
+          directory.push(
+            record([
+              [4, 0x02014b50],
+              [2, 20],
+              ...common,
+              [2, 0],
+              [2, 0],
+              [2, 0],
+              [4, 0],
+              [4, offset],
+            ]),
+            nameBytes
+          );
+          offset += local.length + nameBytes.length + data.length;
+        });
+        const size = directory.reduce((total, part) => total + part.length, 0);
+        const end = record([
+          [4, 0x06054b50],
+          [2, 0],
+          [2, 0],
+          [2, files.length],
+          [2, files.length],
+          [4, size],
+          [4, offset],
+          [2, 0],
+        ]);
+        return [...entries, ...directory, end];
       }
 
       // The rider's photo card: a 1080x1920 story image on the felt, with the

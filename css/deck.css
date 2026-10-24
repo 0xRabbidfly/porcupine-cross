@@ -2234,6 +2234,11 @@ footer {
   display: none;
 }
 
+/* Picked from the results, the panel scrolls up to sit under the header. */
+.rider-panel {
+  scroll-margin-top: calc(var(--header-height-desktop) + 16px);
+}
+
 .rider-bib {
   min-width: 3.2ch;
   padding: 10px 18px 8px;
@@ -2316,13 +2321,17 @@ footer {
 }
 
 .rider-link:focus,
-.rider-card-btn:focus {
+.rider-card-btn:focus,
+.rider-zip-btn:focus,
+.standings-photos button:focus {
   box-shadow: none;
   outline: none;
 }
 
 .rider-link:focus-visible,
-.rider-card-btn:focus-visible {
+.rider-card-btn:focus-visible,
+.rider-zip-btn:focus-visible,
+.standings-photos button:focus-visible {
   outline: 2px solid var(--pc-gilt);
   outline-offset: 2px;
 }
@@ -2351,6 +2360,243 @@ footer {
 .rider-card-btn:disabled {
   cursor: progress;
   opacity: 0.75;
+}
+
+.rider-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* The second action: the same pill, drawn in outline so the card leads. */
+.rider-zip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  font-family: var(--pc-data);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--pc-felt);
+  background: transparent;
+  border: 2px solid var(--pc-felt);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rider-zip-btn small {
+  font-family: var(--pc-numeral);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pc-ink-soft);
+}
+
+.rider-zip-btn small:empty {
+  display: none;
+}
+
+.rider-zip-btn:hover {
+  color: var(--pc-stock);
+  background: var(--pc-felt);
+}
+
+.rider-zip-btn:hover small {
+  color: inherit;
+}
+
+.rider-zip-btn:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+/* The results board: folded under the race tabs until asked for, then a
+   table per category with each rider's photos a tap away. */
+.race-results {
+  max-width: 980px;
+  margin: 0 auto 22px;
+  background: var(--pc-stock);
+  border-radius: 4px;
+  box-shadow: 0 12px 22px -14px rgba(0, 0, 0, 0.9);
+}
+
+.race-results[hidden] {
+  display: none;
+}
+
+.race-results summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 14px;
+  padding: 13px 44px 13px 20px;
+  position: relative;
+  list-style: none;
+  cursor: pointer;
+}
+
+.race-results summary::-webkit-details-marker {
+  display: none;
+}
+
+.race-results summary::after {
+  content: '';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--pc-ink);
+  border-bottom: 2px solid var(--pc-ink);
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.race-results[open] summary::after {
+  transform: translateY(-20%) rotate(-135deg);
+}
+
+.race-results summary:focus {
+  outline: none;
+}
+
+.race-results summary:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 2px;
+}
+
+.race-results-title {
+  font-family: var(--pc-data);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--pc-ink);
+}
+
+.race-results-hint {
+  font-family: var(--pc-body);
+  font-size: 0.86rem;
+  color: var(--pc-ink-soft);
+}
+
+.race-results-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 26px 36px;
+  padding: 4px 20px 20px;
+}
+
+.standings-race {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 6px;
+  font-family: var(--pc-data) !important;
+  font-size: 1.1rem;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em;
+}
+
+.standings-race span {
+  font-family: var(--pc-body);
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--pc-ink-soft);
+}
+
+.standings-closest {
+  margin: 0 0 8px;
+  font-size: 0.86rem;
+  color: var(--pc-ink-soft);
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--pc-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.standings-table th {
+  padding: 4px 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--pc-ink-soft);
+  border-bottom: 1px solid rgba(17, 24, 35, 0.22);
+}
+
+.standings-table td {
+  padding: 4px 6px;
+  font-size: 1rem;
+  color: var(--pc-ink);
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(17, 24, 35, 0.08);
+}
+
+.standings-table th:last-child,
+.standings-table td:last-child {
+  text-align: right;
+}
+
+.standings-table tr.is-linked {
+  cursor: pointer;
+}
+
+.standings-table tr.is-linked:hover td {
+  background: rgba(200, 162, 74, 0.14);
+}
+
+.standings-place {
+  width: 3em;
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+}
+
+.standings-place.is-podium {
+  color: var(--pc-blood);
+}
+
+.standings-bib {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+}
+
+.standings-gap,
+.standings-none {
+  color: var(--pc-ink-soft);
+}
+
+.standings-none {
+  font-size: 0.85rem;
+}
+
+.standings-photos button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 10px 2px 2px;
+  font-family: var(--pc-numeral);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--pc-ink);
+  background: #fff;
+  border: 1px solid rgba(17, 24, 35, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.standings-photos img {
+  width: 42px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 2px;
+  background: rgba(17, 24, 35, 0.12);
+}
+
+.standings-photos button:hover {
+  border-color: var(--pc-ink);
 }
 
 /* Which lap the photo caught the rider on. */
@@ -2385,9 +2631,33 @@ footer {
     font-size: 1.15rem;
   }
 
-  .rider-card-btn {
+  .rider-panel {
+    scroll-margin-top: calc(var(--header-height-mobile) + 12px);
+  }
+
+  .rider-actions {
     grid-column: 1 / -1;
+  }
+
+  .rider-card-btn {
     justify-content: center;
+  }
+
+  .race-results {
+    margin-inline: -6px;
+  }
+
+  .race-results summary {
+    padding-left: 14px;
+  }
+
+  .race-results-body {
+    padding: 4px 10px 14px;
+  }
+
+  .standings-table th,
+  .standings-table td {
+    padding-inline: 4px;
   }
 }
 
