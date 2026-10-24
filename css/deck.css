@@ -665,10 +665,6 @@ section.visible {
   --deal-tilt: -1.6deg;
   --rest-tilt: 0.3deg;
 }
-#register {
-  --deal-tilt: 1.4deg;
-  --rest-tilt: -0.25deg;
-}
 #contact {
   --deal-tilt: -1.5deg;
   --rest-tilt: 0.3deg;
@@ -683,7 +679,7 @@ section.visible:focus-within {
 /* --- Section headings --- */
 section > h2,
 .quick-tips-section h2,
-#register [data-phase] > h2 {
+#results [data-phase] > h2 {
   font-family: var(--pc-heading) !important;
   font-size: clamp(1.75rem, 3.8vw, 2.55rem) !important;
   font-weight: 800 !important;
@@ -703,7 +699,7 @@ section > h2,
 
 section[data-suit] > h2::before,
 .quick-tips-section[data-suit] h2::before,
-#register[data-suit] [data-phase] > h2::before {
+#results[data-suit] [data-phase] > h2::before {
   content: var(--pc-glyph, '♠');
   display: block;
   font-family: var(--pc-suit);
@@ -716,7 +712,7 @@ section[data-suit] > h2::before,
 /* A gilt rule under each heading, the width of a card's centre panel. */
 section > h2::after,
 .quick-tips-section h2::after,
-#register [data-phase] > h2::after {
+#results [data-phase] > h2::after {
   content: '';
   display: block;
   width: 64px;
@@ -1424,11 +1420,17 @@ section p {
   margin: 32px auto 0 !important;
 }
 
+/* #register still lands on card 7, which is Register before race day. */
+.section-alias {
+  display: block;
+  height: 0;
+}
+
 /* ===================================================================== */
 /* 12. REGISTER — the money card                                         */
 /* ===================================================================== */
 
-#register h2 {
+#results [data-phase] > h2 {
   color: var(--pc-ink) !important;
 }
 
@@ -3293,7 +3295,6 @@ footer {
   #schedule,
   #course,
   #results,
-  #register,
   #contact {
     transform: none !important;
   }

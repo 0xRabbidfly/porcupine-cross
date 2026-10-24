@@ -36,6 +36,18 @@ class RegisterPhase {
   }
 
   /**
+   * Create and start a phase switch for every matching element: card 7 on
+   * the home page and the nav's 7 card on every page
+   * @param {string} selector - Element selector
+   * @returns {RegisterPhase[]} Started instances
+   */
+  static createAll(selector = '[data-flip-at]') {
+    return Array.from(document.querySelectorAll(selector)).map(element =>
+      new RegisterPhase(element).start()
+    );
+  }
+
+  /**
    * Apply the current phase and keep checking for the flip
    */
   start() {

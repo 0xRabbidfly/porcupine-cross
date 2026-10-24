@@ -63,7 +63,8 @@ class App {
       this.components.heroCardRotators = HeroCardRotator.createAll();
 
       // Initialize register phase switch
-      this.components.registerPhase = RegisterPhase.create();
+      // Card 7 and the nav's 7 card: Register before race day, Results after
+      this.components.registerPhases = RegisterPhase.createAll();
 
       // Initialize the race replay, on a page that has one
       this.components.raceReplay = RaceReplay.create();

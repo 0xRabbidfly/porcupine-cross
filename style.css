@@ -132,7 +132,6 @@ section {
 #about,
 #schedule,
 #course,
-#register,
 #contact {
   padding: 30px 4%;
 }
@@ -710,7 +709,6 @@ footer {
   #about,
   #schedule,
   #course,
-  #register,
   #contact {
     padding: 20px 4%;
   }
@@ -726,7 +724,6 @@ footer {
     padding-bottom: 20px;
   }
 
-  #register,
   #contact {
     padding: 20px 20px;
   }
@@ -1117,13 +1114,12 @@ nav#main-nav {
   outline: 2px solid rgba(44, 62, 80, 0.1);
 }
 
-/* Register Section Styling */
-#register {
+/* Register Section Styling: card 7 before race day (#results, in its pre phase). */
+#results [data-phase='pre'] {
   text-align: center;
-  padding: 30px 20px;
 }
 
-#register h2 {
+#results [data-phase] > h2 {
   font-size: clamp(1.8rem, 4vw, 2.4rem);
   margin-bottom: 2rem;
   color: var(--color-secondary) !important;

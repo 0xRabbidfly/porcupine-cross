@@ -82,6 +82,23 @@ describe('RegisterPhase', () => {
     expect(phase.intervalId).toBeNull();
   });
 
+  test('createAll flips card 7 and the nav label together', () => {
+    jest.setSystemTime(new Date(AFTER));
+    document.body.innerHTML = `
+      <a href="#results" data-flip-at="${FLIP_AT}"><span data-phase="pre">Register</span><span data-phase="post" hidden>Results</span></a>
+      <div class="register-phase" data-flip-at="${FLIP_AT}">
+        <div data-phase="pre">Register</div>
+        <div data-phase="post" hidden>Results</div>
+      </div>
+    `;
+    const phases = RegisterPhase.createAll();
+    expect(phases).toHaveLength(2);
+    expect(document.querySelector('a [data-phase="post"]').hidden).toBe(false);
+    expect(document.querySelector('a [data-phase="pre"]').hidden).toBe(true);
+    expect(document.querySelector('.register-phase [data-phase="post"]').hidden).toBe(false);
+    phases.forEach(phase => phase.destroy());
+  });
+
   test('create returns null when the container is absent', () => {
     document.body.innerHTML = '';
     expect(RegisterPhase.create()).toBeNull();

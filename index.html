@@ -96,16 +96,16 @@
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 
     <!-- EXISTING STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-6" />
-    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-6" />
+    <link rel="stylesheet" href="style.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-7" />
+    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-7" />
     <!-- Add FontAwesome for icons -->
     <link
       rel="stylesheet"
@@ -121,7 +121,7 @@
     />
 
     <!-- PROLOGUE DECK — loaded last, owns the skin -->
-    <link rel="stylesheet" href="css/deck.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-7" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -155,14 +155,16 @@
         <a href="#course" data-rank="6" data-suit="&#9824;"
           ><i class="fas fa-map-marked-alt menu-icon"></i>Course</a
         >
-        <a href="#results" data-rank="7" data-suit="&#9827;"
-          ><i class="fas fa-flag-checkered menu-icon"></i>Results</a
+        <a
+          href="#results"
+          data-rank="7"
+          data-suit="&#9827;"
+          data-flip-at="2026-10-18T16:00:00-04:00"
+          ><i class="fas fa-flag-checkered menu-icon"></i><span data-phase="pre">Register</span
+          ><span data-phase="post" hidden>Results</span></a
         >
         <a href="photos.html" data-rank="J" data-suit="&#9829;"
           ><i class="fas fa-camera menu-icon"></i>Photos</a
-        >
-        <a href="#register" data-rank="8" data-suit="&#9830;"
-          ><i class="fas fa-user-plus menu-icon"></i>Register</a
         >
         <a href="tech-guide.html" data-rank="J" data-suit="&#9827;"
           ><i class="fas fa-file-pdf menu-icon"></i>Tech Guide</a
@@ -724,72 +726,11 @@
         </div>
       </section>
 
+      <!-- Card 7 is the event's: Register until the race is run, then Results.
+           The flip time is race day's finish; for a new event, change it here
+           and on the nav's 7 card on every page. #register still lands here. -->
       <section id="results" data-rank="7" data-suit="&#9827;">
-        <h2><span class="ace-icon">♣</span>Results</h2>
-        <div class="results-table">
-          <a
-            href="https://racetiming.ca/rr4eventpage.php?EventId=2639"
-            target="_blank"
-            rel="noopener"
-            class="results-hand"
-            tabindex="-1"
-            aria-hidden="true"
-          >
-            <span class="results-card results-card-second" data-suit="&#9829;">
-              <span class="results-card-index">K<br />&#9829;</span>
-              <span class="results-card-pip">&#9829;</span>
-              <span class="results-card-place">2nd</span>
-            </span>
-            <span class="results-card results-card-first" data-suit="&#9824;">
-              <span class="results-card-index">A<br />&#9824;</span>
-              <span class="results-card-pip">&#9824;</span>
-              <span class="results-card-place">1st</span>
-            </span>
-            <span class="results-card results-card-third" data-suit="&#9830;">
-              <span class="results-card-index">Q<br />&#9830;</span>
-              <span class="results-card-pip">&#9830;</span>
-              <span class="results-card-place">3rd</span>
-            </span>
-          </a>
-        </div>
-        <div class="results-action">
-          <a
-            href="https://racetiming.ca/rr4eventpage.php?EventId=2639"
-            target="_blank"
-            rel="noopener"
-            class="results-button"
-          >
-            <i class="fas fa-flag-checkered"></i>
-            <span class="register-text">View start list and race results</span>
-          </a>
-          <p class="register-note">Timing by RaceTiming.ca</p>
-        </div>
-
-        <!-- The replay teaser: Cat A riders looping the course map, and the way
-             into the replays. A link carrying data-replay: the photos page opens
-             the replay in place, elsewhere it goes there with ?replay=. -->
-        <a
-          class="replay-teaser"
-          href="photos.html?replay=Cat%20A"
-          data-replay="Cat A"
-          data-src="/photos/event-2026/replay/replay.json"
-        >
-          <div class="teaser-stage" aria-hidden="true"><span class="teaser-lap"></span></div>
-          <div class="teaser-copy">
-            <span class="teaser-new">New</span>
-            <h3 class="teaser-title">Watch every race, lap by lap</h3>
-            <p class="teaser-text">
-              Every rider rides the course map as their own race photo, at the pace of their real
-              lap times. Pick a race, follow a rider, and stay for the podium.
-            </p>
-            <span class="teaser-cta"
-              ><i class="fas fa-play" aria-hidden="true"></i> Watch the races</span
-            >
-          </div>
-        </a>
-      </section>
-
-      <section id="register" data-rank="8" data-suit="&#9830;">
+        <span id="register" class="section-alias" aria-hidden="true"></span>
         <div class="register-phase" data-flip-at="2026-10-18T16:00:00-04:00">
           <div data-phase="pre">
             <h2><span class="ace-icon">♠</span>Deal Yourself In</h2>
@@ -857,51 +798,74 @@
               </div>
             </div>
           </div>
-
           <div data-phase="post" hidden>
-            <h2><span class="ace-icon">♠</span>Race Results</h2>
-            <div class="register-content">
-              <div class="register-hero">
-                <a
-                  href="https://racetiming.ca/"
-                  target="_blank"
-                  rel="noopener"
-                  class="register-icon-link"
-                >
-                  <div class="register-icon">
-                    <i class="fas fa-trophy"></i>
-                    <span class="card-symbols">
-                      <span class="card-symbol spade">♠</span>
-                      <span class="card-symbol heart">♥</span>
-                      <span class="card-symbol diamond">♦</span>
-                      <span class="card-symbol club">♣</span>
-                    </span>
-                  </div>
-                </a>
-              </div>
-              <div class="register-cta">
-                <p class="register-details">
-                  <strong>That's a wrap!</strong> Thanks for racing Prologue Cross at Elgin Park on
-                  Sunday, October 18, 2026.<br />
-                  Official times and placings are live now.
-                </p>
-                <a
-                  href="https://racetiming.ca/"
-                  target="_blank"
-                  rel="noopener"
-                  class="register-button"
-                >
-                  <i class="fas fa-trophy"></i>
-                  <div class="register-text">View Race Results</div>
-                </a>
-                <p class="register-note">Powered by RaceTiming.ca</p>
-              </div>
+            <h2><span class="ace-icon">♣</span>Results</h2>
+            <div class="results-table">
+              <a
+                href="https://racetiming.ca/rr4eventpage.php?EventId=2639"
+                target="_blank"
+                rel="noopener"
+                class="results-hand"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <span class="results-card results-card-second" data-suit="&#9829;">
+                  <span class="results-card-index">K<br />&#9829;</span>
+                  <span class="results-card-pip">&#9829;</span>
+                  <span class="results-card-place">2nd</span>
+                </span>
+                <span class="results-card results-card-first" data-suit="&#9824;">
+                  <span class="results-card-index">A<br />&#9824;</span>
+                  <span class="results-card-pip">&#9824;</span>
+                  <span class="results-card-place">1st</span>
+                </span>
+                <span class="results-card results-card-third" data-suit="&#9830;">
+                  <span class="results-card-index">Q<br />&#9830;</span>
+                  <span class="results-card-pip">&#9830;</span>
+                  <span class="results-card-place">3rd</span>
+                </span>
+              </a>
             </div>
+            <div class="results-action">
+              <a
+                href="https://racetiming.ca/rr4eventpage.php?EventId=2639"
+                target="_blank"
+                rel="noopener"
+                class="results-button"
+              >
+                <i class="fas fa-flag-checkered"></i>
+                <span class="register-text">View start list and race results</span>
+              </a>
+              <p class="register-note">Timing by RaceTiming.ca</p>
+            </div>
+
+            <!-- The replay teaser: Cat A riders looping the course map, and the way
+               into the replays. A link carrying data-replay: the photos page opens
+               the replay in place, elsewhere it goes there with ?replay=. -->
+            <a
+              class="replay-teaser"
+              href="photos.html?replay=Cat%20A"
+              data-replay="Cat A"
+              data-src="/photos/event-2026/replay/replay.json"
+            >
+              <div class="teaser-stage" aria-hidden="true"><span class="teaser-lap"></span></div>
+              <div class="teaser-copy">
+                <span class="teaser-new">New</span>
+                <h3 class="teaser-title">Watch every race, lap by lap</h3>
+                <p class="teaser-text">
+                  Every rider rides the course map as their own race photo, at the pace of their
+                  real lap times. Pick a race, follow a rider, and stay for the podium.
+                </p>
+                <span class="teaser-cta"
+                  ><i class="fas fa-play" aria-hidden="true"></i> Watch the races</span
+                >
+              </div>
+            </a>
           </div>
         </div>
       </section>
 
-      <section id="contact" data-rank="9" data-suit="&#9829;">
+      <section id="contact" data-rank="8" data-suit="&#9829;">
         <h2><span class="ace-icon">♠</span>Contact Us</h2>
         <div class="contact-content">
           <p class="contact-intro">
@@ -1002,7 +966,7 @@
     <script type="module" src="js/animationBridge.js"></script>
 
     <!-- Load our modular JavaScript -->
-    <script type="module" src="js/main.js?v=20261024-6"></script>
+    <script type="module" src="js/main.js?v=20261024-7"></script>
 
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>
