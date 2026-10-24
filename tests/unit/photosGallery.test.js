@@ -1173,7 +1173,7 @@ describe('photos gallery laps', () => {
     );
   });
 
-  test("a rider's panel lists each lap's time, lap rank and place", async () => {
+  test("a rider's panel lists each lap's time, pace and place", async () => {
     const win = boot();
     await settle();
     win.document.getElementById('bib-input').value = '55';
@@ -1181,17 +1181,20 @@ describe('photos gallery laps', () => {
       .querySelector('.bib-finder')
       .dispatchEvent(new win.Event('submit', { cancelable: true }));
     const table = win.document.querySelector('.rider-laps-table');
-    const row = name =>
-      Array.from(table.querySelectorAll('tbody tr'))
-        .find(tr => tr.querySelector('th').textContent === name)
-        .querySelectorAll('td');
-    expect(Array.from(row('Time')).map(squash)).toEqual(['6:40', '6:10', '6:10']);
-    expect(Array.from(row('Lap rank')).map(squash)).toEqual(['2nd', '1st', '2nd']);
+    const heads = Array.from(table.querySelectorAll('thead th')).map(squash);
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    const col = name => rows.map(tr => squash(tr.children[heads.indexOf(name)]));
+    // A field of two: no lap rank column.
+    expect(heads).toEqual(['Lap', 'Time', 'Pace', 'Place']);
+    expect(col('Time')).toEqual(['6:40', '6:10 Best', '6:10 Best']);
     // 21 leads after lap one; 55 is ahead at 770s to 785s, and 1140s to 1150s.
-    expect(Array.from(row('Place')).map(squash)).toEqual(['2nd', '1st', '1st']);
-    // The best laps are lit; the race's fastest was 21's, so no star here.
-    expect(row('Time')[1].classList).toContain('is-best');
-    expect(row('Time')[0].classList).not.toContain('is-best');
+    expect(col('Place')).toEqual(['2nd', '1st ▲1', '1st']);
+    // The best laps are lit, with the fullest pace bars; the race's fastest was
+    // 21's, so no star here.
+    expect(rows[1].classList).toContain('is-best');
+    expect(rows[0].classList).not.toContain('is-best');
+    expect(rows[1].querySelector('.rider-lap-pace span').style.width).toBe('100%');
+    expect(rows[0].querySelector('.rider-lap-pace span').style.width).toBe('30%');
     expect(table.querySelector('.rider-lap-star')).toBeNull();
   });
 

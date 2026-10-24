@@ -2852,42 +2852,120 @@ footer {
 }
 
 .rider-laps-table {
+  width: 100%;
+  max-width: 560px;
   border-collapse: collapse;
   font-family: var(--pc-data);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-variant-numeric: tabular-nums;
   color: var(--pc-ink);
 }
 
 .rider-laps-table caption {
-  padding-bottom: 4px;
+  padding-bottom: 6px;
   font-weight: 700;
   text-align: left;
 }
 
-.rider-laps-table th,
+.rider-laps-table thead th {
+  padding: 7px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--pc-stock);
+  background: var(--pc-felt);
+}
+
+.rider-laps-table tbody th,
 .rider-laps-table td {
-  padding: 3px 9px;
-  text-align: center;
+  padding: 6px 10px;
+  text-align: left;
   white-space: nowrap;
   border-bottom: 1px solid rgba(17, 24, 35, 0.1);
 }
 
-.rider-laps-table th[scope='row'] {
-  padding-left: 0;
-  font-weight: 600;
-  text-align: left;
-  color: var(--pc-ink-soft);
+.rider-laps-table tbody th {
+  font-weight: 700;
+}
+
+.rider-laps-table tbody tr:nth-child(even) {
+  background: rgba(17, 24, 35, 0.035);
+}
+
+.rider-laps-table tbody tr.is-best {
+  background: rgba(200, 162, 74, 0.22);
+}
+
+/* The faster the lap, the longer the bar; the best lap's bar in gold. */
+.rider-lap-pace {
+  width: 34%;
+  min-width: 70px;
+}
+
+.rider-lap-pace span {
+  display: block;
+  height: 9px;
+  border-radius: 5px;
+  background: var(--pc-felt);
+}
+
+.is-best .rider-lap-pace span {
+  background: var(--pc-gilt);
+}
+
+.rider-lap-tag {
+  margin-left: 4px;
+  font-family: var(--pc-data);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9a7a2a;
+}
+
+.rider-lap-move {
+  margin-left: 3px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.rider-lap-move.is-up {
+  color: #1a7f37;
+}
+
+.rider-lap-move.is-down {
+  color: var(--pc-blood);
 }
 
 .rider-laps-table thead th {
-  font-weight: 600;
-  color: var(--pc-ink-soft);
+  white-space: nowrap;
 }
 
-.rider-laps-table td.is-best {
-  background: rgba(200, 162, 74, 0.25);
-  font-weight: 700;
+@media (max-width: 600px) {
+  .rider-laps-table {
+    font-size: 0.88rem;
+  }
+
+  .rider-laps-table thead th,
+  .rider-laps-table tbody th,
+  .rider-laps-table td {
+    padding-inline: 6px;
+  }
+
+  .rider-lap-pace {
+    width: auto;
+    min-width: 44px;
+  }
+
+  .rider-lap-long {
+    display: none;
+  }
+
+  .rider-lap-tag {
+    display: none;
+  }
 }
 
 .rider-lap-time {

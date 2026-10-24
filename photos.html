@@ -58,10 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-17" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-17" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-17" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-17" />
+    <link rel="stylesheet" href="style.css?v=20261024-18" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-18" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-18" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-18" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -468,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-17" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-18" />
   </head>
   <body>
     <header>
@@ -859,7 +859,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-17"></script>
+    <script type="module" src="js/main.js?v=20261024-18"></script>
 
     <!-- Photo Gallery Script -->
     <script>
@@ -1163,6 +1163,7 @@
               const ends = rider =>
                 rider.laps.map((_, k) => rider.laps.slice(0, k + 1).reduce((a, b) => a + b, 0));
               const crossed = riders.map(rider => ({ rider, ends: ends(rider) }));
+              const field = riders.filter(rider => rider.place).length;
               crossed.forEach(({ rider, ends: own }) => {
                 const places = own.map((end, k) => {
                   const ahead = crossed.filter(
@@ -1178,6 +1179,7 @@
                   laps: rider.laps,
                   ranks: rider.ranks || [],
                   places,
+                  field,
                 };
               });
               if (fastest) this.fastest[race] = fastest;
@@ -1298,35 +1300,55 @@
           this.updateLaps();
         }
 
-        // The rider's laps across the panel: time, lap rank and place, the
-        // best lap lit, and a star on it when it was the race's fastest.
+        // The rider's laps, a row each: the time with a pace bar (the faster
+        // the lap, the longer the bar), the lap's rank in the race when the
+        // field is big enough for that to mean something, and their place on
+        // crossing the line with the places won or lost since the lap before.
+        // The best lap is lit, and starred when it was the race's fastest.
         updateLaps() {
           const box = this.riderPanel.querySelector('.rider-laps');
           const mine = this.laps[this.bib];
           box.hidden = !mine;
           if (!mine) return;
           const best = Math.min(...mine.laps);
+          const worst = Math.max(...mine.laps);
+          const span = worst - best || 1;
+          const ranked = mine.field > 3;
           const fastest = this.fastest[mine.race];
-          const cells = (fn, cls = '') =>
-            mine.laps
-              .map((time, k) => {
-                const lit = time === best ? ' is-best' : '';
-                return `<td class="${cls}${lit}">${fn(time, k)}</td>`;
-              })
-              .join('');
-          const star = k =>
-            fastest && fastest.bib === this.bib && fastest.lap === k + 1
-              ? ' <span class="rider-lap-star" title="Fastest lap of the race">★</span>'
-              : '';
+          const rows = mine.laps
+            .map((time, k) => {
+              const isBest = time === best;
+              const star =
+                fastest && fastest.bib === this.bib && fastest.lap === k + 1
+                  ? ' <span class="rider-lap-star" title="Fastest lap of the race">★</span>'
+                  : '';
+              const pace = Math.round(30 + (70 * (worst - time)) / span);
+              const place = mine.places[k];
+              const change = k ? mine.places[k - 1] - place : 0;
+              const move = change
+                ? ` <span class="rider-lap-move ${change > 0 ? 'is-up' : 'is-down'}" title="${
+                    change > 0 ? `Up ${change}` : `Down ${-change}`
+                  }">${change > 0 ? '▲' : '▼'}${Math.abs(change)}</span>`
+                : '';
+              return `<tr${isBest ? ' class="is-best"' : ''}>
+                  <th scope="row">${k + 1}</th>
+                  <td class="rider-lap-time">${formatLap(time)}${star}${isBest ? ' <span class="rider-lap-tag">Best</span>' : ''}</td>
+                  <td class="rider-lap-pace"><span style="width:${pace}%"></span></td>
+                  ${ranked ? `<td>${mine.ranks[k] ? ordinal(mine.ranks[k]) : ''}</td>` : ''}
+                  <td>${ordinal(place)}${move}</td>
+                </tr>`;
+            })
+            .join('');
           box.innerHTML = `
             <table class="rider-laps-table">
               <caption>Lap by lap</caption>
-              <thead><tr><th scope="row">Lap</th>${mine.laps.map((_, k) => `<th scope="col">${k + 1}</th>`).join('')}</tr></thead>
-              <tbody>
-                <tr><th scope="row">Time</th>${cells((time, k) => `${formatLap(time)}${star(k)}`, 'rider-lap-time')}</tr>
-                <tr><th scope="row" title="Where the lap's time ranked in the race">Lap rank</th>${cells((_, k) => (mine.ranks[k] ? ordinal(mine.ranks[k]) : ''))}</tr>
-                <tr><th scope="row" title="Place in the race on crossing the line">Place</th>${cells((_, k) => ordinal(mine.places[k]))}</tr>
-              </tbody>
+              <thead><tr>
+                <th scope="col">Lap</th><th scope="col">Time</th>
+                <th scope="col" title="The longer the bar, the faster the lap">Pace</th>
+                ${ranked ? `<th scope="col" title="Where the lap's time ranked in the race"><span class=\"rider-lap-long\">Lap </span>Rank</th>` : ''}
+                <th scope="col" title="Place in the race on crossing the line">Place</th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
             </table>`;
         }
 
