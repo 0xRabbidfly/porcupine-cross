@@ -627,8 +627,9 @@ section[data-rank]::after {
 }
 
 /* --- Dealt: the cards land on the table at slightly different angles, the
-       way a hand does. The hero is laid down first and square. --- */
-section:not(.visible) {
+       way a hand does. The hero is laid down first and square. Only while
+       scripts run (html.js): without them every card is face up. --- */
+.js section:not(.visible) {
   opacity: 0;
   transform: translateY(46px) rotate(var(--deal-tilt, -1.2deg)) scale(0.985);
 }
@@ -3189,6 +3190,13 @@ footer {
 }
 
 .photo-item {
+  /* A button: no browser border or type of its own. */
+  display: block;
+  width: 100%;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
   background: var(--pc-stock);
   border-radius: 3px !important;
   overflow: visible !important;
@@ -3566,7 +3574,7 @@ footer {
     transition-duration: 0.001ms !important;
   }
 
-  section:not(.visible) {
+  .js section:not(.visible) {
     opacity: 1;
     transform: none;
   }
@@ -3591,6 +3599,23 @@ footer {
 /* ===================================================================== */
 /* 19. LATE CORRECTIONS                                                  */
 /* ===================================================================== */
+
+/* Without scripts nothing would ever take the loading screen away. */
+html:not(.js) .loading-spinner {
+  display: none;
+}
+
+/* The menu toggle and the photos are buttons now: a mouse click leaves them
+   :focus, so the legacy red focus ring is kept for the keyboard. */
+#menu-toggle:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+.photo-item:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: 0 12px 22px -14px rgba(0, 0, 0, 0.9);
+}
 
 /* One pre-ride session, so one centred slot rather than column 1 of 3. */
 .pre-ride-grid {

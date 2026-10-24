@@ -25,7 +25,7 @@
     <meta property="og:title" content="Event Photos | Prologue Cross Cyclocross Race 2026" />
     <meta
       property="og:description"
-      content="Browse and download professional photos from Prologue Cross 2026. Use AI facial recognition to find your photos instantly."
+      content="Browse and download free photos from Prologue Cross 2026. Search by your bib number, and watch a lap-by-lap replay of your race."
     />
     <meta property="og:url" content="https://www.prologuecross.ca/photos.html" />
     <meta property="og:site_name" content="Prologue Cross" />
@@ -36,7 +36,7 @@
     <meta name="twitter:title" content="Event Photos | Prologue Cross Cyclocross Race 2026" />
     <meta
       name="twitter:description"
-      content="Browse and download professional photos from Prologue Cross 2026. Use AI facial recognition to find your photos instantly."
+      content="Browse and download free photos from Prologue Cross 2026. Search by your bib number, and watch a lap-by-lap replay of your race."
     />
     <meta
       name="twitter:image"
@@ -65,6 +65,9 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -475,15 +478,15 @@
       <div class="logo-container">
         <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo" />
       </div>
-      <a
-        href="#main-nav"
+      <button
+        type="button"
         id="menu-toggle"
-        aria-label="Open Menu"
+        aria-label="Menu"
         aria-expanded="false"
         aria-controls="main-nav"
       >
         <span class="hamburger"></span>
-      </a>
+      </button>
       <nav id="main-nav" role="navigation" aria-label="Main navigation">
         <a href="index.html#home" data-rank="A" data-suit="&#9824;"
           ><i class="fas fa-home menu-icon"></i>Home</a
@@ -717,7 +720,7 @@
             <!-- Bib finder: a year whose photos carry bib tags shows it. A rider
                  is tagged where the number is read, or where the kit matches a
                  photo where it was; the second kind is marked "Likely you".
-                 Numbers only: no names are published. -->
+                 Names show as first name and initial, only for number reads. -->
             <form
               class="bib-finder"
               role="search"
@@ -747,7 +750,7 @@
 
           <!-- One rider's day, shown while a bib is searched: their result from
                the year's results, who they raced alongside, and a card of their
-               photos to share. Bib numbers only, never names. -->
+               photos to share. The name is first name and initial. -->
           <div class="rider-panel" hidden>
             <div class="rider-bib" aria-hidden="true"></div>
             <div class="rider-body">
@@ -772,7 +775,7 @@
           </div>
 
           <!-- The results, each rider linked to their photos: the selected
-               race's, or every race's under All. Bib numbers only, never names. -->
+               race's, or every race's under All, with riders' full names. -->
           <details
             class="race-results"
             data-replays="Cat C,Master Men 55+,Cat B,Master Men 35+,Cat A Women,Cat B Women,Master Women 35+,Master Women 55+,Cat A,Single Speed"
@@ -829,7 +832,14 @@
     ></div>
 
     <!-- Lightbox Modal -->
-    <div id="lightbox" class="lightbox" style="display: none">
+    <div
+      id="lightbox"
+      class="lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lightbox-title"
+      style="display: none"
+    >
       <div class="lightbox-content">
         <button type="button" class="lightbox-close" aria-label="Close">&times;</button>
         <img id="lightbox-image" src="" alt="" />
@@ -863,6 +873,10 @@
 
     <!-- Photo Gallery Script -->
     <script>
+      // There is one lightbox: where focus was and the page's scroll lock
+      // when it opened, handed back when it closes.
+      const lightboxReturn = { focus: null, overflow: '' };
+
       class PhotoGallery {
         constructor(year) {
           // allPhotos is the year; photos is what the grid and lightbox walk,
@@ -1800,12 +1814,14 @@
 
           newPhotos.forEach((photo, index) => {
             const photoIndex = lastRenderedIndex + index;
-            const photoItem = document.createElement('div');
+            // A button, so the photo opens from the keyboard too.
+            const photoItem = document.createElement('button');
+            photoItem.type = 'button';
             photoItem.className = 'photo-item';
 
             const img = document.createElement('img');
             img.loading = 'lazy';
-            img.alt = `Event Photo ${photo.id}`;
+            img.alt = this.photoLabel(photo);
             // Listeners before src, so a cached thumbnail cannot finish loading
             // before anything is listening and get stuck at opacity 0.
             img.addEventListener('load', () => img.classList.add('is-loaded'));
@@ -1888,10 +1904,24 @@
           if (loadingMore) loadingMore.style.display = 'none';
         }
 
+        // "Men Cat A photo, 11:18 am, 30 minutes in": what a screen reader
+        // reads for a photo in the grid.
+        photoLabel(photo) {
+          const race = this.raceFor(photo);
+          const title = race ? raceName(race) : `Prologue Cyclocross ${this.year}`;
+          const when = this.describeMoment(photo);
+          return when ? `${title} photo, ${when}` : `${title} photo`;
+        }
+
         openLightbox(index) {
           this.currentPhotoIndex = index;
           const photo = this.photos[index];
           const lightbox = document.getElementById('lightbox');
+          // Opened fresh, not stepped to the next photo.
+          if (lightbox.style.display !== 'flex') {
+            lightboxReturn.focus = document.activeElement;
+            lightboxReturn.overflow = document.body.style.overflow;
+          }
           const lightboxImage = document.getElementById('lightbox-image');
           const lightboxTitle = document.getElementById('lightbox-title');
           const lightboxDownload = document.getElementById('lightbox-download');
@@ -1909,8 +1939,10 @@
           lightboxDownload.href = this.basePath + 'high-res/' + photo.filename;
           lightboxDownload.download = this.downloadName(photo);
 
+          const opening = lightbox.style.display !== 'flex';
           lightbox.style.display = 'flex';
           document.body.style.overflow = 'hidden';
+          if (opening) lightbox.querySelector('.lightbox-close').focus();
         }
 
         // "Ethan P. (55), Ryan D. (290)": the riders whose number was read in
@@ -1925,7 +1957,32 @@
 
         closeLightbox() {
           document.getElementById('lightbox').style.display = 'none';
-          document.body.style.overflow = 'auto';
+          document.body.style.overflow = lightboxReturn.overflow;
+          const opener = lightboxReturn.focus;
+          lightboxReturn.focus = null;
+          if (opener && opener.isConnected && typeof opener.focus === 'function') opener.focus();
+        }
+
+        // Tab and Shift+Tab go round the lightbox's own controls, not the
+        // page hidden behind it.
+        trapLightboxFocus(e) {
+          const lightbox = document.getElementById('lightbox');
+          const controls = Array.from(
+            lightbox.querySelectorAll('button, a[href]:not([href=""])')
+          ).filter(el => !el.disabled && el.getClientRects().length);
+          if (!controls.length) return;
+          const first = controls[0];
+          const last = controls[controls.length - 1];
+          if (!lightbox.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          } else if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
 
         nextPhoto() {
@@ -1992,6 +2049,9 @@
                   break;
                 case 'ArrowRight':
                   this.nextPhoto();
+                  break;
+                case 'Tab':
+                  this.trapLightboxFocus(e);
                   break;
               }
             }

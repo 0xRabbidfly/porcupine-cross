@@ -786,7 +786,9 @@ try {
 } catch (error) {
   const errorDiv = document.createElement('div');
   errorDiv.className = 'app-error-boundary';
-  errorDiv.innerHTML = '<h2>Something went wrong</h2><p>' + (error.message || error) + '</p>';
+  errorDiv.innerHTML = '<h2>Something went wrong</h2><p></p>';
+  errorDiv.querySelector('p').textContent = error.message || String(error);
+  document.documentElement.classList.remove('js');
   errorDiv.style =
     'background: #fff3f3; color: #b71c1c; padding: 2em; margin: 2em auto; border-radius: 8px; max-width: 600px; text-align: center; font-size: 1.2em;';
   document.body.prepend(errorDiv);

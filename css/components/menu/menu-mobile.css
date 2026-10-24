@@ -34,9 +34,12 @@
     box-shadow: var(--menu-shadow);
     transform: translateY(-105%);
     opacity: 0;
+    /* Hidden from Tab and screen readers too once it has slid away. */
+    visibility: hidden;
     transition:
       transform var(--menu-transition-duration) var(--menu-transition-easing),
-      opacity var(--menu-transition-duration) var(--menu-transition-easing);
+      opacity var(--menu-transition-duration) var(--menu-transition-easing),
+      visibility 0s linear var(--menu-transition-duration);
     pointer-events: none;
     padding: var(--menu-padding);
     overflow: hidden;
@@ -50,6 +53,11 @@
   nav#main-nav.open {
     transform: translateY(0);
     opacity: 1;
+    visibility: visible;
+    transition:
+      transform var(--menu-transition-duration) var(--menu-transition-easing),
+      opacity var(--menu-transition-duration) var(--menu-transition-easing),
+      visibility 0s;
     pointer-events: auto;
   }
 

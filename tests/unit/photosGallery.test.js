@@ -294,6 +294,38 @@ describe('photos gallery race filter', () => {
     expect(win.document.getElementById('lightbox-image').src).toMatch(/menA-late\.jpg$/);
   });
 
+  test('each photo is a button named by its race and moment', async () => {
+    const win = boot();
+    await settle();
+
+    chip(win, '11:00').click();
+    const item = win.document.querySelector('#photo-grid .photo-item');
+    expect(item.tagName).toBe('BUTTON');
+    expect(item.querySelector('img').alt).toBe(
+      'Men B and Masters 35+ photo, 11:30 am, 30 minutes in'
+    );
+  });
+
+  test('the lightbox takes focus as a dialog and hands it back on Escape', async () => {
+    const win = boot();
+    await settle();
+
+    const lightbox = win.document.getElementById('lightbox');
+    const item = win.document.querySelector('#photo-grid .photo-item');
+    win.document.body.style.overflow = 'clip';
+    item.focus();
+    item.click();
+    expect(lightbox.getAttribute('role')).toBe('dialog');
+    expect(lightbox.getAttribute('aria-modal')).toBe('true');
+    expect(win.document.activeElement).toBe(lightbox.querySelector('.lightbox-close'));
+
+    win.document.getElementById('lightbox-next').click();
+    win.document.dispatchEvent(new win.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(lightbox.style.display).toBe('none');
+    expect(win.document.activeElement).toBe(item);
+    expect(win.document.body.style.overflow).toBe('clip');
+  });
+
   test('a sideways swipe moves the lightbox to the next photo and back', async () => {
     const win = boot();
     await settle();

@@ -47,12 +47,18 @@ class MobileMenu {
    * Initialize the mobile menu
    */
   init() {
-    // Toggle menu on click
-    this.toggle.addEventListener('click', this.handleToggleClick.bind(this));
-
     // Store bound handlers for removal in destroy
+    this._boundToggleClickHandler = this.handleToggleClick.bind(this);
     this._boundDocumentClickHandler = this.handleDocumentClick.bind(this);
     this._boundTransitionEndHandler = this.handleTransitionEnd.bind(this);
+    this._boundKeydownHandler = this.handleKeydown.bind(this);
+    this._boundLinkClickHandler = this.handleLinkClick.bind(this);
+
+    // Toggle menu on click
+    this.toggle.addEventListener('click', this._boundToggleClickHandler);
+
+    // Escape closes the open menu
+    document.addEventListener('keydown', this._boundKeydownHandler);
 
     // Close menu on outside click
     document.addEventListener('click', this._boundDocumentClickHandler);
@@ -74,8 +80,19 @@ class MobileMenu {
     const menuLinks = this.menu.querySelectorAll('a[href^="#"]');
 
     menuLinks.forEach(link => {
-      link.addEventListener('click', this.handleLinkClick.bind(this));
+      link.addEventListener('click', this._boundLinkClickHandler);
     });
+  }
+
+  /**
+   * Close the open menu on Escape and hand focus back to the toggle
+   * @param {KeyboardEvent} event - The keydown event
+   */
+  handleKeydown(event) {
+    if (event.key !== 'Escape' || !this.state.isOpen) return;
+    this.state.isAnimating = false;
+    this.closeMenu();
+    this.toggle.focus();
   }
 
   /**
@@ -285,8 +302,16 @@ class MobileMenu {
   destroy() {
     // Clean up event listeners
     if (this.toggle) {
-      this.toggle.removeEventListener('click', this.handleToggleClick);
+      this.toggle.removeEventListener('click', this._boundToggleClickHandler);
     }
+
+    if (this.menu) {
+      this.menu.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.removeEventListener('click', this._boundLinkClickHandler);
+      });
+    }
+
+    document.removeEventListener('keydown', this._boundKeydownHandler);
 
     if (this._boundDocumentClickHandler) {
       document.removeEventListener('click', this._boundDocumentClickHandler);

@@ -59,9 +59,9 @@ describe('Mobile Menu Functionality', () => {
     // Create a basic HTML structure for the mobile menu
     document.body.innerHTML = `
       <header>
-        <a href="#main-nav" id="menu-toggle" aria-label="Open Menu">
+        <button type="button" id="menu-toggle" aria-label="Menu">
           <span class="hamburger"></span>
-        </a>
+        </button>
         <nav id="main-nav">
           <a href="#home">Home</a>
           <a href="#schedule">Schedule</a>
@@ -94,6 +94,7 @@ describe('Mobile Menu Functionality', () => {
   });
 
   afterEach(() => {
+    mobileMenu.destroy();
     jest.clearAllMocks();
     document.body.innerHTML = '';
     mockDocument = null;
@@ -231,5 +232,36 @@ describe('Mobile Menu Functionality', () => {
     expect(mobileMenu.state.isOpen).toBe(false);
     expect(mockMainNav.classList.contains('open')).toBe(false);
     expect(eventBus.emit).toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
+  });
+
+  test('Escape closes the open menu and returns focus to the toggle', () => {
+    mobileMenu._forceState({ isAnimating: false });
+    mobileMenu.openMenu();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(mobileMenu.state.isOpen).toBe(false);
+    expect(mockMenuToggle.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(mockMenuToggle);
+  });
+
+  test('Escape does nothing while the menu is closed', () => {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+    expect(eventBus.emit).not.toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
+  });
+
+  test('destroy removes the toggle and keyboard listeners', () => {
+    jest.useFakeTimers();
+    mobileMenu.destroy();
+
+    mockMenuToggle.click();
+    jest.advanceTimersByTime(50);
+    expect(mobileMenu.state.isOpen).toBe(false);
+
+    mobileMenu._forceState({ isOpen: true, isAnimating: false });
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(mobileMenu.state.isOpen).toBe(true);
+    jest.useRealTimers();
   });
 });

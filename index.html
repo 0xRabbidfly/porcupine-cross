@@ -3,12 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Sections wait face down for the deal only while scripts run: if the
+      // app has not started within 4 s, they are shown as they are.
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.app) document.documentElement.classList.remove('js');
+      }, 4000);
+    </script>
 
     <!-- PRIMARY SEO META TAGS -->
     <title>Prologue Cross Cyclocross Race 2026 | Elgin Park, Uxbridge, Ontario</title>
     <meta
       name="description"
-      content="Race. Ride. Discover CX. Prologue Cross 2026 lands at Elgin Park in Uxbridge, Ontario on Sunday, October 18, 2026. O-Cup racing, Try-a-CX beginner sessions, a women-only guided pre-ride and a free kids course."
+      content="Prologue Cross 2026 raced at Elgin Park in Uxbridge, Ontario on Sunday, October 18, 2026. Full results, event photos and lap-by-lap replays of every race."
     />
     <meta
       name="keywords"
@@ -31,7 +39,7 @@
     />
     <meta
       property="og:description"
-      content="Race. Ride. Discover CX. Prologue Cross 2026 lands at Elgin Park in Uxbridge on Sunday, October 18, 2026. O-Cup racing, Try-a-CX, a women-only guided pre-ride and a free kids course."
+      content="Prologue Cross 2026 raced at Elgin Park in Uxbridge on Sunday, October 18, 2026. Full results, event photos and lap-by-lap replays of every race."
     />
     <meta property="og:url" content="https://www.prologuecross.ca/" />
     <meta property="og:site_name" content="Prologue Cross" />
@@ -49,7 +57,7 @@
     />
     <meta
       name="twitter:description"
-      content="Race. Ride. Discover CX. Prologue Cross 2026 lands at Elgin Park in Uxbridge on Sunday, October 18, 2026."
+      content="Prologue Cross 2026 at Elgin Park, Uxbridge: results, photos and race replays."
     />
     <meta
       name="twitter:image"
@@ -92,9 +100,6 @@
       });
     </script>
 
-    <!-- GOOGLE SEARCH CONSOLE VERIFICATION -->
-    <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
-
     <!-- EXISTING STYLESHEETS -->
     <link rel="stylesheet" href="style.css?v=20261024-19" />
     <link rel="stylesheet" href="css/components/section-home.css?v=20261024-19" />
@@ -111,6 +116,9 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <!-- PROLOGUE DECK TYPE
          Bodoni Moda  display / card indices (a card index is a didone)
@@ -130,15 +138,15 @@
       <div class="logo-container">
         <img src="images/spade-logo.webp" alt="Spade Logo" class="surface-logo" loading="lazy" />
       </div>
-      <a
-        href="#main-nav"
+      <button
+        type="button"
         id="menu-toggle"
-        aria-label="Open Menu"
+        aria-label="Menu"
         aria-expanded="false"
         aria-controls="main-nav"
       >
         <span class="hamburger"></span>
-      </a>
+      </button>
       <nav id="main-nav" role="navigation" aria-label="Main navigation">
         <a href="#home" data-rank="A" data-suit="&#9824;"
           ><i class="fas fa-home menu-icon"></i>Home</a
@@ -1053,7 +1061,7 @@
             "@type": "SportsEvent",
             "@id": "https://www.prologuecross.ca/#event",
             "name": "Prologue Cross Cyclocross Race 2026",
-            "description": "Race. Ride. Discover CX. Prologue Cross 2026 lands at Elgin Park in Uxbridge, Ontario on Sunday, October 18, 2026. O-Cup racing, Try-a-CX beginner sessions, a women-only guided pre-ride and a free kids course.",
+            "description": "Prologue Cross 2026 raced at Elgin Park in Uxbridge, Ontario on Sunday, October 18, 2026. Full results, event photos and lap-by-lap replays of every race.",
             "image": "https://www.prologuecross.ca/images/prologue-card-red.png",
             "startDate": "2026-10-18T09:00:00-04:00",
             "endDate": "2026-10-18T16:00:00-04:00",
@@ -1095,15 +1103,6 @@
                 "name": "Uxbridge Cycling Club"
               }
             ],
-            "offers": {
-              "@type": "Offer",
-              "availability": "https://schema.org/InStock",
-              "price": "0",
-              "priceCurrency": "CAD",
-              "description": "Registration now open for Prologue Cross 2026",
-              "validFrom": "2026-01-01T00:00:00-04:00",
-              "url": "https://upliftercycling.com/#!/events/2026-cx-ocup-4-prologue-cross"
-            },
             "sport": "Cyclocross",
             "audience": {
               "@type": "Audience",
@@ -1116,7 +1115,6 @@
             "name": "Prologue Cross",
             "description": "Professional cyclocross racing events in Uxbridge, Ontario",
             "url": "https://www.prologuecross.ca",
-            "telephone": "+1-905-555-0123",
             "email": "franny@jewett.ca",
             "address": {
               "@type": "PostalAddress",

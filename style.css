@@ -119,8 +119,7 @@ section,
 section {
   padding: 70px 4%;
   border-bottom: none;
-  opacity: 0;
-  transform: translateY(50px) rotate(-1deg); /* Start slightly more off-screen and rotated for a 'splatter' feel */
+  /* Face down until dealt: see .js section:not(.visible) below. */
   transition:
     opacity 0.6s ease-out,
     transform 0.7s ease-out;
@@ -889,7 +888,7 @@ footer {
 }
 
 /* Add a new rule for initial state of section before it becomes visible to have the rotation */
-section:not(.visible) {
+.js section:not(.visible) {
   transform: translateY(50px) rotate(-1deg);
   opacity: 0;
 }
