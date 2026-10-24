@@ -59,6 +59,15 @@ export default [
     },
   },
   {
+    // Node build and deploy scripts
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+      },
+    },
+  },
+  {
     // Test-specific configuration
     files: ['tests/**/*.js'],
     plugins: {

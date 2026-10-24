@@ -53,10 +53,24 @@ Developer → Git Push → GitHub Actions → Tests → Deploy → Production
 
 **Pipeline Steps:**
 
-1. **Test Suite** - Run all 101 tests across 11 suites
-2. **Code Quality** - ESLint and Prettier checks
-3. **Build Verification** - Ensure clean build
-4. **FTP Deployment** - Upload to production server
+1. **Lint** - `npm run lint` (ESLint over the whole repo)
+2. **Test Suite** - the full Jest suite, on Node 22 and 24
+3. **Build** - copies the site into `dist/` with `.htaccess`, `robots.txt` and
+   `sitemap.xml`, plus only the public documents (the technical guide and the
+   GPX). Internal notes such as `SEO-SETUP.md` stay out. Every `?v=` in the
+   pages is stamped with the date and commit, so you no longer bump it by hand.
+4. **FTP Deployment** - FTPES with the host's certificate verified
+
+### Server rules (`.htaccess`)
+
+The root `.htaccess` is deployed with the site. It turns off folder listings,
+serves `404.html`, redirects the bare domain and `http://` to
+`https://www.prologuecross.ca`, compresses the JSON data, sends the security
+headers (the Content-Security-Policy is report-only for now) and has the
+browser check HTML, CSS, JS and JSON with the server on every visit.
+
+A broken `.htaccess` takes the whole site down. Test changes in a throwaway
+folder on the server before deploying them.
 
 ### Pre-commit Quality Gates
 
@@ -172,7 +186,7 @@ npm run quality
 **📈 Deployment Metrics:**
 
 - **Build Time**: < 30 seconds for dev builds
-- **Test Execution**: 101 tests in ~10 seconds
+- **Test Execution**: the full Jest suite in under a minute
 - **Deployment Speed**: FTP upload based on changed files
 - **Success Rate**: 100% for quality-passing commits
 

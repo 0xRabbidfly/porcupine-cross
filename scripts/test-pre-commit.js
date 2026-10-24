@@ -60,6 +60,5 @@ try {
     console.error('❌ Failed to revert test change:', revertError.message);
   }
 
-  // eslint-disable-next-line no-undef
   process.exit(1);
 }

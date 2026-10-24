@@ -1,4 +1,3 @@
-/* global URL, process */
 /**
  * Deployment automation script
  * This script handles deployment to different environments
@@ -7,9 +6,10 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
 
 // ESM-compatible __dirname
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Helper function for cross-platform file copying
 function copyFiles() {
@@ -159,7 +159,6 @@ async function testFtpConnection(config) {
       deleteRemote: false,
       forcePasv: true,
       secure: config.secure || false,
-      secureOptions: { rejectUnauthorized: false },
     };
 
     console.info('Connecting to FTP server...');
@@ -305,7 +304,6 @@ console.info(`Deploying to ${env} environment (${config.description})...`);
             deleteRemote: false,
             forcePasv: true,
             secure: config.secure || false,
-            secureOptions: { rejectUnauthorized: false },
           };
 
           console.info('Starting FTP deployment...');

@@ -1,0 +1,42 @@
+# Server rules for prologuecross.ca. The host runs LiteSpeed, which reads this
+# like Apache. Every rule here was tried in a test folder on the live server
+# first: a mistake in this file takes the whole site down.
+
+# No folder listings, and the site's own page for a missing address.
+Options -Indexes
+ErrorDocument 404 /404.html
+
+# One address for the site: https://www.prologuecross.ca. The path and query
+# string carry over, so links already sent to riders keep working.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^prologuecross\.ca$ [NC]
+  RewriteRule ^ https://www.prologuecross.ca%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Internal notes that earlier deploys left on the server.
+RedirectMatch 404 ^/[^/]+\.md$
+RedirectMatch 404 ^/docs/[^/]+\.md$
+
+# The host only compresses text/* types, and the photo index is 400 KB of
+# JSON: as text/json it is sent compressed, and fetch() reads it the same.
+AddType text/json .json
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  # Report-only: the browser console lists anything this would block, and
+  # nothing is blocked yet. Enforce it once the console stays quiet.
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; media-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+
+  # Pages, styles, scripts and data are checked with the server on every
+  # visit (an unchanged file costs a 304), so an edit reaches returning
+  # visitors straight away. Images keep the host's long cache.
+  <FilesMatch "\.(html|css|js|json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
