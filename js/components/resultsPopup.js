@@ -3,9 +3,9 @@
  *
  * After race day, a visitor landing on the home page is dealt a card: the
  * results are in, with the way to the race replays, the results and their
- * photos. It shows once per browser, a moment after the page settles, and
- * not to someone who arrived on a link into the page (a #section or a query).
- * Before `data-show-after` it stays away, so a new event's date resets it.
+ * photos. It shows once per browser, a moment after the page settles, however
+ * the visitor arrived. Before `data-show-after` it stays away, and a new
+ * event's date shows it again.
  */
 
 const SEEN_KEY = 'pc-results-popup-seen';
@@ -45,7 +45,6 @@ class ResultsPopup {
 
   shouldShow() {
     if (Number.isNaN(this.showAfter) || this.getNow() < this.showAfter) return false;
-    if (window.location.hash || window.location.search) return false;
     try {
       // The key holds the date it was shown for: a new event's date shows it again.
       return window.localStorage.getItem(SEEN_KEY) !== this.element.dataset.showAfter;

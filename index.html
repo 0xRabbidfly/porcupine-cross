@@ -96,17 +96,17 @@
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 
     <!-- EXISTING STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/results-popup.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-9" />
+    <link rel="stylesheet" href="style.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/results-popup.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-10" />
     <!-- Add FontAwesome for icons -->
     <link
       rel="stylesheet"
@@ -122,7 +122,7 @@
     />
 
     <!-- PROLOGUE DECK — loaded last, owns the skin -->
-    <link rel="stylesheet" href="css/deck.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-10" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -233,38 +233,54 @@
             </div>
           </div>
           <div class="hero-countdown-side">
-            <div class="countdown-container">
-              <p class="countdown-date">Sunday, October 18, 2026</p>
-              <h3 class="countdown-title">Race Day Countdown</h3>
-              <div class="countdown-timer">
-                <div class="countdown-item">
-                  <span id="countdown-days">00</span>
-                  <span class="countdown-label">Days</span>
+            <div class="countdown-container" data-flip-at="2026-10-18T16:00:00-04:00">
+              <div data-phase="pre" hidden>
+                <p class="countdown-date">Sunday, October 18, 2026</p>
+                <h3 class="countdown-title">Race Day Countdown</h3>
+                <div class="countdown-timer">
+                  <div class="countdown-item">
+                    <span id="countdown-days">00</span>
+                    <span class="countdown-label">Days</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-seconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                  </div>
                 </div>
-                <div class="countdown-item">
-                  <span id="countdown-hours">00</span>
-                  <span class="countdown-label">Hours</span>
-                </div>
-                <div class="countdown-item">
-                  <span id="countdown-minutes">00</span>
-                  <span class="countdown-label">Minutes</span>
-                </div>
-                <div class="countdown-item">
-                  <span id="countdown-seconds">00</span>
-                  <span class="countdown-label">Seconds</span>
+                <div class="hero-register-cta">
+                  <a href="#register" class="hero-register-button">
+                    <i class="fas fa-user-plus"></i>
+                    <div class="register-text">Register Now</div>
+                  </a>
+                  <p
+                    class="hero-register-note"
+                    style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3)"
+                  >
+                    Powered by Uplifter
+                  </p>
                 </div>
               </div>
-              <div class="hero-register-cta">
-                <a href="#register" class="hero-register-button">
-                  <i class="fas fa-user-plus"></i>
-                  <div class="register-text">Register Now</div>
-                </a>
-                <p
-                  class="hero-register-note"
-                  style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3)"
-                >
-                  Powered by Uplifter
+              <div data-phase="post" class="countdown-results">
+                <p class="countdown-date">Sunday, October 18, 2026</p>
+                <h3 class="countdown-title">The results are in</h3>
+                <p class="countdown-results-text">
+                  Every race, replayed lap by lap on the course map.
                 </p>
+                <div class="hero-register-cta countdown-results-actions">
+                  <a href="photos.html?replay=Cat%20A" class="hero-register-button">
+                    <i class="fas fa-play" aria-hidden="true"></i>
+                    <div class="register-text">Watch the races</div>
+                  </a>
+                  <a href="#results" class="countdown-results-link">See the results</a>
+                </div>
               </div>
             </div>
           </div>
@@ -305,38 +321,54 @@
             </div>
           </div>
           <div class="hero-mobile-countdown">
-            <div class="countdown-container">
-              <p class="countdown-date">Sunday, October 18, 2026</p>
-              <h3 class="countdown-title">Race Day Countdown</h3>
-              <div class="countdown-timer">
-                <div class="countdown-item">
-                  <span id="countdown-days">00</span>
-                  <span class="countdown-label">Days</span>
+            <div class="countdown-container" data-flip-at="2026-10-18T16:00:00-04:00">
+              <div data-phase="pre" hidden>
+                <p class="countdown-date">Sunday, October 18, 2026</p>
+                <h3 class="countdown-title">Race Day Countdown</h3>
+                <div class="countdown-timer">
+                  <div class="countdown-item">
+                    <span id="countdown-days">00</span>
+                    <span class="countdown-label">Days</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                  </div>
+                  <div class="countdown-item">
+                    <span id="countdown-seconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                  </div>
                 </div>
-                <div class="countdown-item">
-                  <span id="countdown-hours">00</span>
-                  <span class="countdown-label">Hours</span>
-                </div>
-                <div class="countdown-item">
-                  <span id="countdown-minutes">00</span>
-                  <span class="countdown-label">Minutes</span>
-                </div>
-                <div class="countdown-item">
-                  <span id="countdown-seconds">00</span>
-                  <span class="countdown-label">Seconds</span>
+                <div class="hero-register-cta">
+                  <a href="#register" class="hero-register-button">
+                    <i class="fas fa-user-plus"></i>
+                    <div class="register-text">Register Now</div>
+                  </a>
+                  <p
+                    class="hero-register-note"
+                    style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3)"
+                  >
+                    Powered by Uplifter
+                  </p>
                 </div>
               </div>
-              <div class="hero-register-cta">
-                <a href="#register" class="hero-register-button">
-                  <i class="fas fa-user-plus"></i>
-                  <div class="register-text">Register Now</div>
-                </a>
-                <p
-                  class="hero-register-note"
-                  style="color: white !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3)"
-                >
-                  Powered by Uplifter
+              <div data-phase="post" class="countdown-results">
+                <p class="countdown-date">Sunday, October 18, 2026</p>
+                <h3 class="countdown-title">The results are in</h3>
+                <p class="countdown-results-text">
+                  Every race, replayed lap by lap on the course map.
                 </p>
+                <div class="hero-register-cta countdown-results-actions">
+                  <a href="photos.html?replay=Cat%20A" class="hero-register-button">
+                    <i class="fas fa-play" aria-hidden="true"></i>
+                    <div class="register-text">Watch the races</div>
+                  </a>
+                  <a href="#results" class="countdown-results-link">See the results</a>
+                </div>
               </div>
             </div>
           </div>
@@ -1007,7 +1039,7 @@
     <script type="module" src="js/animationBridge.js"></script>
 
     <!-- Load our modular JavaScript -->
-    <script type="module" src="js/main.js?v=20261024-9"></script>
+    <script type="module" src="js/main.js?v=20261024-10"></script>
 
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>

@@ -427,6 +427,11 @@
   display: none;
 }
 
+/* The podium has the screen to itself. */
+.replay-frame:has(.replay-podium:not([hidden])) .replay-info {
+  display: none;
+}
+
 .replay-info-head {
   display: flex;
   align-items: center;
@@ -453,6 +458,15 @@
   font-size: 0.88rem;
   font-weight: 600;
   color: rgba(17, 24, 35, 0.7);
+}
+
+.replay-info-team {
+  font-size: 0.82rem;
+  color: rgba(17, 24, 35, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 18ch;
 }
 
 .replay-info-close {
@@ -557,6 +571,16 @@
   font-family: var(--pc-data);
   font-size: 0.9rem;
   line-height: 1.25;
+}
+
+.replay-zoom-team {
+  margin-top: 2px !important;
+  font-size: 0.8rem !important;
+  color: rgba(17, 24, 35, 0.65);
+}
+
+.replay-zoom-team:empty {
+  display: none;
 }
 
 .replay-zoom-bib {
@@ -732,6 +756,16 @@
 .podium-time {
   color: var(--pc-gilt);
   font-weight: 700;
+}
+
+.podium-team {
+  margin: -2px 0 6px;
+  max-width: 100%;
+  font-family: var(--pc-data);
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: center;
+  color: rgba(247, 242, 231, 0.75);
 }
 
 .podium-block {

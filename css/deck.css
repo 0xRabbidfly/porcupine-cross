@@ -990,6 +990,39 @@ section p {
   margin: 0 0 2px !important;
 }
 
+/* After race day the countdown card points at the results and replays. */
+.countdown-results-text {
+  margin: 0 0 14px;
+  font-family: var(--pc-body);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: rgba(247, 242, 231, 0.85) !important;
+  text-align: center;
+}
+
+.countdown-results-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.countdown-results-link {
+  font-family: var(--pc-data);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pc-gilt) !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.countdown-results-link:hover,
+.countdown-results-link:focus-visible {
+  color: var(--pc-stock) !important;
+}
+
 .countdown-title {
   font-family: var(--pc-data) !important;
   font-size: 0.66rem !important;
@@ -2316,6 +2349,33 @@ footer {
   color: var(--pc-blood);
 }
 
+.rider-team {
+  margin: 2px 0 0;
+  font-family: var(--pc-data);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pc-ink-soft);
+}
+
+.rider-team:empty {
+  display: none;
+}
+
+.standings-table .standings-team {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.88rem;
+  color: var(--pc-ink-soft);
+}
+
+@media (max-width: 760px) {
+  .standings-table .standings-team {
+    display: none;
+  }
+}
+
 .rider-detail:empty {
   display: none;
 }
@@ -2615,7 +2675,7 @@ footer {
 
 .standings-table {
   width: 100%;
-  max-width: 680px;
+  max-width: 860px;
   border-collapse: collapse;
   font-family: var(--pc-data);
   font-variant-numeric: tabular-nums;

@@ -66,6 +66,14 @@ export function pointAt(route, share) {
   return [x0 + (x1 - x0) * k, y0 + (y1 - y0) * k];
 }
 
+/** Text made safe to put in HTML. */
+export function escapeHtml(text) {
+  return String(text).replace(
+    /[&<>"']/g,
+    ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]
+  );
+}
+
 /** 1 -> "1st", 22 -> "22nd", 13 -> "13th". */
 export function ordinal(n) {
   const tens = n % 100;
@@ -359,6 +367,7 @@ class RaceReplay {
             <div class="replay-zoom" hidden>
               <img alt="" />
               <p><b class="replay-zoom-bib"></b> <span class="replay-zoom-text"></span></p>
+              <p class="replay-zoom-team"></p>
             </div>
             <div class="replay-info" role="region" aria-label="The followed rider's laps" hidden></div>
           </div>
@@ -405,7 +414,9 @@ class RaceReplay {
       li.className = 'replay-row';
       li.dataset.bib = rider.bib;
       li.innerHTML = `
-        <button type="button" class="replay-follow" aria-pressed="false" aria-label="Follow bib ${rider.bib}">
+        <button type="button" class="replay-follow" aria-pressed="false" aria-label="Follow bib ${rider.bib}"${
+          rider.team ? ` title="${escapeHtml(rider.team)}"` : ''
+        }>
           <span class="replay-pos"></span>
           ${
             rider.photo
@@ -627,6 +638,7 @@ class RaceReplay {
         ${face}
         <b class="replay-info-bib">${rider.bib}</b>
         <span class="replay-info-status">${status}</span>
+        ${rider.team ? `<span class="replay-info-team">${escapeHtml(rider.team)}</span>` : ''}
         <button type="button" class="replay-info-close" aria-label="Stop following bib ${rider.bib}">&times;</button>
       </div>
       <table class="replay-info-table">
@@ -657,6 +669,7 @@ class RaceReplay {
     if (row.finished) text = `${ordinal(row.rider.place)}, finished in ${clock(row.at)}`;
     if (row.out) text = `Did not finish, out after lap ${row.rider.laps.length}`;
     zoom.querySelector('.replay-zoom-text').textContent = text;
+    zoom.querySelector('.replay-zoom-team').textContent = row.rider.team || '';
     zoom.hidden = false;
     this.markers.forEach((marker, key) => marker.classList.toggle('is-zoomed', key === bib));
     this.rows.forEach((li, key) => li.classList.toggle('is-zoomed', key === bib));
@@ -710,6 +723,7 @@ class RaceReplay {
             <b class="podium-bib">${rider.bib}</b>
             <span class="podium-time">${rider.place === 1 ? clock(time) : `+${clock(time - winner)}`}</span>
           </figcaption>
+          ${rider.team ? `<p class="podium-team">${escapeHtml(rider.team)}</p>` : ''}
           <div class="podium-block"><span>${rider.place}</span></div>
         </figure>`;
     };

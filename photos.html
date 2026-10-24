@@ -58,10 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-9" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-9" />
+    <link rel="stylesheet" href="style.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-10" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -468,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-9" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-10" />
   </head>
   <body>
     <header>
@@ -749,6 +749,7 @@
             <div class="rider-body">
               <p class="rider-result"></p>
               <p class="rider-detail"></p>
+              <p class="rider-team"></p>
               <div class="rider-links"></div>
             </div>
             <div class="rider-actions">
@@ -852,7 +853,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-9"></script>
+    <script type="module" src="js/main.js?v=20261024-10"></script>
 
     <!-- Photo Gallery Script -->
     <script>
@@ -1161,7 +1162,13 @@
                   );
                   return ahead.length + 1;
                 });
-                this.laps[rider.bib] = { race, laps: rider.laps, ranks: rider.ranks || [], places };
+                this.laps[rider.bib] = {
+                  race,
+                  team: rider.team || '',
+                  laps: rider.laps,
+                  ranks: rider.ranks || [],
+                  places,
+                };
               });
               if (fastest) this.fastest[race] = fastest;
             });
@@ -1238,6 +1245,7 @@
           panel.querySelector('.rider-bib').textContent = this.bib;
           panel.querySelector('.rider-result').textContent = headline || `Bib ${this.bib}`;
           panel.querySelector('.rider-detail').textContent = detail;
+          panel.querySelector('.rider-team').textContent = (this.laps[this.bib] || {}).team || '';
 
           const links = panel.querySelector('.rider-links');
           links.textContent = '';
@@ -1498,6 +1506,7 @@
               return `<tr${thumb ? ` class="is-linked" data-bib="${rider.bib}"` : ''}>
                   <td class="standings-place${podium}">${rider.place || rider.status}</td>
                   <td class="standings-bib">${rider.bib}</td>
+                  <td class="standings-team">${escapeText((this.laps[rider.bib] || {}).team || '')}</td>
                   <td class="standings-time">${rider.time || ''}</td>
                   <td class="standings-gap">${gapText(rider, winner)}</td>
                   <td class="standings-photos">${cell}</td>
@@ -1520,7 +1529,7 @@
               }
             </div>
             <table class="standings-table">
-              <thead><tr><th>Place</th><th>Bib</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
+              <thead><tr><th>Place</th><th>Bib</th><th class="standings-team">Team</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>`;
         }
@@ -2012,6 +2021,14 @@
           ((photo.sizes && photo.sizes[bib]) || 0) * (photo.bibs[bib] === 'number' ? 1 : 0.8);
         const read = photo => (photo.bibs[bib] === 'number' ? 0 : 1);
         return (a, b) => score(b) - score(a) || read(a) - read(b);
+      }
+
+      // Text made safe to put in HTML.
+      function escapeText(text) {
+        return String(text).replace(
+          /[&<>"']/g,
+          ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]
+        );
       }
 
       // 385 -> "6:25".

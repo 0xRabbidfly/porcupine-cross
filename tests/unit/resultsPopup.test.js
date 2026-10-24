@@ -61,10 +61,10 @@ describe('ResultsPopup', () => {
     expect(element().hidden).toBe(false);
   });
 
-  test('stays away from someone who arrived on a link into the page', () => {
-    window.history.replaceState(null, '', '/#schedule');
+  test('shows to someone who arrived on a link into the page too', () => {
+    window.history.replaceState(null, '', '/?utm_source=instagram#results');
     arm(AFTER);
-    expect(element().hidden).toBe(true);
+    expect(element().hidden).toBe(false);
   });
 
   test('closes on Escape, its x, "Maybe later", the backdrop, or a link', () => {
