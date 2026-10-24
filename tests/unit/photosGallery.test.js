@@ -294,6 +294,32 @@ describe('photos gallery race filter', () => {
     expect(win.document.getElementById('lightbox-image').src).toMatch(/menA-late\.jpg$/);
   });
 
+  test('a sideways swipe moves the lightbox to the next photo and back', async () => {
+    const win = boot();
+    await settle();
+
+    chip(win, '14:20').click();
+    win.document.querySelector('#photo-grid .photo-item').click();
+    const lightbox = win.document.getElementById('lightbox');
+    const image = win.document.getElementById('lightbox-image');
+    const first = image.src;
+    const swipe = (from, to) => {
+      const start = new win.Event('touchstart');
+      start.touches = [{ clientX: from }];
+      lightbox.dispatchEvent(start);
+      const end = new win.Event('touchend');
+      end.changedTouches = [{ clientX: to }];
+      lightbox.dispatchEvent(end);
+    };
+
+    swipe(300, 290);
+    expect(image.src).toBe(first);
+    swipe(300, 100);
+    expect(image.src).toMatch(/menA-late\.jpg$/);
+    swipe(100, 300);
+    expect(image.src).toBe(first);
+  });
+
   test('a year without a race schedule hides the chips and shows everything', async () => {
     const win = boot();
     await settle();

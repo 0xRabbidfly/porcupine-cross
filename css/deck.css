@@ -2471,26 +2471,6 @@ footer {
   }
 }
 
-.lightbox-when,
-.lightbox-credit {
-  margin: 2px 0 0;
-  font-family: var(--pc-body);
-  font-size: 0.85rem;
-  color: var(--pc-stock-shade);
-}
-
-.lightbox-credit {
-  font-family: var(--pc-display);
-  font-style: italic;
-  color: var(--pc-gilt);
-  margin-bottom: 8px;
-}
-
-.lightbox-when:empty,
-.lightbox-credit:empty {
-  display: none;
-}
-
 .back-to-home {
   text-align: center;
   margin-top: 2.5rem;
@@ -2523,20 +2503,154 @@ footer {
   z-index: 2;
 }
 
+/* The lightbox: the photo with its caption under it, never on it, so a phone
+   sees the whole frame. The pair sits in the middle; the close button keeps
+   the top. */
 .lightbox {
-  background: rgba(6, 10, 16, 0.94) !important;
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(6, 10, 16, 0.96);
 }
 
-.lightbox-info h3 {
-  font-family: var(--pc-data) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.03em;
-  color: var(--pc-stock) !important;
+.lightbox-content {
+  display: grid;
+  grid-template-areas: 'stage' 'info';
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  padding: 56px 16px max(16px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
-.lightbox-nav-btn,
 .lightbox-close {
-  color: var(--pc-gilt) !important;
+  position: absolute;
+  top: 6px;
+  right: 16px;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--pc-gilt);
+  font-size: 2.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#lightbox-image {
+  grid-area: stage;
+  align-self: center;
+  max-width: 100%;
+  /* The screen less the close button, the caption and the gaps. */
+  max-height: calc(100vh - 180px);
+  max-height: calc(100dvh - 180px);
+  object-fit: contain;
+  display: block;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.9);
+}
+
+/* The arrows ride the photo's row: past its edges on a wide screen, over
+   them on a phone. */
+.lightbox-nav {
+  grid-area: stage;
+  align-self: center;
+  justify-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.lightbox-nav-btn {
+  pointer-events: auto;
+  width: 44px;
+  height: 64px;
+  padding: 0;
+  border: 1px solid rgba(200, 162, 74, 0.45);
+  border-radius: 4px;
+  background: rgba(6, 10, 16, 0.55);
+  color: var(--pc-gilt);
+  font-size: 2.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox-nav-btn:hover,
+.lightbox-nav-btn:focus-visible,
+.lightbox-close:hover,
+.lightbox-close:focus-visible {
+  color: var(--pc-stock);
+}
+
+.lightbox-info {
+  grid-area: info;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 28px;
+  max-width: 100%;
+  padding-top: 14px;
+}
+
+.lightbox-caption {
+  min-width: 0;
+}
+
+.lightbox-caption h3 {
+  margin: 0;
+  font-family: var(--pc-data);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--pc-stock);
+}
+
+.lightbox-when,
+.lightbox-credit {
+  margin: 2px 0 0;
+  font-family: var(--pc-body);
+  font-size: 0.85rem;
+  color: var(--pc-stock-shade);
+}
+
+.lightbox-credit {
+  font-family: var(--pc-display);
+  font-style: italic;
+  color: var(--pc-gilt);
+}
+
+.lightbox-when:empty,
+.lightbox-credit:empty {
+  display: none;
+}
+
+.lightbox .download-btn {
+  padding: 11px 20px !important;
+  font-size: 0.9rem !important;
+}
+
+@media (max-width: 768px) {
+  /* Caption left, button right, on one line under the photo. */
+  .lightbox-info {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .lightbox-caption h3 {
+    font-size: 1rem;
+  }
+
+  .lightbox .download-btn {
+    flex: none;
+    padding: 10px 14px !important;
+    letter-spacing: 0.1em !important;
+  }
 }
 
 /* ===================================================================== */
