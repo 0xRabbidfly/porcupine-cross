@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-1" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-1" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-1" />
+    <link rel="stylesheet" href="style.css?v=20261024-2" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-2" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-2" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -467,7 +467,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-1" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-2" />
   </head>
   <body>
     <header>
@@ -1346,18 +1346,17 @@
             });
           });
 
-          // One category at a time, picked from tabs, so the board stays a
-          // table and not a scroll. A race change keeps the pick when the
-          // category is still on the board.
+          // One category at a time, picked from a dropdown on one line, so
+          // the board stays a table and not a scroll. A race change keeps the
+          // pick when the category is still on the board.
           const shown = groups.find(group => group.race === this.standingsRace) || groups[0];
           this.standingsRace = shown.race;
-          const tabs = groups
-            .map(
-              ({ race: category, riders }) =>
-                `<button type="button" class="standings-tab" data-race="${category}" aria-pressed="${category === shown.race}">
-                   ${category} <span>${riders.filter(rider => rider.place).length}</span>
-                 </button>`
-            )
+          const options = groups
+            .map(({ race: category, riders }) => {
+              const finished = riders.filter(rider => rider.place).length;
+              const selected = category === shown.race ? ' selected' : '';
+              return `<option value="${category}"${selected}>${category} (${finished})</option>`;
+            })
             .join('');
 
           const { riders } = shown;
@@ -1384,20 +1383,17 @@
             .join('');
 
           board.querySelector('.race-results-body').innerHTML = `
-            <div class="standings-tabs" role="group" aria-label="Category">${tabs}</div>
-            ${closestFinish(riders)}
+            <div class="standings-head">
+              <label class="standings-pick">
+                <span class="sr-only">Category</span>
+                <select class="standings-select">${options}</select>
+              </label>
+              ${closestFinish(riders)}
+            </div>
             <table class="standings-table">
               <thead><tr><th>Place</th><th>Bib</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>`;
-
-          // Redrawing resets a phone's sideways-scrolled tab row; bring the
-          // chosen tab back into view.
-          const strip = board.querySelector('.standings-tabs');
-          const chosen = strip.querySelector('[aria-pressed="true"]');
-          if (strip.scrollWidth > strip.clientWidth) {
-            strip.scrollLeft = chosen.offsetLeft - strip.offsetLeft - 10;
-          }
         }
 
         // From the results to a rider's photos, with their panel in view.
@@ -1459,14 +1455,14 @@
           const board = document.querySelector('.race-results-body');
           if (board) {
             board.addEventListener('click', event => {
-              const tab = event.target.closest('.standings-tab');
-              if (tab) {
-                this.standingsRace = tab.dataset.race;
-                this.updateResults();
-                return;
-              }
               const row = event.target.closest('[data-bib]');
               if (row) this.pickRider(row.dataset.bib);
+            });
+            board.addEventListener('change', event => {
+              if (!event.target.matches('.standings-select')) return;
+              this.standingsRace = event.target.value;
+              this.updateResults();
+              board.querySelector('.standings-select').focus();
             });
           }
         }

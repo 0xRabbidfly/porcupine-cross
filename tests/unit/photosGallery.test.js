@@ -995,10 +995,13 @@ describe('photos gallery results board', () => {
   const settle = () => new Promise(resolve => setTimeout(resolve, 50));
   const board = win => win.document.querySelector('.race-results');
   const squash = node => node.textContent.replace(/\s+/g, ' ').trim();
-  const tabs = win => Array.from(board(win).querySelectorAll('.standings-tab')).map(squash);
-  const shown = win => squash(board(win).querySelector('.standings-tab[aria-pressed="true"]'));
-  const pickTab = (win, race) =>
-    board(win).querySelector(`.standings-tab[data-race="${race}"]`).click();
+  const select = win => board(win).querySelector('.standings-select');
+  const tabs = win => Array.from(select(win).options).map(squash);
+  const shown = win => squash(select(win).selectedOptions[0]);
+  const pickTab = (win, race) => {
+    select(win).value = race;
+    select(win).dispatchEvent(new win.Event('change', { bubbles: true }));
+  };
   const rows = win =>
     Array.from(board(win).querySelectorAll('.standings-table tbody tr')).map(squash);
   const pickRace = (win, start) =>
@@ -1006,14 +1009,14 @@ describe('photos gallery results board', () => {
       .querySelector(`.gallery-race-btn[data-start="2026-10-18T${start}:00-04:00"]`)
       .click();
 
-  test('tabs every category in start order under All, folded until opened', async () => {
+  test('offers every category in start order under All, folded until opened', async () => {
     const win = boot();
     await settle();
     expect(board(win).hidden).toBe(false);
     expect(board(win).open).toBe(false);
     expect(squash(board(win).querySelector('.race-results-title'))).toBe('Results');
-    expect(tabs(win)).toEqual(['Cat B 1', 'Master Men 35+ 3', 'Cat A 2']);
-    expect(shown(win)).toBe('Cat B 1');
+    expect(tabs(win)).toEqual(['Cat B (1)', 'Master Men 35+ (3)', 'Cat A (2)']);
+    expect(shown(win)).toBe('Cat B (1)');
   });
 
   test('shows one category at a time, with gaps, laps down and no DNS', async () => {
@@ -1023,7 +1026,7 @@ describe('photos gallery results board', () => {
     expect(rows(win)).toEqual(['1 6 41:00 None', 'DNF 5 1']);
 
     pickTab(win, 'Master Men 35+');
-    expect(shown(win)).toBe('Master Men 35+ 3');
+    expect(shown(win)).toBe('Master Men 35+ (3)');
     expect(rows(win)).toEqual([
       '1 204 42:00 2',
       '2 7 43:05 +1:05 None',
@@ -1039,12 +1042,12 @@ describe('photos gallery results board', () => {
     expect(squash(board(win).querySelector('.race-results-title'))).toBe(
       'Results: Men B and Masters 35+'
     );
-    expect(tabs(win)).toEqual(['Cat B 1', 'Master Men 35+ 3']);
-    expect(shown(win)).toBe('Master Men 35+ 3');
+    expect(tabs(win)).toEqual(['Cat B (1)', 'Master Men 35+ (3)']);
+    expect(shown(win)).toBe('Master Men 35+ (3)');
 
     pickRace(win, '14:20');
-    expect(tabs(win)).toEqual(['Cat A 2']);
-    expect(shown(win)).toBe('Cat A 2');
+    expect(tabs(win)).toEqual(['Cat A (2)']);
+    expect(shown(win)).toBe('Cat A (2)');
   });
 
   test('names the closest finish on the same lap, within ten seconds', async () => {
