@@ -730,7 +730,7 @@
                race's, or every race's under All. Bib numbers only, never names. -->
           <details class="race-results" data-replays="Cat A" hidden>
             <summary>
-              <span class="race-results-title">Results</span>
+              <span class="race-results-title">Results leaderboard and watch the race!</span>
               <span class="race-results-hint">Pick a rider to see their photos</span>
             </summary>
             <div class="race-results-body"></div>
@@ -1337,11 +1337,6 @@
           const groups = this.resultGroups();
           board.hidden = Boolean(this.bib) || groups.length === 0;
           if (board.hidden) return;
-
-          const race = this.raceButtons().find(button => button.dataset.start === this.raceStart);
-          board.querySelector('.race-results-title').textContent = race
-            ? `Results: ${raceName(race)}`
-            : 'Results';
 
           const tagged = new Map();
           this.allPhotos.forEach(photo => {

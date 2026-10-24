@@ -1014,7 +1014,9 @@ describe('photos gallery results board', () => {
     await settle();
     expect(board(win).hidden).toBe(false);
     expect(board(win).open).toBe(false);
-    expect(squash(board(win).querySelector('.race-results-title'))).toBe('Results');
+    expect(squash(board(win).querySelector('.race-results-title'))).toBe(
+      'Results leaderboard and watch the race!'
+    );
     expect(tabs(win)).toEqual(['Cat B (1)', 'Master Men 35+ (3)', 'Cat A (2)']);
     expect(shown(win)).toBe('Cat B (1)');
   });
@@ -1039,9 +1041,6 @@ describe('photos gallery results board', () => {
     await settle();
     pickTab(win, 'Master Men 35+');
     pickRace(win, '11:00');
-    expect(squash(board(win).querySelector('.race-results-title'))).toBe(
-      'Results: Men B and Masters 35+'
-    );
     expect(tabs(win)).toEqual(['Cat B (1)', 'Master Men 35+ (3)']);
     expect(shown(win)).toBe('Master Men 35+ (3)');
 
