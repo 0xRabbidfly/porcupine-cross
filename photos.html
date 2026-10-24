@@ -58,10 +58,11 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-5" />
+    <link rel="stylesheet" href="style.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-6" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -468,7 +469,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-5" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-6" />
   </head>
   <body>
     <header>
@@ -585,6 +586,14 @@
                 aria-pressed="false"
               >
                 <b>9:00</b> Men C
+                <span
+                  class="race-watch"
+                  data-replay="Cat C"
+                  title="Watch the Men Cat C race"
+                  aria-hidden="true"
+                >
+                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
+                </span>
               </button>
               <button
                 type="button"
@@ -605,6 +614,14 @@
                 aria-pressed="false"
               >
                 <b>11:00</b> Men B
+                <span
+                  class="race-watch"
+                  data-replay="Cat B"
+                  title="Watch the Men Cat B race"
+                  aria-hidden="true"
+                >
+                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
+                </span>
               </button>
               <button
                 type="button"
@@ -625,6 +642,14 @@
                 aria-pressed="false"
               >
                 <b>1:15</b> Women
+                <span
+                  class="race-watch"
+                  data-replay="Cat A Women"
+                  title="Watch the Women Cat A race"
+                  aria-hidden="true"
+                >
+                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
+                </span>
               </button>
               <button
                 type="button"
@@ -635,8 +660,10 @@
                 aria-pressed="false"
               >
                 <b>2:20</b> Men A
-                <!-- Opens the Cat A replay (and selects the race). Hidden from
-                     assistive tech: the results bar has the same button. -->
+                <!-- Each Watch badge opens its race's replay (and selects the
+                     race); the replay's own picker reaches the other categories.
+                     Hidden from assistive tech: the results bar has the same
+                     button. -->
                 <span
                   class="race-watch"
                   data-replay="Cat A"
@@ -736,14 +763,41 @@
             </div>
           </div>
 
+          <!-- The replay teaser: Cat A riders looping the course map, and the way
+               into the replays. A link carrying data-replay: the photos page opens
+               the replay in place, elsewhere it goes there with ?replay=. -->
+          <a
+            class="replay-teaser"
+            href="photos.html?replay=Cat%20A"
+            data-replay="Cat A"
+            data-src="/photos/event-2026/replay/replay.json"
+          >
+            <div class="teaser-stage" aria-hidden="true"><span class="teaser-lap"></span></div>
+            <div class="teaser-copy">
+              <span class="teaser-new">New</span>
+              <h3 class="teaser-title">Watch every race, lap by lap</h3>
+              <p class="teaser-text">
+                Every rider rides the course map as their own race photo, at the pace of their real
+                lap times. Pick a race, follow a rider, and stay for the podium.
+              </p>
+              <span class="teaser-cta"
+                ><i class="fas fa-play" aria-hidden="true"></i> Watch the races</span
+              >
+            </div>
+          </a>
+
           <!-- The results, each rider linked to their photos: the selected
                race's, or every race's under All. Bib numbers only, never names. -->
-          <details class="race-results" data-replays="Cat A" hidden>
+          <details
+            class="race-results"
+            data-replays="Cat C,Master Men 55+,Cat B,Master Men 35+,Cat A Women,Cat B Women,Master Women 35+,Master Women 55+,Cat A,Single Speed"
+            hidden
+          >
             <summary>
               <span class="race-results-title">Results leaderboard and watch the race!</span>
               <span class="race-results-hint">Pick a rider to see their photos</span>
               <button type="button" class="race-results-watch" data-replay="Cat A">
-                <i class="fas fa-play" aria-hidden="true"></i> Watch the Cat A race
+                <i class="fas fa-play" aria-hidden="true"></i> Watch the race
               </button>
             </summary>
             <div class="race-results-body"></div>
@@ -817,7 +871,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-5"></script>
+    <script type="module" src="js/main.js?v=20261024-6"></script>
 
     <!-- Photo Gallery Script -->
     <script>
@@ -1376,6 +1430,10 @@
           const winner = riders[0];
           // Categories with a lap-by-lap replay (js/components/raceReplay.js).
           const replays = (board.dataset.replays || '').split(',').filter(Boolean);
+          // The bar's Watch button plays the category on show.
+          if (replays.includes(shown.race)) {
+            board.querySelector('.race-results-watch').dataset.replay = shown.race;
+          }
           const rows = riders
             .map(rider => {
               const photos = tagged.get(rider.bib) || [];

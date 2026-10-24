@@ -43,6 +43,57 @@
   color: var(--pc-stock) !important;
 }
 
+/* The race is picked in the title: the select reads as the race's name. */
+.replay-pick {
+  position: relative;
+  display: inline-block;
+}
+
+.replay-pick::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--pc-gilt);
+  border-bottom: 2px solid var(--pc-gilt);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.replay-pick select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 2px 26px 2px 8px;
+  font: inherit;
+  color: var(--pc-stock);
+  background: rgba(247, 242, 231, 0.08);
+  border: 1px solid rgba(200, 162, 74, 0.55);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.replay-pick select option {
+  font-family: var(--pc-data);
+  font-style: normal;
+  color: #111823;
+  background: #fff;
+}
+
+.replay-pick select:focus {
+  outline: none;
+}
+
+.replay-pick select:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 2px;
+}
+
+.replay-title-rest {
+  margin-left: 4px;
+}
+
 .replay-clock {
   margin: 0 0 0 auto;
   font-family: var(--pc-data);
@@ -139,6 +190,50 @@
 .replay-tag {
   fill: #fff;
   stroke: rgba(17, 24, 35, 0.4);
+}
+
+/* A rider with no photo rides as their number. */
+.replay-noface {
+  fill: #fff;
+}
+
+.replay-noface-bib {
+  font-family: var(--pc-numeral);
+  font-size: 19px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: #111823;
+}
+
+.replay-row-noface {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(247, 242, 231, 0.85);
+  color: #111823;
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+}
+
+.replay-zoom img[hidden] {
+  display: none;
+}
+
+.podium-nophoto {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 210px;
+  aspect-ratio: 3 / 4;
+  background: #fff;
+  border: 6px solid var(--pc-stock);
+  border-radius: 3px;
+  color: #111823;
+  font-family: var(--pc-numeral);
+  font-size: 3.4rem;
+  font-weight: 800;
 }
 
 .replay-bib {
@@ -555,6 +650,11 @@
 
   .replay-title {
     font-size: 1.1rem;
+  }
+
+  /* On a phone the picker is the title. */
+  .replay-title-rest {
+    display: none;
   }
 
   .replay-clock {

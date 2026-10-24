@@ -96,15 +96,16 @@
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
 
     <!-- EXISTING STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-5" />
-    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-5" />
+    <link rel="stylesheet" href="style.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/section-home.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/quick-tips.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/sponsors.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/replay-teaser.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/photos-menu-animation.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/hero-card-rotator.css?v=20261024-6" />
+    <link rel="stylesheet" href="css/components/smolderchad-easter-egg.css?v=20261024-6" />
     <!-- Add FontAwesome for icons -->
     <link
       rel="stylesheet"
@@ -120,7 +121,7 @@
     />
 
     <!-- PROLOGUE DECK — loaded last, owns the skin -->
-    <link rel="stylesheet" href="css/deck.css?v=20261024-5" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-6" />
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -763,6 +764,29 @@
           </a>
           <p class="register-note">Timing by RaceTiming.ca</p>
         </div>
+
+        <!-- The replay teaser: Cat A riders looping the course map, and the way
+             into the replays. A link carrying data-replay: the photos page opens
+             the replay in place, elsewhere it goes there with ?replay=. -->
+        <a
+          class="replay-teaser"
+          href="photos.html?replay=Cat%20A"
+          data-replay="Cat A"
+          data-src="/photos/event-2026/replay/replay.json"
+        >
+          <div class="teaser-stage" aria-hidden="true"><span class="teaser-lap"></span></div>
+          <div class="teaser-copy">
+            <span class="teaser-new">New</span>
+            <h3 class="teaser-title">Watch every race, lap by lap</h3>
+            <p class="teaser-text">
+              Every rider rides the course map as their own race photo, at the pace of their real
+              lap times. Pick a race, follow a rider, and stay for the podium.
+            </p>
+            <span class="teaser-cta"
+              ><i class="fas fa-play" aria-hidden="true"></i> Watch the races</span
+            >
+          </div>
+        </a>
       </section>
 
       <section id="register" data-rank="8" data-suit="&#9830;">
@@ -978,7 +1002,7 @@
     <script type="module" src="js/animationBridge.js"></script>
 
     <!-- Load our modular JavaScript -->
-    <script type="module" src="js/main.js?v=20261024-5"></script>
+    <script type="module" src="js/main.js?v=20261024-6"></script>
 
     <!-- Load non-modular script (for backwards compatibility) -->
     <script src="script.js"></script>

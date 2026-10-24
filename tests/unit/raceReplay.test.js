@@ -11,11 +11,10 @@ import RaceReplay, {
   standingsAt,
 } from '../../js/components/raceReplay.js';
 
-// Three riders over two laps of a square course 400 units round.
+// A square course 400 units round; Cat A is three riders over two laps, and
+// Cat B one rider with no photo.
 const race = {
-  'Cat A': {
-    title: 'Men Cat A',
-    laps: 2,
+  course: {
     map: { src: '/images/map.jpg', width: 200, height: 200 },
     route: [
       [0, 0],
@@ -23,12 +22,24 @@ const race = {
       [100, 100],
       [0, 100],
     ],
-    riders: [
-      { bib: '55', place: 1, laps: [100, 100], photo: '55.jpg' },
-      { bib: '21', place: 2, laps: [110, 100], photo: '21.jpg' },
-      { bib: '36', status: 'DNF', laps: [120, 150], photo: '36.jpg' },
-    ],
-    podium: { 55: 'podium-55.jpg', 21: 'podium-21.jpg' },
+  },
+  races: {
+    'Cat B': {
+      title: 'Men Cat B',
+      laps: 1,
+      riders: [{ bib: '127', place: 1, laps: [150] }],
+      podium: {},
+    },
+    'Cat A': {
+      title: 'Men Cat A',
+      laps: 2,
+      riders: [
+        { bib: '55', place: 1, laps: [100, 100], photo: '55.jpg' },
+        { bib: '21', place: 2, laps: [110, 100], photo: '21.jpg' },
+        { bib: '36', status: 'DNF', laps: [120, 150], photo: '36.jpg' },
+      ],
+      podium: { 55: 'podium-55.jpg', 21: 'podium-21.jpg' },
+    },
   },
 };
 
@@ -44,7 +55,7 @@ describe('race replay maths', () => {
   });
 
   test('a point is found by its share of the way round', () => {
-    const route = measureRoute(race['Cat A'].route);
+    const route = measureRoute(race.course.route);
     expect(route.total).toBe(400);
     expect(pointAt(route, 0)).toEqual([0, 0]);
     expect(pointAt(route, 0.375)).toEqual([100, 50]);
@@ -58,7 +69,7 @@ describe('race replay maths', () => {
   });
 
   test('standings rank by distance, gap at the last line, the stopped at the bottom', () => {
-    const { riders } = race['Cat A'];
+    const { riders } = race.races['Cat A'];
     const mid = standingsAt(riders, 150);
     expect(mid.map(row => row.rider.bib)).toEqual(['55', '21', '36']);
     expect(mid.map(row => row.gap)).toEqual(['', '+0:10', '+0:20']);
@@ -217,6 +228,46 @@ describe('RaceReplay', () => {
 
     container().querySelector('.replay-play').click();
     expect(zoom().hidden).toBe(true);
+  });
+
+  test('the title picks the race, and switching starts it over', async () => {
+    await open();
+    const pick = container().querySelector('.replay-pick select');
+    expect(Array.from(pick.options).map(o => o.textContent)).toEqual(['Men Cat B', 'Men Cat A']);
+    expect(pick.value).toBe('Cat A');
+
+    pick.value = 'Cat B';
+    pick.dispatchEvent(new Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(container().querySelectorAll('.replay-rider')).toHaveLength(1);
+    expect(container().querySelector('.replay-pick select').value).toBe('Cat B');
+    expect(replay.t).toBe(0);
+  });
+
+  test('a rider with no photo rides as their number, here and on the podium', async () => {
+    await open();
+    const pick = container().querySelector('.replay-pick select');
+    pick.value = 'Cat B';
+    pick.dispatchEvent(new Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const marker = container().querySelector('.replay-rider[data-bib="127"]');
+    expect(marker.querySelector('image')).toBeNull();
+    expect(marker.querySelector('.replay-noface-bib').textContent).toBe('127');
+    expect(container().querySelector('.replay-row-noface')).not.toBeNull();
+    replay.seek(400);
+    expect(container().querySelector('.podium-1 .podium-nophoto').textContent).toBe('127');
+  });
+
+  test('a link with ?replay= opens on that race, and closing drops it from the address', async () => {
+    replay.destroy();
+    window.history.replaceState(null, '', '/photos.html?replay=Cat%20B');
+    replay = RaceReplay.create();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(container().hidden).toBe(false);
+    expect(container().querySelector('.replay-pick select').value).toBe('Cat B');
+
+    container().querySelector('.replay-close').click();
+    expect(window.location.search).toBe('');
   });
 
   test('Escape closes it, stops the clock and hands focus back', async () => {

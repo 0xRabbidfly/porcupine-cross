@@ -8,6 +8,7 @@ import HeroCardRotator from './components/heroCardRotator.js';
 import MobileMenu from './components/mobileMenu.js';
 import RegisterPhase from './components/registerPhase.js';
 import RaceReplay from './components/raceReplay.js';
+import ReplayTeaser from './components/replayTeaser.js';
 import SmolderchadEasterEgg from './components/smolderchadEasterEgg.js';
 import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
@@ -66,6 +67,9 @@ class App {
 
       // Initialize the race replay, on a page that has one
       this.components.raceReplay = RaceReplay.create();
+
+      // Initialize the race replay teasers
+      this.components.replayTeasers = ReplayTeaser.createAll();
 
       // Initialize Hero Animation
       this.initHeroAnimation();

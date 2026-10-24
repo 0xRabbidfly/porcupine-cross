@@ -1,0 +1,218 @@
+/* Replay teaser: a felt panel with the course map alive on one side, the
+   riders looping round it as their photos, and the invitation on the other.
+   Colours and type come from the deck tokens in deck.css. */
+
+.replay-teaser {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  max-width: 980px;
+  margin: 0 auto 26px;
+  overflow: hidden;
+  color: var(--pc-stock, #f7f2e7);
+  text-decoration: none !important;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(247, 242, 231, 0.09), transparent 60%),
+    var(--pc-felt, #14392c);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px var(--pc-felt-deep, #0b2119),
+    inset 0 0 0 5px var(--pc-felt, #14392c),
+    inset 0 0 0 6px rgba(200, 162, 74, 0.65),
+    0 22px 40px -22px rgba(0, 0, 0, 0.95);
+  transition: transform 0.25s ease;
+}
+
+.replay-teaser:hover,
+.replay-teaser:focus-visible {
+  transform: translateY(-3px);
+}
+
+.replay-teaser:focus {
+  outline: none;
+}
+
+.replay-teaser:focus-visible {
+  outline: 3px solid var(--pc-gilt, #c8a24a);
+  outline-offset: 3px;
+}
+
+.teaser-stage {
+  position: relative;
+  min-height: 380px;
+  margin: 6px 0 6px 6px;
+  overflow: hidden;
+  border-radius: 6px 0 0 6px;
+  background: url('../../images/prologue-course-map-2026.jpg') 22% 60% / 190% auto no-repeat;
+}
+
+.teaser-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.teaser-dim {
+  fill: rgba(6, 10, 16, 0.5);
+}
+
+.teaser-course {
+  fill: none;
+  stroke: rgba(240, 232, 60, 0.9);
+  stroke-width: 8;
+  stroke-linejoin: round;
+}
+
+.teaser-rider {
+  transition: opacity 0.5s ease;
+}
+
+.teaser-rider.is-gone {
+  opacity: 0;
+}
+
+.teaser-ring {
+  fill: var(--pc-stock, #f7f2e7);
+  stroke: #111823;
+  stroke-width: 2;
+}
+
+.teaser-rider.is-leader .teaser-ring {
+  fill: #ffd75a;
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+.teaser-noface {
+  fill: #fff;
+}
+
+.teaser-noface-bib {
+  font-family: var(--pc-numeral);
+  font-size: 20px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: #111823;
+}
+
+.teaser-lap {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  font-family: var(--pc-data);
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #111823;
+  background: var(--pc-gilt, #c8a24a);
+  border-radius: 999px;
+}
+
+.teaser-lap:empty {
+  display: none;
+}
+
+.teaser-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 34px 30px;
+}
+
+.teaser-new {
+  padding: 3px 10px;
+  font-family: var(--pc-data);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--pc-stock, #f7f2e7);
+  background: var(--pc-blood, #b3261e);
+  border-radius: 999px;
+}
+
+.teaser-title {
+  margin: 0;
+  font-family: var(--pc-display) !important;
+  font-size: 2.3rem;
+  font-style: italic;
+  font-weight: 600 !important;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--pc-stock, #f7f2e7) !important;
+}
+
+.teaser-text {
+  margin: 0;
+  max-width: 34ch;
+  font-family: var(--pc-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(247, 242, 231, 0.85);
+}
+
+.teaser-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 13px 24px;
+  font-family: var(--pc-data);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111823;
+  background: var(--pc-gilt, #c8a24a);
+  border-radius: 999px;
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.9);
+  transition: background-color 0.2s ease;
+}
+
+.replay-teaser:hover .teaser-cta {
+  background: #ffd75a;
+}
+
+/* On the photos page it steps aside while a rider's own photos are up. */
+.rider-panel:not([hidden]) ~ .replay-teaser {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .replay-teaser {
+    grid-template-columns: 1fr;
+    margin-inline: -6px;
+  }
+
+  .teaser-stage {
+    min-height: 230px;
+    margin: 6px 6px 0;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .teaser-copy {
+    gap: 10px;
+    padding: 18px 20px 22px;
+  }
+
+  .teaser-title {
+    font-size: 1.75rem;
+  }
+
+  .teaser-cta {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .replay-teaser,
+  .teaser-rider {
+    transition: none;
+  }
+
+  .replay-teaser:hover {
+    transform: none;
+  }
+}

@@ -7,9 +7,11 @@
  * end. A rider's speed is even within a lap, so they are exactly where the
  * timing put them each time they crossed the line, and close to it between.
  *
- * Opened by any `[data-replay="<category>"]` button on the page. The data is a
- * JSON file named by the container's `data-src`: the course as a path in the
- * map's pixels, and each rider's lap times by bib number. Bib numbers only.
+ * Opened by any `[data-replay="<category>"]` button on the page, or by a link
+ * with `?replay=<category>`. The data is a JSON file named by the container's
+ * `data-src`: the course once, as a path in the map's pixels, and each race's
+ * riders with their lap times by bib number. Bib numbers only. A rider with no
+ * photo rides as their number.
  *
  * The clock is a requestAnimationFrame loop rather than AnimationSystem, which
  * runs CSS animations on elements; this one advances race time frame by frame.
@@ -160,16 +162,20 @@ class RaceReplay {
 
   init() {
     document.addEventListener('click', this.onClick);
+    // A shared link opens straight onto its race.
+    const linked = new URLSearchParams(window.location.search).get('replay');
+    if (linked) this.open(linked).catch(error => console.warn('Replay failed to open', error));
     return this;
   }
 
   onClick(event) {
     const button = event.target.closest('[data-replay]');
     if (button) {
-      // A button on a <details> summary opens the replay, not the details.
+      // A button on a <details> summary opens the replay, not the details;
+      // a link to the replay page opens it here instead of reloading.
       event.preventDefault();
       this.opener = button;
-      this.open(button.dataset.replay);
+      this.open(button.dataset.replay).catch(error => console.warn('Replay failed to open', error));
     }
   }
 
@@ -194,12 +200,15 @@ class RaceReplay {
 
   async open(category) {
     const data = await this.load();
-    const race = data[category];
+    const race = data.races[category];
     if (!race) return;
+    this.pause();
     this.race = {
       ...race,
       category,
-      measured: measureRoute(race.route),
+      map: data.course.map,
+      route: data.course.route,
+      measured: measureRoute(data.course.route),
       end: Math.max(...race.riders.map(rider => lapEnds(rider.laps).pop())),
     };
     this.container.hidden = false;
@@ -219,6 +228,11 @@ class RaceReplay {
     document.body.style.overflow = '';
     document.removeEventListener('keydown', this.onKey);
     window.removeEventListener('resize', this.onResize);
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('replay')) {
+      url.searchParams.delete('replay');
+      window.history.replaceState(null, '', url);
+    }
     if (this.opener && this.opener.isConnected) this.opener.focus();
   }
 
@@ -307,7 +321,18 @@ class RaceReplay {
     this.container.innerHTML = `
       <div class="replay-frame" role="dialog" aria-modal="true" aria-labelledby="replay-title">
         <div class="replay-head">
-          <h2 id="replay-title" class="replay-title">${race.title}, lap by lap</h2>
+          <h2 id="replay-title" class="replay-title">
+            <label class="replay-pick">
+              <span class="sr-only">Race</span>
+              <select>${Object.entries(this.data.races)
+                .map(
+                  ([key, other]) =>
+                    `<option value="${key}"${key === race.category ? ' selected' : ''}>${other.title}</option>`
+                )
+                .join('')}</select>
+            </label>
+            <span class="replay-title-rest">lap by lap</span>
+          </h2>
           <p class="replay-clock"><span class="replay-lap"></span> <span class="replay-time"></span></p>
           <button type="button" class="replay-close" aria-label="Close the replay">&times;</button>
         </div>
@@ -355,8 +380,12 @@ class RaceReplay {
         <circle class="replay-halo" r="${RADIUS + 9}" />
         <circle class="replay-halo replay-halo-late" r="${RADIUS + 9}" />
         <circle class="replay-ring" r="${RADIUS + 3}" />
-        <image href="${this.base}${rider.photo}" x="${-RADIUS}" y="${-RADIUS}" width="${RADIUS * 2}" height="${RADIUS * 2}"
-               clip-path="url(#replay-face)" preserveAspectRatio="xMidYMid slice" />
+        ${
+          rider.photo
+            ? `<image href="${this.base}${rider.photo}" x="${-RADIUS}" y="${-RADIUS}" width="${RADIUS * 2}" height="${RADIUS * 2}"
+                 clip-path="url(#replay-face)" preserveAspectRatio="xMidYMid slice" />`
+            : `<circle class="replay-noface" r="${RADIUS}" /><text class="replay-noface-bib" y="7">${rider.bib}</text>`
+        }
         <rect class="replay-tag" x="-15" y="${RADIUS - 2}" width="30" height="17" rx="3" />
         <text class="replay-bib" y="${RADIUS + 11}">${rider.bib}</text>`;
       riders.appendChild(g);
@@ -372,13 +401,23 @@ class RaceReplay {
       li.innerHTML = `
         <button type="button" class="replay-follow" aria-pressed="false" aria-label="Follow bib ${rider.bib}">
           <span class="replay-pos"></span>
-          <img src="${this.base}${rider.photo}" alt="" />
+          ${
+            rider.photo
+              ? `<img src="${this.base}${rider.photo}" alt="" />`
+              : '<span class="replay-row-noface" aria-hidden="true">#</span>'
+          }
           <b class="replay-row-bib">${rider.bib}</b>
           <span class="replay-row-lap"></span>
           <span class="replay-gap"></span>
         </button>`;
       standings.appendChild(li);
       this.rows.set(rider.bib, li);
+    });
+
+    const pick = this.container.querySelector('.replay-pick select');
+    pick.addEventListener('change', async () => {
+      await this.open(pick.value);
+      this.container.querySelector('.replay-pick select').focus();
     });
 
     const scrub = this.container.querySelector('.replay-scrub');
@@ -538,7 +577,9 @@ class RaceReplay {
     const row = (this.rowsNow || []).find(r => r.rider.bib === bib);
     if (!zoom || !row) return;
     this.zoomBib = bib;
-    zoom.querySelector('img').src = `${this.base}${row.rider.photo}`;
+    const img = zoom.querySelector('img');
+    img.hidden = !row.rider.photo;
+    if (row.rider.photo) img.src = `${this.base}${row.rider.photo}`;
     zoom.querySelector('.replay-zoom-bib').textContent = bib;
     const lap = Math.min(Math.floor(row.progress) + 1, row.rider.laps.length);
     let text = `${ordinal(row.position)} on lap ${lap}`;
@@ -589,7 +630,11 @@ class RaceReplay {
       const photo = this.race.podium[rider.bib] || rider.photo;
       return `
         <figure class="podium-step podium-${rider.place}">
-          <img src="${this.base}${photo}" alt="" />
+          ${
+            photo
+              ? `<img src="${this.base}${photo}" alt="" />`
+              : `<div class="podium-nophoto" aria-hidden="true">${rider.bib}</div>`
+          }
           <figcaption>
             <b class="podium-bib">${rider.bib}</b>
             <span class="podium-time">${rider.place === 1 ? clock(time) : `+${clock(time - winner)}`}</span>
