@@ -601,7 +601,8 @@
 }
 
 /* The podium has the screen to itself. */
-.replay-frame:has(.replay-podium:not([hidden])) .replay-info {
+.replay-frame:has(.replay-podium:not([hidden])) .replay-info,
+.replay-frame:has(.replay-podium:not([hidden])) .replay-records {
   display: none;
 }
 
