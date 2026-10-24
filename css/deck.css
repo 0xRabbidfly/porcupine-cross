@@ -3000,19 +3000,53 @@ footer {
 }
 
 @media (max-width: 600px) {
+  /* On a phone the bib is a small tag beside the name and result, and
+     everything after them (team, links, buttons, laps) takes the full width.
+     The body's lines join the panel's grid to do that. */
   .rider-panel {
     grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    column-gap: 12px;
+    row-gap: 0;
     padding: 14px;
     margin-inline: -6px;
   }
 
+  .rider-body {
+    display: contents;
+  }
+
   .rider-bib {
-    font-size: 1.9rem;
-    padding: 8px 12px 6px;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    align-self: center;
+    min-width: 0;
+    font-size: 1.4rem;
+    padding: 9px 14px 7px;
+  }
+
+  .rider-name,
+  .rider-result,
+  .rider-detail {
+    grid-column: 2;
+  }
+
+  .rider-team,
+  .rider-links {
+    grid-column: 1 / -1;
+  }
+
+  .rider-team {
+    margin-top: 10px;
   }
 
   .rider-result {
     font-size: 1.15rem;
+  }
+
+  .rider-actions,
+  .rider-laps {
+    margin-top: 14px;
   }
 
   .rider-panel {
