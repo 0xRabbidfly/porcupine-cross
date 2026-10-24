@@ -433,6 +433,116 @@
   }
 }
 
+/* The course record: a small trophy pinned in the map's lower corner. */
+.replay-trophy {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 6px;
+  font-family: var(--pc-data);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: #111823;
+  background: linear-gradient(135deg, #ffe28a, var(--pc-gilt, #c8a24a));
+  border-radius: 999px;
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.9);
+  pointer-events: auto;
+  transition: transform 0.3s ease;
+}
+
+.replay-trophy-cup {
+  font-size: 1.15rem;
+  line-height: 1;
+  transform-origin: 50% 90%;
+}
+
+.replay-trophy b {
+  font-family: var(--pc-numeral);
+  font-weight: 800;
+}
+
+.replay-trophy-who {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+.replay-trophy.is-lit {
+  transform: scale(1.12);
+}
+
+.replay-trophy.is-lit .replay-trophy-cup {
+  animation: replay-cup 0.5s ease-in-out 4;
+}
+
+/* The moment the record is set: a gold burst across the middle of the map. */
+.replay-burst {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  z-index: 3;
+  padding: 10px 22px;
+  font-family: var(--pc-display);
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #111823;
+  background: radial-gradient(circle at 50% 40%, #fff3c2, #ffd75a 60%, var(--pc-gilt, #c8a24a));
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 4px rgba(255, 215, 90, 0.35),
+    0 0 40px 10px rgba(255, 215, 90, 0.45);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.replay-burst[hidden] {
+  display: none;
+}
+
+.replay-burst.is-on {
+  animation: replay-burst 3.2s cubic-bezier(0.16, 0.9, 0.24, 1) both;
+}
+
+@keyframes replay-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3) rotate(-8deg);
+  }
+  12% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08) rotate(2deg);
+  }
+  20%,
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+}
+
+@keyframes replay-cup {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-16deg);
+  }
+  75% {
+    transform: rotate(16deg);
+  }
+}
+
 /* The followed rider's laps, a card in the map's top corner. */
 .replay-info {
   position: absolute;
@@ -918,6 +1028,21 @@
     display: none;
   }
 
+  .replay-trophy {
+    right: 6px;
+    bottom: 6px;
+    font-size: 0.74rem;
+  }
+
+  .replay-trophy-who {
+    display: none;
+  }
+
+  .replay-burst {
+    font-size: 1.05rem;
+    padding: 8px 14px;
+  }
+
   .replay-info-table th,
   .replay-info-table td {
     min-width: 2.3em;
@@ -956,7 +1081,9 @@
   }
 
   .replay-zoom,
-  .replay-rider.is-followed .replay-halo {
+  .replay-rider.is-followed .replay-halo,
+  .replay-burst.is-on,
+  .replay-trophy.is-lit .replay-trophy-cup {
     animation: none;
   }
 }

@@ -14,6 +14,7 @@ import RaceReplay, {
 // A square course 400 units round; Cat A is three riders over two laps, and
 // Cat B one rider with no photo.
 const race = {
+  record: { race: 'Cat A', bib: '55', name: '', lap: 2, time: 100 },
   course: {
     map: { src: '/images/map.jpg', width: 200, height: 200 },
     route: [
@@ -188,6 +189,25 @@ describe('RaceReplay', () => {
     } finally {
       delete race.races['Cat A'].riders[0].name;
     }
+  });
+
+  test('the course record sits on the map, and bursts when it is ridden', async () => {
+    await open();
+    const trophy = container().querySelector('.replay-trophy');
+    expect(trophy.textContent.replace(/\s+/g, ' ').trim()).toBe('🏆 Course record 1:40 #55');
+    const burst = container().querySelector('.replay-burst');
+    expect(burst.hidden).toBe(true);
+    // Playing through 200s, when 55 ends lap two.
+    replay.seek(190);
+    replay.seek(205);
+    expect(burst.hidden).toBe(false);
+    expect(burst.textContent).toBe('Course record! 55, 1:40');
+    // Scrubbed (paused) through the same moment, it stays quiet.
+    burst.hidden = true;
+    replay.pause();
+    replay.seek(190);
+    replay.seek(205);
+    expect(burst.hidden).toBe(true);
   });
 
   test("the title bar carries the race's lap record", async () => {

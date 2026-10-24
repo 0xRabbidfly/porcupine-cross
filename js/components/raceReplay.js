@@ -220,6 +220,7 @@ class RaceReplay {
       ...race,
       category,
       map: data.course.map,
+      record: data.record || null,
       route: data.course.route,
       measured: measureRoute(data.course.route),
       end: Math.max(...race.riders.map(rider => lapEnds(rider.laps).pop())),
@@ -236,6 +237,7 @@ class RaceReplay {
 
   close() {
     this.pause();
+    clearTimeout(this.burstTimer);
     this.container.hidden = true;
     this.container.innerHTML = '';
     document.body.style.overflow = '';
@@ -293,8 +295,10 @@ class RaceReplay {
 
   /** Moves the race to a moment, in seconds from the start. */
   seek(t) {
+    const before = this.t;
     this.t = Math.max(0, Math.min(t, this.race.end + PODIUM_DELAY_S));
     this.draw();
+    this.checkRecord(before, this.t);
   }
 
   setSpeed(speed) {
@@ -375,6 +379,16 @@ class RaceReplay {
               <p class="replay-zoom-team"></p>
             </div>
             <div class="replay-info" role="region" aria-label="The followed rider's laps" hidden></div>
+            ${
+              race.record
+                ? `<div class="replay-trophy" title="The fastest lap of the day, in any race">
+                     <span class="replay-trophy-cup" aria-hidden="true">🏆</span>
+                     <span class="replay-trophy-text">Course record <b>${clock(race.record.time)}</b>
+                       <span class="replay-trophy-who">${escapeHtml(race.record.name || `#${race.record.bib}`)}</span></span>
+                   </div>
+                   <div class="replay-burst" aria-live="polite" hidden></div>`
+                : ''
+            }
           </div>
           <ol class="replay-standings" aria-label="Standings: pick a rider to follow"></ol>
         </div>
@@ -576,6 +590,30 @@ class RaceReplay {
 
     const over = this.t >= race.end + PODIUM_DELAY_S;
     if (over !== this.podiumShown) this.showPodium(over);
+  }
+
+  // Playing through the moment the record lap ends, in the race it was set
+  // in: a burst on the map, by the rider, for a few seconds of real time.
+  checkRecord(before, now) {
+    const record = this.race.record;
+    if (!record || record.race !== this.race.category || !this.playing) return;
+    const rider = this.race.riders.find(r => r.bib === record.bib);
+    if (!rider) return;
+    const at = lapEnds(rider.laps)[record.lap - 1];
+    if (!(before < at && now >= at)) return;
+    const burst = this.container.querySelector('.replay-burst');
+    burst.textContent = `Course record! ${riderName(rider)}, ${clock(record.time)}`;
+    burst.hidden = false;
+    burst.classList.remove('is-on');
+    void burst.offsetWidth;
+    burst.classList.add('is-on');
+    this.container.querySelector('.replay-trophy').classList.add('is-lit');
+    clearTimeout(this.burstTimer);
+    this.burstTimer = setTimeout(() => {
+      burst.hidden = true;
+      const trophy = this.container.querySelector('.replay-trophy');
+      if (trophy) trophy.classList.remove('is-lit');
+    }, 3200);
   }
 
   // One rider at a time wears a halo on the map and is lit in the standings;
