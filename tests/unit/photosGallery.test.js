@@ -1090,7 +1090,7 @@ describe('photos gallery laps', () => {
         id: 'photo_1',
         filename: 'menA.jpg',
         date_taken: '2026-10-18T18:30:00Z',
-        bibs: { 55: 'number' },
+        bibs: { 55: 'number', 21: 'kit' },
       },
     ],
     results: {
@@ -1117,8 +1117,20 @@ describe('photos gallery laps', () => {
     races: {
       'Cat A': {
         riders: [
-          { bib: '55', laps: [400, 370, 370], ranks: [2, 1, 2] },
-          { bib: '21', laps: [390, 395, 365], ranks: [1, 2, 1] },
+          {
+            bib: '55',
+            name: 'Ethan Pauly',
+            short: 'Ethan P.',
+            laps: [400, 370, 370],
+            ranks: [2, 1, 2],
+          },
+          {
+            bib: '21',
+            name: 'Ryan Rutherford',
+            short: 'Ryan R.',
+            laps: [390, 395, 365],
+            ranks: [1, 2, 1],
+          },
         ],
         fastest: { bib: '21', lap: 3, time: 365 },
       },
@@ -1157,7 +1169,7 @@ describe('photos gallery laps', () => {
     select.value = 'Cat A';
     select.dispatchEvent(new win.Event('change', { bubbles: true }));
     expect(squash(win.document.querySelector('.standings-fastest'))).toBe(
-      'Fastest lap: 21, 6:05 on lap 3'
+      'Fastest lap: Ryan Rutherford, 6:05 on lap 3'
     );
   });
 
@@ -1181,5 +1193,25 @@ describe('photos gallery laps', () => {
     expect(row('Time')[1].classList).toContain('is-best');
     expect(row('Time')[0].classList).not.toContain('is-best');
     expect(table.querySelector('.rider-lap-star')).toBeNull();
+  });
+
+  test('the leaderboard names riders in full; the panel and photos by first name', async () => {
+    const win = boot();
+    await settle();
+    const select = win.document.querySelector('.standings-select');
+    select.value = 'Cat A';
+    select.dispatchEvent(new win.Event('change', { bubbles: true }));
+    const names = Array.from(win.document.querySelectorAll('.standings-name')).map(squash);
+    expect(names).toEqual(['Ethan Pauly', 'Ryan Rutherford']);
+
+    win.document.getElementById('bib-input').value = '55';
+    win.document
+      .querySelector('.bib-finder')
+      .dispatchEvent(new win.Event('submit', { cancelable: true }));
+    expect(squash(win.document.querySelector('.rider-name'))).toBe('Ethan P.');
+
+    // In the photo 55's number was read and 21 was matched by kit: only 55 is named.
+    win.document.querySelector('#photo-grid .photo-item').click();
+    expect(squash(win.document.getElementById('lightbox-riders'))).toBe('Ethan P. (55)');
   });
 });

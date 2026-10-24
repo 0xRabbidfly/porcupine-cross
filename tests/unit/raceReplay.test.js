@@ -172,6 +172,24 @@ describe('RaceReplay', () => {
     expect(container().hidden).toBe(true);
   });
 
+  test('a named rider rides by name in the standings and on the podium', async () => {
+    race.races['Cat A'].riders[0].name = 'Ethan Pauly';
+    try {
+      await open();
+      const row = container().querySelector('.replay-row[data-bib="55"]');
+      expect(row.querySelector('.replay-row-name').textContent).toBe('Ethan Pauly');
+      expect(row.querySelector('.replay-row-bib').textContent).toBe('55');
+      // The map keeps the bib.
+      expect(
+        container().querySelector('.replay-rider[data-bib="55"] .replay-bib').textContent
+      ).toBe('55');
+      replay.seek(400);
+      expect(container().querySelector('.podium-1 .podium-bib').textContent).toBe('Ethan Pauly');
+    } finally {
+      delete race.races['Cat A'].riders[0].name;
+    }
+  });
+
   test("the title bar carries the race's lap record", async () => {
     await open();
     expect(container().querySelector('.replay-record').textContent).toBe(

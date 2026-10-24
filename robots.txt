@@ -14,6 +14,13 @@ Allow: /css/
 Allow: /js/
 Allow: /images/
 
+# Riders are named on the photos page: keep a rider's photo search and the
+# gallery's data files out of search results.
+Disallow: /photos.html?bib=
+Disallow: /*?bib=
+Disallow: /photos/*.json$
+Disallow: /photos/event-*/replay/
+
 # Block any admin or private areas (if they exist later)
 Disallow: /admin/
 Disallow: /private/

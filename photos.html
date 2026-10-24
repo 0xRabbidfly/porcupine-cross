@@ -58,10 +58,10 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261024-10" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261024-10" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-10" />
-    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-10" />
+    <link rel="stylesheet" href="style.css?v=20261024-11" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-11" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-11" />
+    <link rel="stylesheet" href="css/components/race-replay.css?v=20261024-11" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -468,7 +468,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261024-10" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-11" />
   </head>
   <body>
     <header>
@@ -537,6 +537,10 @@
           <h1><span id="gallery-title">2026 Event Photos and Race Replay</span></h1>
           <!-- Filled from the year's photos.json, which credits each photo. -->
           <p class="photos-credit" id="gallery-credit" hidden></p>
+          <p class="photos-removal">
+            Riders are named as in the official results. To have your name or a photo of you
+            removed, email <a href="mailto:franny@jewett.ca">franny@jewett.ca</a>.
+          </p>
         </div>
 
         <!-- Photo Gallery -->
@@ -747,6 +751,7 @@
           <div class="rider-panel" hidden>
             <div class="rider-bib" aria-hidden="true"></div>
             <div class="rider-body">
+              <p class="rider-name"></p>
               <p class="rider-result"></p>
               <p class="rider-detail"></p>
               <p class="rider-team"></p>
@@ -836,6 +841,7 @@
           <div class="lightbox-caption">
             <h3 id="lightbox-title"></h3>
             <p id="lightbox-when" class="lightbox-when"></p>
+            <p id="lightbox-riders" class="lightbox-riders"></p>
             <p id="lightbox-credit" class="lightbox-credit"></p>
           </div>
           <a
@@ -853,7 +859,7 @@
 
     <!-- SCRIPTS -->
     <script src="script.js"></script>
-    <script type="module" src="js/main.js?v=20261024-10"></script>
+    <script type="module" src="js/main.js?v=20261024-11"></script>
 
     <!-- Photo Gallery Script -->
     <script>
@@ -874,7 +880,9 @@
           // one rider raced under.
           this.results = {};
           this.sameRider = [];
-          // From the replay's lap data: bib -> {race, laps, ranks, places},
+          // From the replay's lap data: bib -> {race, team, name, short, laps,
+          // ranks, places}: full names for the results, first name and last
+          // initial for anything tied to a photo,
           // and race -> its fastest lap. Empty in a year without it.
           this.laps = {};
           this.fastest = {};
@@ -1165,6 +1173,8 @@
                 this.laps[rider.bib] = {
                   race,
                   team: rider.team || '',
+                  name: rider.name || '',
+                  short: rider.short || '',
                   laps: rider.laps,
                   ranks: rider.ranks || [],
                   places,
@@ -1243,6 +1253,7 @@
             count === 1 ? 'Download the photo' : `Download all ${count} photos`;
           panel.querySelector('.rider-zip-size').textContent = bytes ? megabytes(bytes) : '';
           panel.querySelector('.rider-bib').textContent = this.bib;
+          panel.querySelector('.rider-name').textContent = (this.laps[this.bib] || {}).short || '';
           panel.querySelector('.rider-result').textContent = headline || `Bib ${this.bib}`;
           panel.querySelector('.rider-detail').textContent = detail;
           panel.querySelector('.rider-team').textContent = (this.laps[this.bib] || {}).team || '';
@@ -1505,7 +1516,11 @@
               const podium = rider.place && rider.place <= 3 ? ' is-podium' : '';
               return `<tr${thumb ? ` class="is-linked" data-bib="${rider.bib}"` : ''}>
                   <td class="standings-place${podium}">${rider.place || rider.status}</td>
-                  <td class="standings-bib">${rider.bib}</td>
+                  <td class="standings-bib">${
+                    (this.laps[rider.bib] || {}).name
+                      ? `<span class="standings-name">${escapeText(this.laps[rider.bib].name)}</span> `
+                      : ''
+                  }<span class="standings-num">${rider.bib}</span></td>
                   <td class="standings-team">${escapeText((this.laps[rider.bib] || {}).team || '')}</td>
                   <td class="standings-time">${rider.time || ''}</td>
                   <td class="standings-gap">${gapText(rider, winner)}</td>
@@ -1521,15 +1536,15 @@
                 <select class="standings-select">${options}</select>
               </label>
               ${replays.includes(shown.race) ? `<button type="button" class="standings-replay" data-replay="${shown.race}"><i class="fas fa-play" aria-hidden="true"></i> Watch the race</button>` : ''}
-              ${closestFinish(riders)}
+              ${closestFinish(riders, bib => (this.laps[bib] || {}).name)}
               ${
                 this.fastest[shown.race]
-                  ? `<p class="standings-fastest">Fastest lap: <button type="button" class="rider-link" data-bib="${this.fastest[shown.race].bib}"><b>${this.fastest[shown.race].bib}</b></button>, ${formatLap(this.fastest[shown.race].time)} on lap ${this.fastest[shown.race].lap}</p>`
+                  ? `<p class="standings-fastest">Fastest lap: ${riderLink(this.fastest[shown.race].bib, (this.laps[this.fastest[shown.race].bib] || {}).name)}, ${formatLap(this.fastest[shown.race].time)} on lap ${this.fastest[shown.race].lap}</p>`
                   : ''
               }
             </div>
             <table class="standings-table">
-              <thead><tr><th>Place</th><th>Bib</th><th class="standings-team">Team</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
+              <thead><tr><th>Place</th><th>Rider</th><th class="standings-team">Team</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>`;
         }
@@ -1865,6 +1880,7 @@
           lightboxImage.alt = `${title} race photo`;
           lightboxTitle.textContent = title;
           document.getElementById('lightbox-when').textContent = this.describeMoment(photo);
+          document.getElementById('lightbox-riders').textContent = this.namedRiders(photo);
           document.getElementById('lightbox-credit').textContent = photo.photographer
             ? `Photo by ${photo.photographer}`
             : '';
@@ -1873,6 +1889,16 @@
 
           lightbox.style.display = 'flex';
           document.body.style.overflow = 'hidden';
+        }
+
+        // "Ethan P. (55), Ryan D. (290)": the riders whose number was read in
+        // the photo. A kit match is a good guess but a guess, so it is not
+        // put to a name.
+        namedRiders(photo) {
+          const read = Object.keys(photo.bibs || {}).filter(
+            bib => photo.bibs[bib] === 'number' && this.laps[bib] && this.laps[bib].short
+          );
+          return read.map(bib => `${this.laps[bib].short} (${bib})`).join(', ');
         }
 
         closeLightbox() {
@@ -1994,7 +2020,14 @@
 
       // The tightest finish between two riders on the same lap, when it was
       // within ten seconds: the race worth looking at the photos of.
-      function closestFinish(riders) {
+      // A rider's link in a results line: their name when the results give
+      // one, else their bib.
+      function riderLink(bib, name) {
+        const label = name ? escapeText(name) : `<b>${bib}</b>`;
+        return `<button type="button" class="rider-link" data-bib="${bib}">${label}</button>`;
+      }
+
+      function closestFinish(riders, nameOf = () => '') {
         let best = null;
         riders.forEach((rider, i) => {
           const ahead = riders[i - 1];
@@ -2009,9 +2042,8 @@
             : best.gap === 1
               ? '1 second apart'
               : `${best.gap} seconds apart`;
-        const bib = b =>
-          `<button type="button" class="rider-link" data-bib="${b}"><b>${b}</b></button>`;
-        return `<p class="standings-closest">Closest finish: ${bib(best.ahead.bib)} and ${bib(best.rider.bib)}, ${apart}</p>`;
+        const link = b => riderLink(b, nameOf(b));
+        return `<p class="standings-closest">Closest finish: ${link(best.ahead.bib)} and ${link(best.rider.bib)}, ${apart}</p>`;
       }
 
       // Sorts a rider's photos close-ups first: by how much of the frame they

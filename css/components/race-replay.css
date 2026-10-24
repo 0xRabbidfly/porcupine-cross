@@ -280,7 +280,7 @@
 /* The whole row is a button: picking it follows that rider. */
 .replay-follow {
   display: grid;
-  grid-template-columns: 1.6em 30px 2.4em 3.4em 1fr;
+  grid-template-columns: 1.6em 30px minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
   width: 100%;
@@ -317,9 +317,31 @@
   object-fit: cover;
 }
 
+/* The rider's name, and under it their bib and lap. */
+.replay-row-who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.replay-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.replay-row-sub {
+  display: flex;
+  gap: 8px;
+}
+
 .replay-row-bib {
   font-family: var(--pc-numeral);
+  font-size: 0.8rem;
   font-weight: 800;
+  color: rgba(247, 242, 231, 0.7);
 }
 
 .replay-row-lap {
@@ -448,7 +470,23 @@
   object-fit: cover;
 }
 
+.replay-info-num {
+  font-family: var(--pc-numeral);
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: rgba(17, 24, 35, 0.55);
+}
+
+.replay-info-head > * {
+  flex: none;
+  white-space: nowrap;
+}
+
 .replay-info-bib {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 14ch;
+  flex: 0 1 auto !important;
   font-family: var(--pc-numeral);
   font-size: 1.1rem;
   font-weight: 800;
@@ -740,17 +778,21 @@
 
 .podium-step figcaption {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: baseline;
-  gap: 8px;
+  gap: 0 8px;
   margin: 8px 0 6px;
+  text-align: center;
   font-family: var(--pc-data);
   font-variant-numeric: tabular-nums;
 }
 
 .podium-bib {
-  font-family: var(--pc-numeral);
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-family: var(--pc-data);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.15;
 }
 
 .podium-time {
@@ -867,6 +909,10 @@
     font-size: 0.74rem;
   }
 
+  .replay-info-team {
+    display: none;
+  }
+
   .replay-info-table th,
   .replay-info-table td {
     min-width: 2.3em;
@@ -887,7 +933,7 @@
   }
 
   .podium-bib {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
   }
 
   .podium-time {

@@ -74,6 +74,11 @@ export function escapeHtml(text) {
   );
 }
 
+/** A rider as named on screen: their name, or their bib without one. */
+export function riderName(rider) {
+  return rider.name || rider.bib;
+}
+
 /** 1 -> "1st", 22 -> "22nd", 13 -> "13th". */
 export function ordinal(n) {
   const tens = n % 100;
@@ -414,7 +419,7 @@ class RaceReplay {
       li.className = 'replay-row';
       li.dataset.bib = rider.bib;
       li.innerHTML = `
-        <button type="button" class="replay-follow" aria-pressed="false" aria-label="Follow bib ${rider.bib}"${
+        <button type="button" class="replay-follow" aria-pressed="false" aria-label="Follow ${escapeHtml(riderName(rider))}, bib ${rider.bib}"${
           rider.team ? ` title="${escapeHtml(rider.team)}"` : ''
         }>
           <span class="replay-pos"></span>
@@ -423,8 +428,12 @@ class RaceReplay {
               ? `<img src="${this.base}${rider.photo}" alt="" />`
               : '<span class="replay-row-noface" aria-hidden="true">#</span>'
           }
-          <b class="replay-row-bib">${rider.bib}</b>
-          <span class="replay-row-lap"></span>
+          <span class="replay-row-who">
+            <b class="replay-row-name">${escapeHtml(riderName(rider))}</b>
+            <span class="replay-row-sub">${
+              rider.name ? `<span class="replay-row-bib">${rider.bib}</span>` : ''
+            }<span class="replay-row-lap"></span></span>
+          </span>
           <span class="replay-gap"></span>
         </button>`;
       standings.appendChild(li);
@@ -636,10 +645,11 @@ class RaceReplay {
     info.innerHTML = `
       <div class="replay-info-head">
         ${face}
-        <b class="replay-info-bib">${rider.bib}</b>
+        <b class="replay-info-bib">${escapeHtml(riderName(rider))}</b>
+        ${rider.name ? `<span class="replay-info-num">${rider.bib}</span>` : ''}
         <span class="replay-info-status">${status}</span>
         ${rider.team ? `<span class="replay-info-team">${escapeHtml(rider.team)}</span>` : ''}
-        <button type="button" class="replay-info-close" aria-label="Stop following bib ${rider.bib}">&times;</button>
+        <button type="button" class="replay-info-close" aria-label="Stop following ${escapeHtml(riderName(rider))}">&times;</button>
       </div>
       <table class="replay-info-table">
         <thead><tr><th scope="row">Lap</th>${rider.laps.map((_, k) => `<th scope="col">${k + 1}</th>`).join('')}</tr></thead>
@@ -663,13 +673,18 @@ class RaceReplay {
     const img = zoom.querySelector('img');
     img.hidden = !row.rider.photo;
     if (row.rider.photo) img.src = `${this.base}${row.rider.photo}`;
-    zoom.querySelector('.replay-zoom-bib').textContent = bib;
+    zoom.querySelector('.replay-zoom-bib').textContent = riderName(row.rider);
     const lap = Math.min(Math.floor(row.progress) + 1, row.rider.laps.length);
     let text = `${ordinal(row.position)} on lap ${lap}`;
     if (row.finished) text = `${ordinal(row.rider.place)}, finished in ${clock(row.at)}`;
     if (row.out) text = `Did not finish, out after lap ${row.rider.laps.length}`;
     zoom.querySelector('.replay-zoom-text').textContent = text;
-    zoom.querySelector('.replay-zoom-team').textContent = row.rider.team || '';
+    zoom.querySelector('.replay-zoom-team').textContent = [
+      row.rider.name ? `Bib ${bib}` : '',
+      row.rider.team || '',
+    ]
+      .filter(Boolean)
+      .join(' · ');
     zoom.hidden = false;
     this.markers.forEach((marker, key) => marker.classList.toggle('is-zoomed', key === bib));
     this.rows.forEach((li, key) => li.classList.toggle('is-zoomed', key === bib));
@@ -720,7 +735,7 @@ class RaceReplay {
               : `<div class="podium-nophoto" aria-hidden="true">${rider.bib}</div>`
           }
           <figcaption>
-            <b class="podium-bib">${rider.bib}</b>
+            <b class="podium-bib">${escapeHtml(riderName(rider))}</b>
             <span class="podium-time">${rider.place === 1 ? clock(time) : `+${clock(time - winner)}`}</span>
           </figcaption>
           ${rider.team ? `<p class="podium-team">${escapeHtml(rider.team)}</p>` : ''}
