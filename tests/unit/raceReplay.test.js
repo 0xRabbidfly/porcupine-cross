@@ -2,6 +2,7 @@
  * Race Replay Unit Tests
  */
 
+import eventBus from '../../js/core/eventBus.js';
 import RaceReplay, {
   lapEnds,
   progressAt,
@@ -395,6 +396,99 @@ describe('RaceReplay', () => {
     info().querySelector('.replay-info-close').click();
     expect(info().hidden).toBe(true);
     expect(container().querySelectorAll('.is-followed')).toHaveLength(0);
+  });
+
+  const withRaces = extra => {
+    replay.destroy();
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({ ...race, races: { ...race.races, ...extra } }),
+      })
+    );
+    replay = RaceReplay.create();
+  };
+
+  test('Space on the race picker is left to the picker; elsewhere it pauses', async () => {
+    await open();
+    const select = container().querySelector('.replay-pick select');
+    select.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    expect(replay.playing).toBe(true);
+
+    container().dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    expect(replay.playing).toBe(false);
+  });
+
+  test('Tab goes round the replay and never reaches the page behind it', async () => {
+    await open();
+    const frame = container().querySelector('.replay-frame');
+    const controls = Array.from(
+      frame.querySelectorAll('button:not([disabled]), a[href], input, select')
+    ).filter(el => !el.closest('[hidden]'));
+    const tab = shiftKey =>
+      document.activeElement.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true })
+      );
+
+    controls[controls.length - 1].focus();
+    tab(false);
+    expect(document.activeElement).toBe(controls[0]);
+    tab(true);
+    expect(document.activeElement).toBe(controls[controls.length - 1]);
+
+    document.querySelector('[data-replay]').focus();
+    tab(false);
+    expect(document.activeElement).toBe(controls[0]);
+  });
+
+  test('with reduced motion it opens paused on the start, ready to play', async () => {
+    window.matchMedia = jest.fn(query => ({ matches: query.includes('reduce') }));
+    try {
+      await open();
+      expect(replay.playing).toBe(false);
+      expect(frames).toHaveLength(0);
+      expect(container().querySelector('.replay-play').getAttribute('aria-label')).toBe('Play');
+    } finally {
+      delete window.matchMedia;
+    }
+  });
+
+  test('a race with nobody in it does not open', async () => {
+    withRaces({ Empty: { title: 'Empty', laps: 1, riders: [], fastest: null } });
+    expect(await replay.open('Empty')).toBe(false);
+    expect(container().hidden).toBe(true);
+  });
+
+  test('a race nobody finished ends without a podium, and without throwing', async () => {
+    withRaces({
+      'Cat C': {
+        title: 'Men Cat C',
+        laps: 1,
+        riders: [{ bib: '9', status: 'DNF', laps: [150] }],
+        fastest: { bib: '9', lap: 1, time: 150 },
+      },
+    });
+    expect(await replay.open('Cat C')).toBe(true);
+    expect(() => replay.seek(1000)).not.toThrow();
+    expect(container().querySelector('.replay-podium').hidden).toBe(true);
+  });
+
+  test('opening announces the race and how it was opened, never the rider', async () => {
+    const heard = jest.fn();
+    const off = eventBus.on('replay:opened', heard);
+    try {
+      await open();
+      expect(heard).toHaveBeenLastCalledWith({ race: 'Cat A', source: 'button', following: false });
+
+      replay.destroy();
+      window.history.replaceState(null, '', '/photos.html?replay=Cat%20A&follow=21');
+      replay = RaceReplay.create();
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(heard).toHaveBeenLastCalledWith({ race: 'Cat A', source: 'link', following: true });
+    } finally {
+      off();
+      window.history.replaceState(null, '', '/');
+    }
   });
 
   test('Escape closes it, stops the clock and hands focus back', async () => {

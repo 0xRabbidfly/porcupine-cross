@@ -17,11 +17,24 @@
  * runs CSS animations on elements; this one advances race time frame by frame.
  */
 
+import eventBus from '../core/eventBus.js';
+
 const SVG = 'http://www.w3.org/2000/svg';
 const SPEEDS = [10, 30, 60, 120];
 const RADIUS = 22;
 // The race clock holds at the finish this long before the podium comes up.
 const PODIUM_DELAY_S = 4;
+// Keys typed into these keep their own meaning: Space opens a picker or
+// presses a button, it does not pause the race.
+const OWN_KEYS = 'button, input, select, textarea, summary, a[href], [contenteditable]';
+// What Tab moves between inside the open replay.
+const FOCUSABLE = 'button:not([disabled]), a[href], input, select, [tabindex]:not([tabindex="-1"])';
+
+function prefersReducedMotion() {
+  return Boolean(
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
 
 /** Each lap's finishing time, from the start, in seconds. */
 export function lapEnds(laps) {
@@ -182,9 +195,12 @@ class RaceReplay {
     const linked = params.get('replay');
     if (linked) {
       this.open(linked)
-        .then(() => {
+        .then(opened => {
+          if (!opened) return;
           const bib = params.get('follow');
-          if (bib && this.markers && this.markers.has(bib)) this.follow(bib);
+          const following = Boolean(bib && this.markers && this.markers.has(bib));
+          if (following) this.follow(bib);
+          eventBus.emit('replay:opened', { race: linked, source: 'link', following });
         })
         .catch(error => console.warn('Replay failed to open', error));
     }
@@ -198,7 +214,12 @@ class RaceReplay {
       // a link to the replay page opens it here instead of reloading.
       event.preventDefault();
       this.opener = button;
-      this.open(button.dataset.replay).catch(error => console.warn('Replay failed to open', error));
+      const race = button.dataset.replay;
+      this.open(race)
+        .then(opened => {
+          if (opened) eventBus.emit('replay:opened', { race, source: 'button', following: false });
+        })
+        .catch(error => console.warn('Replay failed to open', error));
     }
   }
 
@@ -206,9 +227,35 @@ class RaceReplay {
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close();
-    } else if (event.key === ' ' && !event.target.closest('button, input')) {
+    } else if (event.key === ' ' && !event.target.closest(OWN_KEYS)) {
       event.preventDefault();
       this.toggle();
+    } else if (event.key === 'Tab') {
+      this.keepFocus(event);
+    }
+  }
+
+  // Tab and Shift+Tab go round the replay's own controls, never the page
+  // hidden behind it.
+  keepFocus(event) {
+    const frame = this.container.querySelector('.replay-frame');
+    if (!frame) return;
+    const controls = Array.from(frame.querySelectorAll(FOCUSABLE)).filter(
+      el => !el.closest('[hidden]')
+    );
+    if (!controls.length) return;
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    const active = document.activeElement;
+    if (!frame.contains(active)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
     }
   }
 
@@ -221,10 +268,12 @@ class RaceReplay {
     return this.data;
   }
 
+  /** Opens a category's race; false when the data has no such race. */
   async open(category) {
     const data = await this.load();
     const race = data.races[category];
-    if (!race) return;
+    // A race with nobody in it has nothing to replay.
+    if (!race || !race.riders || !race.riders.length) return false;
     this.pause();
     this.race = {
       ...race,
@@ -241,8 +290,11 @@ class RaceReplay {
     document.addEventListener('keydown', this.onKey);
     window.addEventListener('resize', this.onResize);
     this.seek(0);
-    this.play();
+    // With reduced motion the race waits on its first frame for Play.
+    if (prefersReducedMotion()) this.updatePlayButton();
+    else this.play();
     this.container.querySelector('.replay-play').focus();
+    return true;
   }
 
   close() {
@@ -355,7 +407,7 @@ class RaceReplay {
               <select>${Object.entries(this.data.races)
                 .map(
                   ([key, other]) =>
-                    `<option value="${key}"${key === race.category ? ' selected' : ''}>${other.title}</option>`
+                    `<option value="${escapeHtml(key)}"${key === race.category ? ' selected' : ''}>${escapeHtml(other.title)}</option>`
                 )
                 .join('')}</select>
             </label>
@@ -853,16 +905,22 @@ class RaceReplay {
     const top = this.race.riders
       .filter(rider => rider.place && rider.place <= 3)
       .sort((a, b) => a.place - b.place);
+    // Nobody finished: no podium to stand on.
+    if (!top.length) {
+      podium.hidden = true;
+      return;
+    }
     const winner = lapEnds(top[0].laps).pop();
+    const portraits = this.race.podium || {};
     const step = rider => {
       const time = lapEnds(rider.laps).pop();
-      const photo = this.race.podium[rider.bib] || rider.photo;
+      const photo = portraits[rider.bib] || rider.photo;
       return `
         <figure class="podium-step podium-${rider.place}">
           ${
             photo
               ? `<img src="${this.base}${photo}" alt="" />`
-              : `<div class="podium-nophoto" aria-hidden="true">${rider.bib}</div>`
+              : `<div class="podium-nophoto" aria-hidden="true">${escapeHtml(rider.bib)}</div>`
           }
           <figcaption>
             <b class="podium-bib">${escapeHtml(riderName(rider))}</b>
@@ -875,7 +933,7 @@ class RaceReplay {
     const order = [top[1], top[0], top[2]].filter(Boolean);
     podium.innerHTML = `
       <button type="button" class="podium-close" aria-label="Close the replay">&times;</button>
-      <h3 class="podium-title">${this.race.title} podium</h3>
+      <h3 class="podium-title">${escapeHtml(this.race.title)} podium</h3>
       <div class="podium-steps">${order.map(step).join('')}</div>
       <button type="button" class="podium-again">Watch again</button>`;
     podium.querySelector('.podium-close').addEventListener('click', () => this.close());

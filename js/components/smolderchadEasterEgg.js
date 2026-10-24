@@ -109,6 +109,8 @@ class SmolderchadEasterEgg {
 
     // Create the image
     const image = document.createElement('img');
+    // Hidden until the egg hatches, so it is fetched then, not on every visit.
+    image.loading = 'lazy';
     image.src = 'images/SMOLDERCHAD.jpeg';
     image.alt = 'SMOLDERCHAD';
 

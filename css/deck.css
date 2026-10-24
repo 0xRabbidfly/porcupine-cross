@@ -3600,6 +3600,43 @@ footer {
 /* 19. LATE CORRECTIONS                                                  */
 /* ===================================================================== */
 
+/* In-page links glide to their section (the one scroll path: no script
+   scrolls), and the section stops clear of the fixed header. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+section[id],
+.section-alias {
+  --scroll-gap: calc(var(--header-height-desktop) + 8px);
+  scroll-margin-top: var(--scroll-gap);
+}
+
+@media (max-width: 768px) {
+  section[id],
+  .section-alias {
+    --scroll-gap: calc(var(--header-height-mobile) + 8px);
+  }
+}
+
+/* A section not dealt yet sits low (the deal's 46px drop, below, plus a
+   little from its shrink), and the browser aims for where it is now, so aim
+   that much higher. */
+@media (prefers-reduced-motion: no-preference) {
+  .js section[id]:not(.visible) {
+    scroll-margin-top: calc(var(--scroll-gap) + 54px);
+  }
+}
+
+/* Images carry their width and height so the page holds their room while
+   they load. :where() keeps this at zero specificity: any rule that sizes an
+   image still wins, and the rest keep their shape. */
+:where(img[width][height]) {
+  height: auto;
+}
+
 /* Without scripts nothing would ever take the loading screen away. */
 html:not(.js) .loading-spinner {
   display: none;

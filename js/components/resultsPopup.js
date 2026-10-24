@@ -56,6 +56,8 @@ class ResultsPopup {
 
   open() {
     this.timer = null;
+    // Focus goes back where it was when the card is put away.
+    this.returnFocus = document.activeElement;
     this.element.hidden = false;
     document.addEventListener('keydown', this.onKey);
     this.element.addEventListener('click', this.onClick);
@@ -69,15 +71,40 @@ class ResultsPopup {
   }
 
   close() {
+    const wasOpen = !this.element.hidden;
     this.element.hidden = true;
     document.removeEventListener('keydown', this.onKey);
     this.element.removeEventListener('click', this.onClick);
+    const back = this.returnFocus;
+    this.returnFocus = null;
+    if (wasOpen && back && back.isConnected && back !== document.body && back.focus) back.focus();
   }
 
   onKey(event) {
     if (event.key === 'Escape') {
       event.preventDefault();
       this.close();
+    } else if (event.key === 'Tab') {
+      this.keepFocus(event);
+    }
+  }
+
+  // Tab and Shift+Tab go round the card's own links and buttons while it is up.
+  keepFocus(event) {
+    const controls = Array.from(this.element.querySelectorAll('a[href], button:not([disabled])'));
+    if (!controls.length) return;
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    const active = document.activeElement;
+    if (!this.element.contains(active)) {
+      event.preventDefault();
+      first.focus();
+    } else if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
     }
   }
 

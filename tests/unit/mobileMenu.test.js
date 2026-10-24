@@ -251,6 +251,34 @@ describe('Mobile Menu Functionality', () => {
     expect(eventBus.emit).not.toHaveBeenCalledWith('mobileMenu:closed', { isAnimating: true });
   });
 
+  test('on a phone a menu link closes the menu, then goes to its section once', () => {
+    jest.useFakeTimers();
+    const width = window.innerWidth;
+    window.innerWidth = 390;
+    const section = document.createElement('section');
+    section.id = 'schedule';
+    section.scrollIntoView = jest.fn();
+    document.body.appendChild(section);
+    try {
+      window.location.hash = '';
+      mobileMenu._forceState({ isOpen: true, isAnimating: false });
+      mockMainNav.querySelector('a[href="#schedule"]').click();
+      expect(window.location.hash).toBe('');
+      jest.advanceTimersByTime(1000);
+      expect(mobileMenu.state.isOpen).toBe(false);
+      expect(window.location.hash).toBe('#schedule');
+
+      // Already at that address: the hash would not move, so it scrolls.
+      mockMainNav.querySelector('a[href="#schedule"]').click();
+      jest.advanceTimersByTime(1000);
+      expect(section.scrollIntoView).toHaveBeenCalledTimes(1);
+    } finally {
+      window.innerWidth = width;
+      window.location.hash = '';
+      jest.useRealTimers();
+    }
+  });
+
   test('destroy removes the toggle and keyboard listeners', () => {
     jest.useFakeTimers();
     mobileMenu.destroy();

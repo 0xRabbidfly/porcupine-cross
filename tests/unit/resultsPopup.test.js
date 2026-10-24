@@ -90,6 +90,28 @@ describe('ResultsPopup', () => {
     });
   });
 
+  test('Tab stays on the card while it is up, and Escape hands focus back', () => {
+    const before = document.createElement('button');
+    document.body.appendChild(before);
+    before.focus();
+    arm(AFTER);
+    const controls = Array.from(element().querySelectorAll('a[href], button'));
+    const tab = shiftKey =>
+      document.activeElement.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true })
+      );
+
+    controls[controls.length - 1].focus();
+    tab(false);
+    expect(document.activeElement).toBe(controls[0]);
+    tab(true);
+    expect(document.activeElement).toBe(controls[controls.length - 1]);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(element().hidden).toBe(true);
+    expect(document.activeElement).toBe(before);
+  });
+
   test('create does nothing on a page without one', () => {
     document.body.innerHTML = '';
     expect(ResultsPopup.create()).toBeNull();

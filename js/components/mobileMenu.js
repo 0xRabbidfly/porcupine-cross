@@ -155,9 +155,13 @@ class MobileMenu {
         this.closeMenu();
       }, 200);
 
-      // Navigate after delay
+      // Then go to the section, once, after the splat. The page's CSS makes
+      // the jump a glide and stops it clear of the header. A link to the
+      // section already in the address would not move by hash, so it scrolls.
       setTimeout(() => {
-        window.location.hash = href;
+        const target = href.length > 1 ? document.querySelector(href) : null;
+        if (window.location.hash === href && target) target.scrollIntoView();
+        else window.location.hash = href;
       }, 1000);
     }
   }

@@ -15,6 +15,7 @@ import eventBus from './core/eventBus.js';
 import { getElements, getElement, addEventListeners } from './utils/domUtils.js';
 import AnimationSystem from './core/animationSystem.js';
 import { setupAudioPlayButton } from './utils/audioUtils.js';
+import Analytics from './utils/analytics.js';
 
 // Application class
 class App {
@@ -41,9 +42,6 @@ class App {
       this.initAnimationEffects();
     }
 
-    // Set up smooth scrolling for anchor links
-    this.initSmoothScrolling();
-
     return this;
   }
 
@@ -54,6 +52,9 @@ class App {
     if (this.initialized) return;
 
     try {
+      // Count the key clicks and replay opens in GA4, once each
+      this.components.analytics = Analytics.create();
+
       // Initialize AudioManager
       this.initAudioManager();
 
@@ -81,50 +82,6 @@ class App {
 
       // Initialize SMOLDERCHAD Easter Egg
       this.initSmolderchadEasterEgg();
-
-      // Track easter egg interactions in GA4
-      if (window.gtag) {
-        // Track spade logo clicks
-        const spadeLogo = document.querySelector('.surface-logo');
-        if (spadeLogo) {
-          spadeLogo.addEventListener('click', () => {
-            window.gtag('event', 'EasterEgg', {
-              event_category: 'engagement',
-              event_label: 'spade_logo_click',
-              value: 1,
-            });
-          });
-        }
-
-        // Track "WTF" typing
-        document.addEventListener('keydown', event => {
-          if (event.key === 't' || event.key === 'T') {
-            // Simple "WTF" detection - you might want to enhance this
-            const currentText = document.activeElement?.value || '';
-            if (currentText.toLowerCase().includes('wtf')) {
-              window.gtag('event', 'EasterEgg', {
-                event_category: 'engagement',
-                event_label: 'wtf_typed',
-                value: 1,
-              });
-            }
-          }
-        });
-      }
-
-      // Track audio file clicks in GA4
-      if (window.gtag) {
-        const audioFile = document.querySelector('#race-day-audio');
-        if (audioFile) {
-          audioFile.addEventListener('play', () => {
-            window.gtag('event', 'RaceOutline', {
-              event_category: 'engagement',
-              event_label: 'audio_played',
-              value: 1,
-            });
-          });
-        }
-      }
 
       this.initialized = true;
       eventBus.emit('app:initialized');
@@ -234,15 +191,6 @@ class App {
         if (this.components.audioManager) {
           this.components.audioManager.playClickSound();
         }
-
-        // Track registration button clicks in GA4
-        if (window.gtag) {
-          window.gtag('event', 'register_button_click', {
-            event_category: 'engagement',
-            event_label: 'registration',
-            value: 1,
-          });
-        }
       });
 
       // Add mud splatter to contact section links
@@ -252,29 +200,6 @@ class App {
         AnimationSystem.createMudSplat(event.currentTarget);
         if (this.components.audioManager) {
           this.components.audioManager.playClickSound();
-        }
-
-        // Track contact link clicks in GA4 with descriptive names
-        if (window.gtag) {
-          const linkText = event.currentTarget.textContent.toLowerCase();
-          let eventName = 'contact_link_click';
-
-          // Use more specific event names based on link content
-          if (linkText.includes('instagram')) {
-            eventName = 'instagram_click';
-          } else if (linkText.includes('facebook')) {
-            eventName = 'facebook_click';
-          } else if (linkText.includes('email') || linkText.includes('@')) {
-            eventName = 'email_click';
-          } else if (linkText.includes('map') || linkText.includes('location')) {
-            eventName = 'location_click';
-          }
-
-          window.gtag('event', eventName, {
-            event_category: 'engagement',
-            event_label: 'contact',
-            value: 1,
-          });
         }
       });
 
@@ -564,49 +489,6 @@ class App {
       this.components.countdownTimer.start();
     } else {
       console.warn('CountdownTimer elements not found');
-    }
-  }
-
-  /**
-   * Initialize smooth scrolling for anchor links
-   */
-  initSmoothScrolling() {
-    try {
-      const anchorLinks = getElements('a[href^="#"]');
-
-      addEventListeners(anchorLinks, 'click', e => {
-        e.preventDefault();
-        const targetElement = document.querySelector(e.currentTarget.getAttribute('href'));
-        if (targetElement) {
-          // Calculate offset due to sticky header
-          const headerOffset = window.innerWidth <= 768 ? 60 : 100; // Adjust for mobile vs desktop
-          const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          // If mobile menu is open, close it with a delay
-          if (window.innerWidth <= 768 && this.components.mobileMenu?.getState().isOpen) {
-            setTimeout(() => {
-              this.components.mobileMenu.closeMenu();
-            }, 200);
-
-            // Scroll after a slight delay to allow animation to complete
-            setTimeout(() => {
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth',
-              });
-            }, 1000);
-          } else {
-            // Desktop or menu already closed - scroll immediately
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth',
-            });
-          }
-        }
-      });
-    } catch (error) {
-      console.error('Error setting up smooth scrolling:', error);
     }
   }
 
