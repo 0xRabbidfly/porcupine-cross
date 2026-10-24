@@ -30,6 +30,7 @@ const race = {
       laps: 1,
       riders: [{ bib: '127', place: 1, laps: [150] }],
       podium: {},
+      fastest: { bib: '127', lap: 1, time: 150 },
     },
     'Cat A': {
       title: 'Men Cat A',
@@ -100,6 +101,7 @@ describe('RaceReplay', () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     replay.destroy();
     document.body.innerHTML = '';
     delete global.fetch;
@@ -210,16 +212,41 @@ describe('RaceReplay', () => {
     expect(burst.hidden).toBe(true);
   });
 
+  test('the race record and course record each play their lap, the course one in its race', async () => {
+    await open();
+    // In Cat A the race record is the course record: one button, not two.
+    expect(container().querySelectorAll('[data-jump]')).toHaveLength(1);
+
+    const pick = container().querySelector('.replay-pick select');
+    pick.value = 'Cat B';
+    pick.dispatchEvent(new Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const race = container().querySelector('[data-jump="race"]');
+    expect(race.textContent.replace(/\s+/g, ' ').trim()).toBe('⏱ Race record 2:30 127');
+
+    container().querySelector('[data-jump="course"]').click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(container().querySelector('.replay-pick select').value).toBe('Cat A');
+    // 55's record lap ends at 200s: two seconds of playback (at 60x) before.
+    expect(replay.t).toBe(80);
+    expect(replay.followed).toBe('55');
+    expect(replay.playing).toBe(true);
+  });
+
   test("a race's winner gets a burst as they cross the line", async () => {
     await open();
     const pick = container().querySelector('.replay-pick select');
     pick.value = 'Cat B';
     pick.dispatchEvent(new Event('change'));
     await new Promise(resolve => setTimeout(resolve, 0));
+    jest.useFakeTimers();
     replay.seek(140);
     replay.seek(155);
     const burst = container().querySelector('.replay-burst');
+    // Here the fastest lap is the winning one: its burst first, then the win.
     expect(burst.hidden).toBe(false);
+    expect(burst.dataset.kind).toBe('lap');
+    jest.advanceTimersByTime(3300);
     expect(burst.dataset.kind).toBe('win');
     expect(burst.textContent).toBe('Winner! 127, 2:30');
   });

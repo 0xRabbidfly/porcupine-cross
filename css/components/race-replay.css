@@ -433,13 +433,25 @@
   }
 }
 
-/* The course record: a small trophy pinned in the map's lower corner. */
-.replay-trophy {
+/* The records, pinned in the map's lower corner: the race's, then the
+   course's. Each plays its lap. */
+.replay-records {
   position: absolute;
   right: 10px;
   bottom: 10px;
   z-index: 2;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.replay-trophy {
+  display: flex;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
   align-items: center;
   gap: 7px;
   padding: 4px 11px 4px 6px;
@@ -470,6 +482,14 @@
   display: block;
   font-size: 0.74rem;
   font-weight: 500;
+}
+
+.replay-trophy.is-race {
+  background: linear-gradient(135deg, #ffffff, #cfd6e0);
+}
+
+.replay-trophy:hover {
+  transform: translateY(-2px);
 }
 
 .replay-trophy.is-lit {
@@ -1044,9 +1064,12 @@
     display: none;
   }
 
-  .replay-trophy {
+  .replay-records {
     right: 6px;
     bottom: 6px;
+  }
+
+  .replay-trophy {
     font-size: 0.74rem;
   }
 

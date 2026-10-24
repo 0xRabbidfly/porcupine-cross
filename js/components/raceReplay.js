@@ -379,15 +379,18 @@ class RaceReplay {
               <p class="replay-zoom-team"></p>
             </div>
             <div class="replay-info" role="region" aria-label="The followed rider's laps" hidden></div>
-            ${
-              race.record
-                ? `<div class="replay-trophy" title="The fastest lap of the day, in any race">
-                     <span class="replay-trophy-cup" aria-hidden="true">🏆</span>
-                     <span class="replay-trophy-text">Course record <b>${clock(race.record.time)}</b>
-                       <span class="replay-trophy-who">${escapeHtml(race.record.name || `#${race.record.bib}`)}</span></span>
-                   </div>`
-                : ''
-            }
+            <div class="replay-records">
+              ${this.recordButton()}
+              ${
+                race.record
+                  ? `<button type="button" class="replay-trophy" data-jump="course" title="The fastest lap of the day, in any race: watch it">
+                       <span class="replay-trophy-cup" aria-hidden="true">🏆</span>
+                       <span class="replay-trophy-text">Course record <b>${clock(race.record.time)}</b>
+                         <span class="replay-trophy-who">${escapeHtml(race.record.name || `#${race.record.bib}`)}</span></span>
+                     </button>`
+                  : ''
+              }
+            </div>
             <div class="replay-burst" aria-live="polite" hidden></div>
           </div>
           <ol class="replay-standings" aria-label="Standings: pick a rider to follow"></ol>
@@ -454,6 +457,10 @@ class RaceReplay {
       this.rows.set(rider.bib, li);
     });
 
+    this.container.querySelectorAll('[data-jump]').forEach(button => {
+      button.addEventListener('click', () => this.jumpTo(button.dataset.jump));
+    });
+
     const pick = this.container.querySelector('.replay-pick select');
     pick.addEventListener('change', async () => {
       await this.open(pick.value);
@@ -508,6 +515,8 @@ class RaceReplay {
     this.followed = null;
     this.order = '';
     this.podiumShown = false;
+    clearTimeout(this.burstTimer);
+    this.burstQueue = [];
     this.fitView();
   }
 
@@ -592,6 +601,43 @@ class RaceReplay {
     if (over !== this.podiumShown) this.showPodium(over);
   }
 
+  // The race's own record, its fastest lap, as a button: left out when it is
+  // the course record too, which has its own.
+  recordButton() {
+    const { fastest, record, category } = this.race;
+    if (!fastest) return '';
+    if (record && record.race === category && record.bib === fastest.bib) return '';
+    const rider = this.race.riders.find(r => r.bib === fastest.bib);
+    if (!rider) return '';
+    return `<button type="button" class="replay-trophy is-race" data-jump="race" title="This race's fastest lap: watch it">
+        <span class="replay-trophy-cup" aria-hidden="true">⏱</span>
+        <span class="replay-trophy-text">Race record <b>${clock(fastest.time)}</b>
+          <span class="replay-trophy-who">${escapeHtml(riderName(rider))}</span></span>
+      </button>`;
+  }
+
+  // Plays up to the moment a record lap ends, two seconds of playback before
+  // its rider, followed, crosses the line and the burst lands. The course
+  // record may be another race's.
+  async jumpTo(which) {
+    let race = this.race;
+    let lap = race.fastest;
+    if (which === 'course') {
+      if (race.record.race !== race.category) {
+        await this.open(race.record.race);
+        race = this.race;
+      }
+      lap = { bib: race.record.bib, lap: race.record.lap };
+    }
+    const rider = race.riders.find(r => r.bib === lap.bib);
+    if (!rider) return;
+    const end = lapEnds(rider.laps)[lap.lap - 1];
+    this.pause();
+    this.seek(Math.max(0, end - this.speed * 2));
+    if (this.followed !== rider.bib) this.follow(rider.bib);
+    this.play();
+  }
+
   // The race's moments worth a burst: its fastest lap (the course record,
   // when it is that) as it is ridden, and the winner crossing the line.
   moments() {
@@ -619,26 +665,35 @@ class RaceReplay {
     return out;
   }
 
-  // Playing through one of the race's moments: a burst on the map for a few
-  // seconds of real time. Scrubbing through them stays quiet.
+  // Playing through the race's moments: a burst on the map for each, one
+  // after another when they fall together. Scrubbing through stays quiet.
   checkRecord(before, now) {
     if (!this.playing) return;
-    const moment = this.moments().find(m => before < m.at && now >= m.at);
-    if (!moment) return;
+    const crossed = this.moments().filter(m => before < m.at && now >= m.at);
+    if (!crossed.length) return;
+    const showing = this.burstQueue && this.burstQueue.length;
+    this.burstQueue = (this.burstQueue || []).concat(crossed);
+    if (!showing) this.nextBurst();
+  }
+
+  nextBurst() {
     const burst = this.container.querySelector('.replay-burst');
+    const trophy = this.container.querySelector('.replay-trophy[data-jump="course"]');
+    const moment = this.burstQueue && this.burstQueue[0];
+    if (!burst || !moment) return;
     burst.textContent = moment.text;
     burst.dataset.kind = moment.kind;
     burst.hidden = false;
     burst.classList.remove('is-on');
     void burst.offsetWidth;
     burst.classList.add('is-on');
-    const trophy = this.container.querySelector('.replay-trophy');
     if (trophy && moment.kind === 'record') trophy.classList.add('is-lit');
     clearTimeout(this.burstTimer);
     this.burstTimer = setTimeout(() => {
       burst.hidden = true;
-      const lit = this.container.querySelector('.replay-trophy');
-      if (lit) lit.classList.remove('is-lit');
+      if (trophy) trophy.classList.remove('is-lit');
+      this.burstQueue.shift();
+      if (this.burstQueue.length) this.nextBurst();
     }, 3200);
   }
 
