@@ -22,6 +22,10 @@
 # and the rider was matched by kit to a photo where it was read. They are merged
 # into each photo here, so regenerating photos.json never drops them.
 #
+# Beside them, bib_sizes.json gives how much of the frame each tagged rider
+# fills, 0 to 1, so the gallery can pick a rider's close-ups:
+#   { "R6II0603.jpg": { "5": 0.183 } }
+#
 # Race results, when the year has them, sit beside it as results.json:
 #   { "results": { "204": { "race": "Master Women 35+", "place": 1, ... } },
 #     "same_rider": [["240", "289"]] }
@@ -48,6 +52,8 @@ param(
 
     [string]$BibsPath,
 
+    [string]$SizesPath,
+
     [string]$ResultsPath
 )
 
@@ -68,6 +74,12 @@ if (Test-Path $ResultsPath) {
 $bibs = @{}
 if (Test-Path $BibsPath) {
     $bibs = Get-Content $BibsPath -Raw | ConvertFrom-Json -AsHashtable
+}
+
+if (-not $SizesPath) { $SizesPath = Join-Path $eventRoot 'bib_sizes.json' }
+$sizes = @{}
+if (Test-Path $SizesPath) {
+    $sizes = Get-Content $SizesPath -Raw | ConvertFrom-Json -AsHashtable
 }
 
 Write-Host "===== Prologue Cross Metadata Generator ====="
@@ -153,6 +165,7 @@ foreach ($highResFile in $highResFiles) {
         $uncredited += $highResFile.Name
     }
     if ($bibs.ContainsKey($highResFile.Name)) { $photo.bibs = $bibs[$highResFile.Name] }
+    if ($sizes.ContainsKey($highResFile.Name)) { $photo.sizes = $sizes[$highResFile.Name] }
     $photos += $photo
     $photoId++
 

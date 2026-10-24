@@ -845,6 +845,31 @@ describe('photos gallery rider panel', () => {
     expect(button.textContent.trim()).toBe('Make my photo card');
   });
 
+  test('the card takes the close-ups, two minutes apart, in race order', async () => {
+    const win = boot();
+    await settle();
+    const shot = (name, time, size, how = 'number') => ({
+      filename: name,
+      date_taken: at(time),
+      bibs: { 204: how },
+      sizes: { 204: size },
+    });
+    const photos = [
+      shot('far', '11:05', 0.05),
+      shot('burst-1', '11:10', 0.5),
+      shot('burst-2', '11:10', 0.45),
+      shot('mid', '11:20', 0.3),
+      shot('kit', '11:30', 0.3, 'kit'),
+      shot('late', '11:40', 0.25),
+    ];
+    const pick = win
+      .eval('PhotoGallery.prototype.cardPhotos')
+      .call({ bib: '204', photos })
+      .map(photo => photo.filename);
+    // burst-2 is a second frame of the same moment; the kit match counts for less.
+    expect(pick).toEqual(['burst-1', 'mid', 'late']);
+  });
+
   test('offers every photo of the rider as one download', async () => {
     const win = boot();
     await settle();
@@ -886,12 +911,14 @@ describe('photos gallery results board', () => {
         filename: 'menB.jpg',
         date_taken: '2026-10-18T15:20:00Z',
         bibs: { 204: 'kit', 5: 'number' },
+        sizes: { 204: 0.4, 5: 0.1 },
       },
       {
         id: 'photo_2',
         filename: 'menB-2.jpg',
         date_taken: '2026-10-18T15:30:00Z',
         bibs: { 204: 'number' },
+        sizes: { 204: 0.2 },
       },
     ],
     results: {
@@ -968,7 +995,10 @@ describe('photos gallery results board', () => {
   const settle = () => new Promise(resolve => setTimeout(resolve, 50));
   const board = win => win.document.querySelector('.race-results');
   const squash = node => node.textContent.replace(/\s+/g, ' ').trim();
-  const headings = win => Array.from(board(win).querySelectorAll('.standings-race')).map(squash);
+  const tabs = win => Array.from(board(win).querySelectorAll('.standings-tab')).map(squash);
+  const shown = win => squash(board(win).querySelector('.standings-tab[aria-pressed="true"]'));
+  const pickTab = (win, race) =>
+    board(win).querySelector(`.standings-tab[data-race="${race}"]`).click();
   const rows = win =>
     Array.from(board(win).querySelectorAll('.standings-table tbody tr')).map(squash);
   const pickRace = (win, start) =>
@@ -976,46 +1006,61 @@ describe('photos gallery results board', () => {
       .querySelector(`.gallery-race-btn[data-start="2026-10-18T${start}:00-04:00"]`)
       .click();
 
-  test('lists every category in start order under All, folded until opened', async () => {
+  test('tabs every category in start order under All, folded until opened', async () => {
     const win = boot();
     await settle();
     expect(board(win).hidden).toBe(false);
     expect(board(win).open).toBe(false);
     expect(squash(board(win).querySelector('.race-results-title'))).toBe('Results');
-    expect(headings(win)).toEqual([
-      'Cat B 1 finished',
-      'Master Men 35+ 3 finished',
-      'Cat A 2 finished',
-    ]);
+    expect(tabs(win)).toEqual(['Cat B 1', 'Master Men 35+ 3', 'Cat A 2']);
+    expect(shown(win)).toBe('Cat B 1');
   });
 
-  test('narrows to the selected race, with gaps, laps down and no DNS', async () => {
+  test('shows one category at a time, with gaps, laps down and no DNS', async () => {
     const win = boot();
     await settle();
-    pickRace(win, '11:00');
-    expect(squash(board(win).querySelector('.race-results-title'))).toBe(
-      'Results: Men B and Masters 35+'
-    );
-    expect(headings(win)).toEqual(['Cat B 1 finished', 'Master Men 35+ 3 finished']);
+    expect(board(win).querySelectorAll('.standings-table')).toHaveLength(1);
+    expect(rows(win)).toEqual(['1 6 41:00 None', 'DNF 5 1']);
+
+    pickTab(win, 'Master Men 35+');
+    expect(shown(win)).toBe('Master Men 35+ 3');
     expect(rows(win)).toEqual([
-      '1 6 41:00 None',
-      'DNF 5 1',
       '1 204 42:00 2',
       '2 7 43:05 +1:05 None',
       '3 8 43:08 1 lap down None',
     ]);
   });
 
+  test('a race narrows the tabs and keeps the chosen category when it can', async () => {
+    const win = boot();
+    await settle();
+    pickTab(win, 'Master Men 35+');
+    pickRace(win, '11:00');
+    expect(squash(board(win).querySelector('.race-results-title'))).toBe(
+      'Results: Men B and Masters 35+'
+    );
+    expect(tabs(win)).toEqual(['Cat B 1', 'Master Men 35+ 3']);
+    expect(shown(win)).toBe('Master Men 35+ 3');
+
+    pickRace(win, '14:20');
+    expect(tabs(win)).toEqual(['Cat A 2']);
+    expect(shown(win)).toBe('Cat A 2');
+  });
+
   test('names the closest finish on the same lap, within ten seconds', async () => {
     const win = boot();
     await settle();
-    const closest = Array.from(board(win).querySelectorAll('.standings-closest')).map(squash);
-    expect(closest).toEqual(['Closest finish: 30 and 31, 7 seconds apart']);
+    expect(board(win).querySelector('.standings-closest')).toBeNull();
+    pickTab(win, 'Cat A');
+    expect(squash(board(win).querySelector('.standings-closest'))).toBe(
+      'Closest finish: 30 and 31, 7 seconds apart'
+    );
   });
 
   test("a rider's photos open from the board, which steps aside for the rider", async () => {
     const win = boot();
     await settle();
+    pickTab(win, 'Master Men 35+');
     board(win).querySelector('button[data-bib="204"]').click();
     expect(win.location.search).toBe('?bib=204');
     expect(win.document.querySelector('.rider-panel').hidden).toBe(false);
@@ -1025,10 +1070,12 @@ describe('photos gallery results board', () => {
     expect(board(win).hidden).toBe(false);
   });
 
-  test('the thumbnail is a photo where the number was read', async () => {
+  test('the thumbnail is the photo the rider fills the most', async () => {
     const win = boot();
     await settle();
+    pickTab(win, 'Master Men 35+');
     const thumb = board(win).querySelector('button[data-bib="204"] img');
-    expect(thumb.getAttribute('src')).toMatch(/thumbnails\/menB-2\.jpg$/);
+    // A kit match at 0.4 of the frame beats a read number at 0.2.
+    expect(thumb.getAttribute('src')).toMatch(/thumbnails\/menB\.jpg$/);
   });
 });

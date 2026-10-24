@@ -58,9 +58,9 @@
     </script>
 
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="style.css?v=20261023-4" />
-    <link rel="stylesheet" href="css/components/index.css?v=20261023-4" />
-    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261023-4" />
+    <link rel="stylesheet" href="style.css?v=20261024-1" />
+    <link rel="stylesheet" href="css/components/index.css?v=20261024-1" />
+    <link rel="stylesheet" href="css/components/section-backgrounds.css?v=20261024-1" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -467,7 +467,7 @@
       href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700;800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700..900;1,6..96,400&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Libre+Franklin:wght@500..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/deck.css?v=20261023-4" />
+    <link rel="stylesheet" href="css/deck.css?v=20261024-1" />
   </head>
   <body>
     <header>
@@ -820,6 +820,8 @@
           // one rider raced under.
           this.results = {};
           this.sameRider = [];
+          // The category the results board shows.
+          this.standingsRace = '';
           this.fetching = false;
           this.currentPage = 0;
           this.photosPerPage = 50;
@@ -1183,13 +1185,24 @@
           }
         }
 
-        // Up to three of the rider's photos for the card, spread over the
-        // race, from frames where the number was read when there are enough.
+        // Three of the rider's photos for the card: the frames they fill
+        // most, at least two minutes apart so a burst of one corner does not
+        // take every print, laid out in the order they were taken.
         cardPhotos() {
-          const read = this.photos.filter(photo => photo.bibs[this.bib] === 'number');
-          const pool = read.length >= 3 ? read : this.photos;
-          if (pool.length <= 3) return pool;
-          return [pool[0], pool[Math.floor(pool.length / 2)], pool[pool.length - 1]];
+          const ranked = this.photos.slice().sort(byCloseUp(this.bib));
+          const apart = photo =>
+            picked.every(
+              other =>
+                Math.abs(Date.parse(photo.date_taken) - Date.parse(other.date_taken)) >= 120000
+            );
+          const picked = [];
+          ranked.forEach(photo => {
+            if (picked.length < 3 && apart(photo)) picked.push(photo);
+          });
+          ranked.forEach(photo => {
+            if (picked.length < 3 && !picked.includes(photo)) picked.push(photo);
+          });
+          return picked.sort((a, b) => Date.parse(a.date_taken) - Date.parse(b.date_taken));
         }
 
         async makeCard() {
@@ -1333,41 +1346,58 @@
             });
           });
 
-          board.querySelector('.race-results-body').innerHTML = groups
-            .map(({ race: category, riders }) => {
-              const winner = riders[0];
-              const rows = riders
-                .map(rider => {
-                  const photos = tagged.get(rider.bib) || [];
-                  const thumb =
-                    photos.find(photo => photo.bibs[rider.bib] === 'number') || photos[0];
-                  const cell = thumb
-                    ? `<button type="button" data-bib="${rider.bib}" aria-label="${photos.length} photos of bib ${rider.bib}">
-                         <img src="${this.basePath}thumbnails/${thumb.filename}" alt="" loading="lazy" />
-                         <span>${photos.length}</span>
-                       </button>`
-                    : '<span class="standings-none">None</span>';
-                  const podium = rider.place && rider.place <= 3 ? ' is-podium' : '';
-                  return `<tr${thumb ? ` class="is-linked" data-bib="${rider.bib}"` : ''}>
-                      <td class="standings-place${podium}">${rider.place || rider.status}</td>
-                      <td class="standings-bib">${rider.bib}</td>
-                      <td class="standings-time">${rider.time || ''}</td>
-                      <td class="standings-gap">${gapText(rider, winner)}</td>
-                      <td class="standings-photos">${cell}</td>
-                    </tr>`;
-                })
-                .join('');
-              const finished = riders.filter(rider => rider.place).length;
-              return `<div class="standings-group">
-                  <h3 class="standings-race">${category} <span>${finished} finished</span></h3>
-                  ${closestFinish(riders)}
-                  <table class="standings-table">
-                    <thead><tr><th>Place</th><th>Bib</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                  </table>
-                </div>`;
+          // One category at a time, picked from tabs, so the board stays a
+          // table and not a scroll. A race change keeps the pick when the
+          // category is still on the board.
+          const shown = groups.find(group => group.race === this.standingsRace) || groups[0];
+          this.standingsRace = shown.race;
+          const tabs = groups
+            .map(
+              ({ race: category, riders }) =>
+                `<button type="button" class="standings-tab" data-race="${category}" aria-pressed="${category === shown.race}">
+                   ${category} <span>${riders.filter(rider => rider.place).length}</span>
+                 </button>`
+            )
+            .join('');
+
+          const { riders } = shown;
+          const winner = riders[0];
+          const rows = riders
+            .map(rider => {
+              const photos = tagged.get(rider.bib) || [];
+              const thumb = photos.slice().sort(byCloseUp(rider.bib))[0];
+              const cell = thumb
+                ? `<button type="button" data-bib="${rider.bib}" aria-label="${photos.length} photos of bib ${rider.bib}">
+                     <img src="${this.basePath}thumbnails/${thumb.filename}" alt="" loading="lazy" />
+                     <span>${photos.length}</span>
+                   </button>`
+                : '<span class="standings-none">None</span>';
+              const podium = rider.place && rider.place <= 3 ? ' is-podium' : '';
+              return `<tr${thumb ? ` class="is-linked" data-bib="${rider.bib}"` : ''}>
+                  <td class="standings-place${podium}">${rider.place || rider.status}</td>
+                  <td class="standings-bib">${rider.bib}</td>
+                  <td class="standings-time">${rider.time || ''}</td>
+                  <td class="standings-gap">${gapText(rider, winner)}</td>
+                  <td class="standings-photos">${cell}</td>
+                </tr>`;
             })
             .join('');
+
+          board.querySelector('.race-results-body').innerHTML = `
+            <div class="standings-tabs" role="group" aria-label="Category">${tabs}</div>
+            ${closestFinish(riders)}
+            <table class="standings-table">
+              <thead><tr><th>Place</th><th>Bib</th><th>Time</th><th>Gap</th><th>Photos</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>`;
+
+          // Redrawing resets a phone's sideways-scrolled tab row; bring the
+          // chosen tab back into view.
+          const strip = board.querySelector('.standings-tabs');
+          const chosen = strip.querySelector('[aria-pressed="true"]');
+          if (strip.scrollWidth > strip.clientWidth) {
+            strip.scrollLeft = chosen.offsetLeft - strip.offsetLeft - 10;
+          }
         }
 
         // From the results to a rider's photos, with their panel in view.
@@ -1429,6 +1459,12 @@
           const board = document.querySelector('.race-results-body');
           if (board) {
             board.addEventListener('click', event => {
+              const tab = event.target.closest('.standings-tab');
+              if (tab) {
+                this.standingsRace = tab.dataset.race;
+                this.updateResults();
+                return;
+              }
               const row = event.target.closest('[data-bib]');
               if (row) this.pickRider(row.dataset.bib);
             });
@@ -1842,6 +1878,15 @@
         const bib = b =>
           `<button type="button" class="rider-link" data-bib="${b}"><b>${b}</b></button>`;
         return `<p class="standings-closest">Closest finish: ${bib(best.ahead.bib)} and ${bib(best.rider.bib)}, ${apart}</p>`;
+      }
+
+      // Sorts a rider's photos close-ups first: by how much of the frame they
+      // fill, with a read number ahead of a kit match, which is a guess.
+      function byCloseUp(bib) {
+        const score = photo =>
+          ((photo.sizes && photo.sizes[bib]) || 0) * (photo.bibs[bib] === 'number' ? 1 : 0.8);
+        const read = photo => (photo.bibs[bib] === 'number' ? 0 : 1);
+        return (a, b) => score(b) - score(a) || read(a) - read(b);
       }
 
       // 34123456 -> "34 MB".

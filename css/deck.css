@@ -2481,28 +2481,61 @@ footer {
 }
 
 .race-results-body {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-  gap: 26px 36px;
   padding: 4px 20px 20px;
 }
 
-.standings-race {
+/* One category at a time: a row of tabs, the chosen one filled in felt. */
+.standings-tabs {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin: 0 0 6px;
-  font-family: var(--pc-data) !important;
-  font-size: 1.1rem;
-  font-weight: 700 !important;
-  letter-spacing: 0.01em;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
 }
 
-.standings-race span {
-  font-family: var(--pc-body);
-  font-size: 0.82rem;
-  font-weight: 400;
+.standings-tab {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--pc-data);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--pc-ink);
+  background: #fff;
+  border: 1px solid rgba(17, 24, 35, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.standings-tab span {
+  font-family: var(--pc-numeral);
+  font-size: 0.74rem;
+  font-weight: 600;
   color: var(--pc-ink-soft);
+}
+
+.standings-tab:hover {
+  border-color: var(--pc-ink);
+}
+
+.standings-tab[aria-pressed='true'] {
+  color: var(--pc-stock);
+  background: var(--pc-felt);
+  border-color: var(--pc-felt);
+}
+
+.standings-tab[aria-pressed='true'] span {
+  color: var(--pc-gilt);
+}
+
+.standings-tab:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.standings-tab:focus-visible {
+  outline: 2px solid var(--pc-gilt);
+  outline-offset: 2px;
 }
 
 .standings-closest {
@@ -2513,6 +2546,7 @@ footer {
 
 .standings-table {
   width: 100%;
+  max-width: 680px;
   border-collapse: collapse;
   font-family: var(--pc-data);
   font-variant-numeric: tabular-nums;
@@ -2653,6 +2687,23 @@ footer {
 
   .race-results-body {
     padding: 4px 10px 14px;
+  }
+
+  /* Ten categories under All: one row to swipe, not five to scroll past. */
+  .standings-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -10px;
+    padding: 2px 10px 4px;
+    scrollbar-width: none;
+  }
+
+  .standings-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .standings-tab {
+    flex: none;
   }
 
   .standings-table th,
