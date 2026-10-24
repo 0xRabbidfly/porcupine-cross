@@ -210,6 +210,20 @@ describe('RaceReplay', () => {
     expect(burst.hidden).toBe(true);
   });
 
+  test("a race's winner gets a burst as they cross the line", async () => {
+    await open();
+    const pick = container().querySelector('.replay-pick select');
+    pick.value = 'Cat B';
+    pick.dispatchEvent(new Event('change'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    replay.seek(140);
+    replay.seek(155);
+    const burst = container().querySelector('.replay-burst');
+    expect(burst.hidden).toBe(false);
+    expect(burst.dataset.kind).toBe('win');
+    expect(burst.textContent).toBe('Winner! 127, 2:30');
+  });
+
   test("the title bar carries the race's lap record", async () => {
     await open();
     expect(container().querySelector('.replay-record').textContent).toBe(

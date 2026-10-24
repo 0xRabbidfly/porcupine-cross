@@ -506,6 +506,22 @@
   display: none;
 }
 
+/* A race's fastest lap in silver-white; the winner on the felt. */
+.replay-burst[data-kind='lap'] {
+  background: radial-gradient(circle at 50% 40%, #ffffff, #e8ecf2 60%, #b9c3d1);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.35),
+    0 0 40px 10px rgba(255, 255, 255, 0.35);
+}
+
+.replay-burst[data-kind='win'] {
+  color: var(--pc-stock, #f7f2e7);
+  background: radial-gradient(circle at 50% 40%, #2a6b52, var(--pc-felt, #14392c) 70%);
+  box-shadow:
+    0 0 0 3px #ffd75a,
+    0 0 40px 10px rgba(255, 215, 90, 0.4);
+}
+
 .replay-burst.is-on {
   animation: replay-burst 3.2s cubic-bezier(0.16, 0.9, 0.24, 1) both;
 }

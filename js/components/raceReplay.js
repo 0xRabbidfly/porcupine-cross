@@ -385,10 +385,10 @@ class RaceReplay {
                      <span class="replay-trophy-cup" aria-hidden="true">🏆</span>
                      <span class="replay-trophy-text">Course record <b>${clock(race.record.time)}</b>
                        <span class="replay-trophy-who">${escapeHtml(race.record.name || `#${race.record.bib}`)}</span></span>
-                   </div>
-                   <div class="replay-burst" aria-live="polite" hidden></div>`
+                   </div>`
                 : ''
             }
+            <div class="replay-burst" aria-live="polite" hidden></div>
           </div>
           <ol class="replay-standings" aria-label="Standings: pick a rider to follow"></ol>
         </div>
@@ -592,27 +592,53 @@ class RaceReplay {
     if (over !== this.podiumShown) this.showPodium(over);
   }
 
-  // Playing through the moment the record lap ends, in the race it was set
-  // in: a burst on the map, by the rider, for a few seconds of real time.
+  // The race's moments worth a burst: its fastest lap (the course record,
+  // when it is that) as it is ridden, and the winner crossing the line.
+  moments() {
+    const race = this.race;
+    const out = [];
+    const byBib = bib => race.riders.find(r => r.bib === bib);
+    const fastest = race.fastest && byBib(race.fastest.bib);
+    if (fastest) {
+      const record =
+        race.record && race.record.race === race.category && race.record.bib === fastest.bib;
+      out.push({
+        at: lapEnds(fastest.laps)[race.fastest.lap - 1],
+        kind: record ? 'record' : 'lap',
+        text: `${record ? 'Course record!' : 'Fastest lap!'} ${riderName(fastest)}, ${clock(race.fastest.time)}`,
+      });
+    }
+    const winner = race.riders.find(r => r.place === 1);
+    if (winner) {
+      out.push({
+        at: lapEnds(winner.laps).pop(),
+        kind: 'win',
+        text: `Winner! ${riderName(winner)}, ${clock(lapEnds(winner.laps).pop())}`,
+      });
+    }
+    return out;
+  }
+
+  // Playing through one of the race's moments: a burst on the map for a few
+  // seconds of real time. Scrubbing through them stays quiet.
   checkRecord(before, now) {
-    const record = this.race.record;
-    if (!record || record.race !== this.race.category || !this.playing) return;
-    const rider = this.race.riders.find(r => r.bib === record.bib);
-    if (!rider) return;
-    const at = lapEnds(rider.laps)[record.lap - 1];
-    if (!(before < at && now >= at)) return;
+    if (!this.playing) return;
+    const moment = this.moments().find(m => before < m.at && now >= m.at);
+    if (!moment) return;
     const burst = this.container.querySelector('.replay-burst');
-    burst.textContent = `Course record! ${riderName(rider)}, ${clock(record.time)}`;
+    burst.textContent = moment.text;
+    burst.dataset.kind = moment.kind;
     burst.hidden = false;
     burst.classList.remove('is-on');
     void burst.offsetWidth;
     burst.classList.add('is-on');
-    this.container.querySelector('.replay-trophy').classList.add('is-lit');
+    const trophy = this.container.querySelector('.replay-trophy');
+    if (trophy && moment.kind === 'record') trophy.classList.add('is-lit');
     clearTimeout(this.burstTimer);
     this.burstTimer = setTimeout(() => {
       burst.hidden = true;
-      const trophy = this.container.querySelector('.replay-trophy');
-      if (trophy) trophy.classList.remove('is-lit');
+      const lit = this.container.querySelector('.replay-trophy');
+      if (lit) lit.classList.remove('is-lit');
     }, 3200);
   }
 
