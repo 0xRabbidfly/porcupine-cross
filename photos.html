@@ -1049,10 +1049,12 @@
 
         // "11:18 am, 18 minutes in": when the photo was taken, as a racer
         // would place it. Empty in a year without a race schedule, whose
-        // timestamps were never checked against the clock.
+        // timestamps were never checked against the clock, and for a photo
+        // whose camera wrote no time: its race was worked out from the riders
+        // in it, and its time is only a place in the race's running order.
         describeMoment(photo) {
           const race = this.raceFor(photo);
-          if (!race) return '';
+          if (!race || photo.time_estimated) return '';
 
           const taken = Date.parse(photo.date_taken);
           const minutes = Math.floor((taken - Date.parse(race.dataset.start)) / 60000);
@@ -1074,13 +1076,35 @@
           if (this.timeline) this.timeline.select();
         }
 
+        // "Photographed by A, B and C", each name a link to the photographer's
+        // own gallery when photos.json gives one.
         updateCredit() {
           const credit = document.getElementById('gallery-credit');
           const names = this.photographers.map(photographer => photographer.name);
           credit.hidden = names.length === 0;
-          credit.textContent = names.length
-            ? `Photographed by ${new Intl.ListFormat('en', { type: 'conjunction' }).format(names)}`
-            : '';
+          credit.textContent = '';
+          if (!names.length) return;
+
+          const parts = new Intl.ListFormat('en', { type: 'conjunction' }).formatToParts(names);
+          let next = 0;
+          credit.append('Photographed by ');
+          parts.forEach(part => {
+            if (part.type !== 'element') {
+              credit.append(part.value);
+              return;
+            }
+            const { name, url } = this.photographers[next++];
+            if (!/^https:\/\//.test(url || '')) {
+              credit.append(name);
+              return;
+            }
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener';
+            link.textContent = name;
+            credit.append(link);
+          });
         }
 
         // Opened from the timeline: stay in the selected race when the photo
@@ -1229,10 +1253,11 @@
 
         // Which lap a photo caught the searched rider on, worked out from
         // their start, finishing time and laps: an even split, so a frame
-        // right at the line can land a lap early or late.
+        // right at the line can land a lap early or late. Empty for a photo
+        // whose time is estimated.
         lapFor(photo) {
           const result = this.results[this.bib];
-          if (!result || !result.laps) return '';
+          if (!result || !result.laps || photo.time_estimated) return '';
           const start = Date.parse(result.start);
           const taken = Date.parse(photo.date_taken);
           const total = clockSeconds(result.time) * 1000;

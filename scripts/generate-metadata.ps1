@@ -11,7 +11,8 @@
 #   pwsh scripts/generate-metadata.ps1 -Year 2026 -EventDate 2026-10-18 `
 #       -HighResPath "D:\Prologue CX 2026\high-res" `
 #       -ThumbnailPath "D:\Prologue CX 2026\thumbnails" `
-#       -Photographers @{ 'R6II' = 'Jamie Gonzalez'; 'IMG_' = 'Marija Gonzalez Najera' }
+#       -Photographers @{ 'R6II' = 'Jamie Gonzalez'; 'IMG_' = 'Marija Gonzalez Najera' } `
+#       -PhotographerLinks @{ 'Jeff Faulds' = 'https://fauldsphotography.com/...' }
 #
 # Defaults write into photos/event-<Year>/ in the repo, which is also where the
 # files need to sit before they go up to the server.
@@ -30,6 +31,12 @@
 #   { "results": { "204": { "race": "Master Women 35+", "place": 1, ... } },
 #     "same_rider": [["240", "289"]] }
 # Bib numbers only, never names. They are copied to the top of photos.json.
+#
+# A camera that wrote no capture time leaves its photos' times to times.json,
+# beside photos.json: { "Prologue-CX-2026-27.jpg": "2026-10-18T18:15:00Z" }.
+# Those times are estimates, worked out from the riders in each photo and the
+# order the photographer numbered them, so the photo is marked time_estimated
+# and the gallery places it in its race without claiming a clock time.
 
 [CmdletBinding()]
 param(
@@ -50,11 +57,16 @@ param(
     # two 2026 cameras exported with its EXIF artist field blanked.
     [hashtable]$Photographers = @{},
 
+    # A photographer's own gallery, keyed by their name; the credit links to it.
+    [hashtable]$PhotographerLinks = @{},
+
     [string]$BibsPath,
 
     [string]$SizesPath,
 
-    [string]$ResultsPath
+    [string]$ResultsPath,
+
+    [string]$TimesPath
 )
 
 $ErrorActionPreference = 'Stop'
@@ -80,6 +92,14 @@ if (-not $SizesPath) { $SizesPath = Join-Path $eventRoot 'bib_sizes.json' }
 $sizes = @{}
 if (Test-Path $SizesPath) {
     $sizes = Get-Content $SizesPath -Raw | ConvertFrom-Json -AsHashtable
+}
+
+if (-not $TimesPath) { $TimesPath = Join-Path $eventRoot 'times.json' }
+$estimatedTimes = @{}
+if (Test-Path $TimesPath) {
+    # -DateKind String keeps each time as written; otherwise ConvertFrom-Json
+    # turns it into a local DateTime.
+    $estimatedTimes = Get-Content $TimesPath -Raw | ConvertFrom-Json -AsHashtable -DateKind String
 }
 
 Write-Host "===== Prologue Cross Metadata Generator ====="
@@ -148,6 +168,10 @@ foreach ($highResFile in $highResFiles) {
     # The old version stamped local time with a literal Z and called it UTC.
     $takenUtc = $highResFile.CreationTimeUtc
     if ($highResFile.LastWriteTimeUtc -lt $takenUtc) { $takenUtc = $highResFile.LastWriteTimeUtc }
+    $estimated = $estimatedTimes.ContainsKey($highResFile.Name)
+    if ($estimated) {
+        $takenUtc = [DateTimeOffset]::Parse($estimatedTimes[$highResFile.Name]).UtcDateTime
+    }
 
     $photo = [ordered]@{
         id            = 'photo_' + $photoId.ToString('000')
@@ -157,6 +181,7 @@ foreach ($highResFile in $highResFiles) {
         size_bytes    = $highResFile.Length
         date_taken    = $takenUtc.ToString('yyyy-MM-ddTHH:mm:ssZ')
     }
+    if ($estimated) { $photo.time_estimated = $true }
     $photographer = Get-Photographer $highResFile.Name
     if ($photographer) {
         $photo.photographer = $photographer
@@ -188,6 +213,9 @@ foreach ($name in $orphanThumbnails) {
 foreach ($name in $bibs.Keys | Where-Object { -not ($highResFiles.Name -contains $_) }) {
     Write-Host "  Warning: bibs.json tags $name, which is not in high-res" -ForegroundColor Yellow
 }
+foreach ($name in $estimatedTimes.Keys | Where-Object { -not ($highResFiles.Name -contains $_) }) {
+    Write-Host "  Warning: times.json times $name, which is not in high-res" -ForegroundColor Yellow
+}
 foreach ($name in $uncredited) {
     Write-Host "  Warning: no -Photographers prefix matches $name - photo uncredited" -ForegroundColor Yellow
 }
@@ -210,7 +238,11 @@ $metadata = [ordered]@{
     date      = $EventDate
     # Busiest photographer first, which is the order the gallery credits them in.
     photographers = @($creditCounts.GetEnumerator() | Sort-Object Value -Descending |
-        ForEach-Object { [ordered]@{ name = $_.Key; photos = $_.Value } })
+        ForEach-Object {
+            $credit = [ordered]@{ name = $_.Key; photos = $_.Value }
+            if ($PhotographerLinks.ContainsKey($_.Key)) { $credit.url = $PhotographerLinks[$_.Key] }
+            $credit
+        })
     photos    = $photos
     generated = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
 }

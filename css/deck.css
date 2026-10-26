@@ -1858,6 +1858,19 @@ footer {
   display: none;
 }
 
+/* A photographer with their own gallery: the name links to it. */
+.photos-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.photos-credit a:hover,
+.photos-credit a:focus-visible {
+  color: var(--pc-royal);
+}
+
 /* Year switch: one small joined control, quiet next to the race deck. */
 .gallery-years {
   gap: 0 !important;

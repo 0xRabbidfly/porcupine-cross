@@ -416,6 +416,45 @@ describe('photos gallery race filter', () => {
       expect(credit.textContent).toBe('Photographed by Jamie Gonzalez and Marija Gonzalez Najera');
     });
 
+    test('a photographer with a gallery of their own is credited with a link to it', async () => {
+      const win = boot({
+        ...sample,
+        photographers: [
+          ...sample.photographers,
+          { name: 'Jeff Faulds', photos: 1, url: 'https://fauldsphotography.com/prologue/' },
+          { name: 'Sam Odd', photos: 1, url: 'javascript:alert(1)' },
+        ],
+      });
+      await settle();
+
+      const credit = win.document.getElementById('gallery-credit');
+      expect(credit.textContent).toBe(
+        'Photographed by Jamie Gonzalez, Marija Gonzalez Najera, Jeff Faulds, and Sam Odd'
+      );
+      const links = Array.from(credit.querySelectorAll('a'));
+      expect(links.map(link => [link.textContent, link.href, link.rel])).toEqual([
+        ['Jeff Faulds', 'https://fauldsphotography.com/prologue/', 'noopener'],
+      ]);
+    });
+
+    test('a photo whose time was estimated names its race but no clock time', async () => {
+      const photos = sample.photos.map(photo =>
+        photo.filename === 'menB.jpg' ? { ...photo, time_estimated: true } : photo
+      );
+      const win = boot({ ...sample, photos });
+      await settle();
+
+      chip(win, '11:00').click();
+      win.document.querySelector('#photo-grid .photo-item').click();
+      const text = id => win.document.getElementById(id).textContent;
+
+      expect(text('lightbox-title')).toBe('Men B and Masters 35+');
+      expect(text('lightbox-when')).toBe('');
+      expect(win.document.querySelector('#photo-grid .photo-item img').alt).toBe(
+        'Men B and Masters 35+ photo'
+      );
+    });
+
     test('a year whose photos.json names nobody shows no credit line', async () => {
       const win = boot({ photos: sample.photos });
       await settle();
@@ -840,6 +879,21 @@ describe('photos gallery rider panel', () => {
     );
     // 9, 19 and 39 minutes after an 11:01 start, at 7 minutes a lap.
     expect(laps).toEqual(['Lap 2', 'Lap 3', 'Lap 6']);
+  });
+
+  test('a photo whose time was estimated gets no lap', async () => {
+    data.photos[1].time_estimated = true;
+    try {
+      const win = boot();
+      await settle();
+      search(win, '204');
+      const laps = Array.from(win.document.querySelectorAll('#photo-grid .photo-lap')).map(
+        mark => mark.textContent
+      );
+      expect(laps).toEqual(['Lap 2', 'Lap 6']);
+    } finally {
+      delete data.photos[1].time_estimated;
+    }
   });
 
   test('links the same rider on their other bib', async () => {
