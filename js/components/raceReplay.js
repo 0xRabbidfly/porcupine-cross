@@ -167,7 +167,10 @@ class RaceReplay {
     this.podiumShown = false;
     this.order = '';
     this.opener = null;
+    this.session = null;
+    this.finished = false;
     this.onClick = this.onClick.bind(this);
+    this.onLeave = () => this.endSession('leave');
     this.onKey = this.onKey.bind(this);
     this.tick = this.tick.bind(this);
     this.onResize = () => {
@@ -217,7 +220,14 @@ class RaceReplay {
       const race = button.dataset.replay;
       this.open(race)
         .then(opened => {
-          if (opened) eventBus.emit('replay:opened', { race, source: 'button', following: false });
+          if (opened) {
+            eventBus.emit('replay:opened', {
+              race,
+              source: 'button',
+              opener: button,
+              following: false,
+            });
+          }
         })
         .catch(error => console.warn('Replay failed to open', error));
     }
@@ -226,7 +236,7 @@ class RaceReplay {
   onKey(event) {
     if (event.key === 'Escape') {
       event.preventDefault();
-      this.close();
+      this.close('escape');
     } else if (event.key === ' ' && !event.target.closest(OWN_KEYS)) {
       event.preventDefault();
       this.toggle();
@@ -274,7 +284,13 @@ class RaceReplay {
     const race = data.races[category];
     // A race with nobody in it has nothing to replay.
     if (!race || !race.riders || !race.riders.length) return false;
+    // A visit lasts from opening to closing, across a change of race.
+    if (!this.session) {
+      this.session = { opened: Date.now(), playedMs: 0 };
+      window.addEventListener('pagehide', this.onLeave);
+    }
     this.pause();
+    this.finished = false;
     this.race = {
       ...race,
       category,
@@ -297,7 +313,9 @@ class RaceReplay {
     return true;
   }
 
-  close() {
+  /** Closes the replay; `how` it was closed is reported with the visit. */
+  close(how) {
+    this.endSession(how);
     this.pause();
     clearTimeout(this.burstTimer);
     this.container.hidden = true;
@@ -312,6 +330,36 @@ class RaceReplay {
       window.history.replaceState(null, '', url);
     }
     if (this.opener && this.opener.isConnected) this.opener.focus();
+  }
+
+  // Reports the visit once, when it was closed or the page left with it open:
+  // how long it was open and played, and how far into the race it got.
+  endSession(how) {
+    if (!this.session) return;
+    window.removeEventListener('pagehide', this.onLeave);
+    if (how && this.race) {
+      this.track('replay_close', {
+        method: how,
+        open_seconds: Math.round((Date.now() - this.session.opened) / 1000),
+        play_seconds: Math.round(this.session.playedMs / 1000),
+        progress: this.progress(),
+        finished: this.finished ? 'yes' : 'no',
+      });
+    }
+    this.session = null;
+  }
+
+  /** An engagement event, with the race it happened in. No rider, ever. */
+  track(name, params = {}) {
+    eventBus.emit('analytics:track', {
+      name,
+      params: { race: this.race ? this.race.category : undefined, ...params },
+    });
+  }
+
+  /** How far the race has got, as a percentage of its length. */
+  progress() {
+    return Math.round((100 * Math.min(this.t, this.race.end)) / this.race.end);
   }
 
   destroy() {
@@ -336,6 +384,7 @@ class RaceReplay {
   }
 
   toggle() {
+    this.track(this.playing ? 'replay_pause' : 'replay_play', { progress: this.progress() });
     if (this.playing) this.pause();
     else this.play();
   }
@@ -346,6 +395,7 @@ class RaceReplay {
     if (this.lastStamp !== null) {
       // A long gap (a background tab) is not race time.
       const step = Math.min(stamp - this.lastStamp, 100);
+      if (this.session) this.session.playedMs += step;
       this.seek(this.t + (step / 1000) * this.speed);
     }
     this.lastStamp = stamp;
@@ -521,12 +571,18 @@ class RaceReplay {
     });
 
     this.container.querySelectorAll('[data-jump]').forEach(button => {
-      button.addEventListener('click', () => this.jumpTo(button.dataset.jump));
+      button.addEventListener('click', () => {
+        this.track('replay_fastest_lap', { lap: button.dataset.jump });
+        this.jumpTo(button.dataset.jump);
+      });
     });
 
     const pick = this.container.querySelector('.replay-pick select');
     pick.addEventListener('change', async () => {
-      await this.open(pick.value);
+      const race = pick.value;
+      if (await this.open(race)) {
+        eventBus.emit('replay:opened', { race, source: 'picker', following: false });
+      }
       this.container.querySelector('.replay-pick select').focus();
     });
 
@@ -535,10 +591,19 @@ class RaceReplay {
       this.pause();
       this.seek(Number(scrub.value));
     });
+    // Once per drag, where it was let go.
+    scrub.addEventListener('change', () =>
+      this.track('replay_seek', { progress: this.progress() })
+    );
     this.container.querySelector('.replay-play').addEventListener('click', () => this.toggle());
-    this.container.querySelector('.replay-close').addEventListener('click', () => this.close());
+    this.container
+      .querySelector('.replay-close')
+      .addEventListener('click', () => this.close('button'));
     this.container.querySelectorAll('.replay-speed button').forEach(button => {
-      button.addEventListener('click', () => this.setSpeed(Number(button.dataset.speed)));
+      button.addEventListener('click', () => {
+        this.setSpeed(Number(button.dataset.speed));
+        this.track('replay_speed', { speed: this.speed });
+      });
     });
 
     // A click on a rider, in the standings or on the map, follows them. Paused,
@@ -562,7 +627,7 @@ class RaceReplay {
     });
     standings.addEventListener('click', event => {
       const bib = bibOf(event);
-      if (bib) this.follow(bib);
+      if (bib) this.followFrom(bib, 'standings');
     });
     riders.addEventListener('pointerup', event => {
       const bib = bibOf(event);
@@ -571,7 +636,7 @@ class RaceReplay {
         if (bib === this.zoomBib) this.hideZoom();
         else this.showZoom(bib);
       } else {
-        this.follow(bib);
+        this.followFrom(bib, 'map');
       }
     });
     this.zoomBib = null;
@@ -760,6 +825,12 @@ class RaceReplay {
     }, 3200);
   }
 
+  // A follow someone chose, reported without the rider; letting go is not.
+  followFrom(bib, method) {
+    this.follow(bib);
+    if (this.followed) this.track('replay_follow', { method });
+  }
+
   // One rider at a time wears a halo on the map and is lit in the standings;
   // picking them again lets them go.
   follow(bib) {
@@ -910,6 +981,11 @@ class RaceReplay {
       podium.hidden = true;
       return;
     }
+    // Reaching the podium, by playing or by dragging there, once a race.
+    if (!this.finished) {
+      this.finished = true;
+      this.track('replay_finish');
+    }
     const winner = lapEnds(top[0].laps).pop();
     const portraits = this.race.podium || {};
     const step = rider => {
@@ -936,8 +1012,9 @@ class RaceReplay {
       <h3 class="podium-title">${escapeHtml(this.race.title)} podium</h3>
       <div class="podium-steps">${order.map(step).join('')}</div>
       <button type="button" class="podium-again">Watch again</button>`;
-    podium.querySelector('.podium-close').addEventListener('click', () => this.close());
+    podium.querySelector('.podium-close').addEventListener('click', () => this.close('podium'));
     podium.querySelector('.podium-again').addEventListener('click', () => {
+      this.track('replay_again');
       this.seek(0);
       this.play();
     });

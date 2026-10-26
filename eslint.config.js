@@ -33,6 +33,7 @@ export default [
 
         // Events
         Event: 'readonly',
+        CustomEvent: 'readonly',
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
 

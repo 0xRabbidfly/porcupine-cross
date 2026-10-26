@@ -1014,6 +1014,12 @@
       // when it opened, handed back when it closes.
       const lightboxReturn = { focus: null, overflow: '' };
 
+      // Engagement for GA4, sent on by js/utils/analytics.js. Never a bib
+      // number or a name.
+      function track(name, params = {}) {
+        document.dispatchEvent(new CustomEvent('analytics:track', { detail: { name, params } }));
+      }
+
       class PhotoGallery {
         constructor(year) {
           // allPhotos is the year; photos is what the grid and lightbox walk,
@@ -1102,7 +1108,7 @@
           // A shared link to one rider's photos opens on them.
           const linked = new URLSearchParams(window.location.search).get('bib');
           if (linked && this.finder && !this.finder.hidden) {
-            this.setBib(linked);
+            this.setBib(linked, 'link');
             return;
           }
 
@@ -1244,7 +1250,7 @@
             const race = this.raceFor(photo);
             this.setRace(race ? race.dataset.start : '');
           }
-          this.openLightbox(this.photos.indexOf(photo));
+          this.openLightbox(this.photos.indexOf(photo), 'strip');
         }
 
         // Choosing a race leaves bib search, even the race already lit for
@@ -1288,7 +1294,7 @@
         // One rider's photos, in the order they were taken, with their race
         // lit on the deck. A rider races once, so the first photo's race is
         // theirs. An empty number goes back to that race.
-        setBib(value) {
+        setBib(value, how = 'typed') {
           const bib = String(value)
             .replace(/\D/g, '')
             .replace(/^0+(?=\d)/, '');
@@ -1310,6 +1316,12 @@
           const race = this.photos.length ? this.raceFor(this.photos[0]) : null;
           this.selectRaceButton(race ? race.dataset.start : '');
           this.showSelection(() => this.showNoBib());
+          track('photo_bib_search', {
+            method: how,
+            result: this.photos.length ? 'found' : 'none',
+            photo_count: this.photos.length,
+            race: race ? race.dataset.short : undefined,
+          });
         }
 
         // Leaves bib search without redrawing, for a caller about to.
@@ -1443,7 +1455,7 @@
             button.type = 'button';
             button.className = 'rider-link';
             button.innerHTML = text;
-            button.addEventListener('click', () => this.setBib(bib));
+            button.addEventListener('click', () => this.setBib(bib, 'rider_link'));
             return button;
           };
 
@@ -1569,12 +1581,14 @@
             const file = new File([blob], name, { type: 'image/jpeg' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
               await navigator.share({ files: [file], title: `Prologue Cross ${this.year}` });
+              track('photo_card', { method: 'shared', photo_count: photos.length });
             } else {
               const anchor = document.createElement('a');
               anchor.href = URL.createObjectURL(blob);
               anchor.download = name;
               anchor.click();
               setTimeout(() => URL.revokeObjectURL(anchor.href), 10000);
+              track('photo_card', { method: 'downloaded', photo_count: photos.length });
             }
           } catch (error) {
             // Closing the share sheet is a choice, not a failure.
@@ -1623,6 +1637,7 @@
             anchor.download = `Prologue${this.year}_bib${bib}.zip`;
             anchor.click();
             setTimeout(() => URL.revokeObjectURL(anchor.href), 60000);
+            track('photo_download_all', { photo_count: photos.length });
             this.updateRider();
           } catch (error) {
             console.warn('Photo download failed', error);
@@ -1749,7 +1764,7 @@
 
         // From the results to a rider's photos, with their panel in view.
         pickRider(bib) {
-          this.setBib(bib);
+          this.setBib(bib, 'results_board');
           if (this.riderPanel && !this.riderPanel.hidden && this.riderPanel.scrollIntoView) {
             this.riderPanel.scrollIntoView({ block: 'start', behavior: 'smooth' });
           }
@@ -1812,6 +1827,7 @@
             board.addEventListener('change', event => {
               if (!event.target.matches('.standings-select')) return;
               this.standingsRace = event.target.value;
+              track('results_race', { race: this.standingsRace });
               this.updateResults();
               board.querySelector('.standings-select').focus();
             });
@@ -2013,7 +2029,7 @@
               photoItem.appendChild(mark);
             }
 
-            photoItem.addEventListener('click', () => this.openLightbox(photoIndex));
+            photoItem.addEventListener('click', () => this.openLightbox(photoIndex, 'grid'));
             grid.appendChild(photoItem);
           });
 
@@ -2030,6 +2046,7 @@
           this.isLoading = true;
           this.showLoadingIndicator();
           this.currentPage++;
+          track('photo_load_more', { page: this.currentPage + 1, view: this.view() });
 
           // Simulate network delay for better UX
           setTimeout(() => {
@@ -2078,7 +2095,9 @@
           return when ? `${title} photo, ${when}` : `${title} photo`;
         }
 
-        openLightbox(index) {
+        // `how` it was reached: from the grid or the strip when it opens, by
+        // button, key or swipe when it steps to the next photo.
+        openLightbox(index, how) {
           this.currentPhotoIndex = index;
           const photo = this.photos[index];
           const lightbox = document.getElementById('lightbox');
@@ -2108,6 +2127,27 @@
           lightbox.style.display = 'flex';
           document.body.style.overflow = 'hidden';
           if (opening) lightbox.querySelector('.lightbox-close').focus();
+          track(opening ? 'photo_open' : 'photo_browse', {
+            ...this.photoParams(photo),
+            method: how,
+          });
+        }
+
+        // What is said of a photo: its race, its photographer and which photo,
+        // and how the grid was narrowed when it was seen.
+        photoParams(photo) {
+          const race = this.raceFor(photo);
+          return {
+            race: race ? race.dataset.short : undefined,
+            photographer: photo.photographer,
+            photo: photo.filename,
+            view: this.view(),
+          };
+        }
+
+        view() {
+          if (this.bib) return 'rider';
+          return this.raceStart ? 'race' : 'all';
         }
 
         // "Ethan P. (55), Ryan D. (290)": the riders whose number was read in
@@ -2150,15 +2190,15 @@
           }
         }
 
-        nextPhoto() {
+        nextPhoto(how) {
           if (this.currentPhotoIndex < this.photos.length - 1) {
-            this.openLightbox(this.currentPhotoIndex + 1);
+            this.openLightbox(this.currentPhotoIndex + 1, how);
           }
         }
 
-        prevPhoto() {
+        prevPhoto(how) {
           if (this.currentPhotoIndex > 0) {
-            this.openLightbox(this.currentPhotoIndex - 1);
+            this.openLightbox(this.currentPhotoIndex - 1, how);
           }
         }
 
@@ -2169,11 +2209,15 @@
           });
 
           document.getElementById('lightbox-next').addEventListener('click', () => {
-            this.nextPhoto();
+            this.nextPhoto('button');
           });
 
           document.getElementById('lightbox-prev').addEventListener('click', () => {
-            this.prevPhoto();
+            this.prevPhoto('button');
+          });
+
+          document.getElementById('lightbox-download').addEventListener('click', () => {
+            track('photo_download', this.photoParams(this.photos[this.currentPhotoIndex]));
           });
 
           // Close lightbox on background click
@@ -2198,8 +2242,8 @@
             const dx = e.changedTouches[0].clientX - swipeX;
             swipeX = null;
             if (Math.abs(dx) < 50) return;
-            if (dx < 0) this.nextPhoto();
-            else this.prevPhoto();
+            if (dx < 0) this.nextPhoto('swipe');
+            else this.prevPhoto('swipe');
           });
 
           // Keyboard navigation
@@ -2210,10 +2254,10 @@
                   this.closeLightbox();
                   break;
                 case 'ArrowLeft':
-                  this.prevPhoto();
+                  this.prevPhoto('key');
                   break;
                 case 'ArrowRight':
-                  this.nextPhoto();
+                  this.nextPhoto('key');
                   break;
                 case 'Tab':
                   this.trapLightboxFocus(e);
@@ -2666,6 +2710,7 @@
           const share = this.xs[index] / 1000;
           const moment = this.gallery.describeMoment(photo);
 
+          if (this.peek.hidden) track('photo_strip_preview', { view: this.gallery.view() });
           this.playhead.hidden = false;
           this.playhead.style.left = `${share * 100}%`;
 
@@ -2804,11 +2849,17 @@
         const gallery = new PhotoGallery(defaultYear);
 
         document.querySelectorAll('.gallery-year-btn').forEach(button => {
-          button.addEventListener('click', () => selectYear(gallery, button.dataset.year));
+          button.addEventListener('click', () => {
+            track('photo_year', { year: button.dataset.year });
+            selectYear(gallery, button.dataset.year);
+          });
         });
 
         document.querySelectorAll('.gallery-race-btn').forEach(button => {
-          button.addEventListener('click', () => gallery.setRace(button.dataset.start));
+          button.addEventListener('click', () => {
+            track('photo_race_filter', { race: button.dataset.short || 'All' });
+            gallery.setRace(button.dataset.start);
+          });
         });
 
         // A category's Watch button opens its replay (RaceReplay listens for

@@ -721,6 +721,51 @@ describe('photos gallery bib finder', () => {
     expect(finder(untagged).hidden).toBe(true);
   });
 
+  test('engagement is reported for GA4 without the bib number', async () => {
+    const win = boot(tagged, '?bib=5');
+    // boot() runs the page's start-up twice (jsdom's DOMContentLoaded and its
+    // own), so each event comes from two galleries: count it once.
+    const tracked = [];
+    win.document.addEventListener('analytics:track', event => {
+      const last = tracked[tracked.length - 1];
+      if (!last || JSON.stringify(last) !== JSON.stringify(event.detail))
+        tracked.push(event.detail);
+    });
+    await settle();
+    search(win, '204');
+    win.document.querySelector('#photo-grid .photo-item').click();
+    win.document.getElementById('lightbox-next').click();
+    win.document.getElementById('lightbox-download').click();
+    win.document.querySelector('.lightbox-close').click();
+    win.document.querySelector('.gallery-race-btn[data-short="Women"]').click();
+
+    expect(tracked.map(event => event.name)).toEqual([
+      'photo_bib_search',
+      'photo_bib_search',
+      'photo_open',
+      'photo_browse',
+      'photo_download',
+      'photo_race_filter',
+    ]);
+    expect(tracked[0].params).toMatchObject({ method: 'link', result: 'found', photo_count: 2 });
+    expect(tracked[1].params).toEqual({
+      method: 'typed',
+      result: 'found',
+      photo_count: 3,
+      race: 'Men B',
+    });
+    expect(tracked[2].params).toMatchObject({
+      method: 'grid',
+      race: 'Men B',
+      photo: 'menB-1.jpg',
+      view: 'rider',
+    });
+    expect(tracked[3].params).toMatchObject({ method: 'button', photo: 'menB-2.jpg' });
+    expect(tracked[4].params).toMatchObject({ photo: 'menB-2.jpg' });
+    expect(tracked[5].params).toEqual({ race: 'Women' });
+    expect(JSON.stringify(tracked)).not.toMatch(/204|"5"/);
+  });
+
   test("a bib shows that rider's photos in order and lights their race", async () => {
     const win = boot();
     await settle();

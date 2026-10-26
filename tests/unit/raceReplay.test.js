@@ -478,7 +478,12 @@ describe('RaceReplay', () => {
     const off = eventBus.on('replay:opened', heard);
     try {
       await open();
-      expect(heard).toHaveBeenLastCalledWith({ race: 'Cat A', source: 'button', following: false });
+      expect(heard).toHaveBeenLastCalledWith({
+        race: 'Cat A',
+        source: 'button',
+        opener: document.querySelector('[data-replay]'),
+        following: false,
+      });
 
       replay.destroy();
       window.history.replaceState(null, '', '/photos.html?replay=Cat%20A&follow=21');
@@ -489,6 +494,78 @@ describe('RaceReplay', () => {
       off();
       window.history.replaceState(null, '', '/');
     }
+  });
+
+  describe('engagement', () => {
+    let tracked;
+    let off;
+    beforeEach(() => {
+      tracked = [];
+      off = eventBus.on('analytics:track', event => tracked.push(event));
+    });
+    afterEach(() => off());
+    const names = () => tracked.map(event => event.name);
+    const last = name => tracked.filter(event => event.name === name).pop();
+
+    test('play, pause, speed and a let-go scrub are reported with the race', async () => {
+      await open();
+      const frame = container();
+      frame.querySelector('.replay-play').click();
+      frame.querySelector('.replay-play').click();
+      frame.querySelector('.replay-speed button[data-speed="120"]').click();
+      const scrub = frame.querySelector('.replay-scrub');
+      scrub.value = '100';
+      scrub.dispatchEvent(new Event('input'));
+      scrub.dispatchEvent(new Event('change'));
+
+      expect(names()).toEqual(['replay_pause', 'replay_play', 'replay_speed', 'replay_seek']);
+      expect(last('replay_speed').params).toEqual({ race: 'Cat A', speed: 120 });
+      expect(last('replay_seek').params.race).toBe('Cat A');
+    });
+
+    test('following a rider says how, never which', async () => {
+      await open();
+      container().querySelector('.replay-row[data-bib="55"]').click();
+      container().querySelector('.replay-row[data-bib="55"]').click();
+
+      expect(tracked.filter(event => event.name === 'replay_follow')).toEqual([
+        { name: 'replay_follow', params: { race: 'Cat A', method: 'standings' } },
+      ]);
+      expect(JSON.stringify(tracked)).not.toMatch(/55/);
+    });
+
+    test('the podium counts as finished, once, and closing reports the visit', async () => {
+      await open();
+      replay.seek(10000);
+      replay.seek(10000);
+      container().querySelector('.replay-close').click();
+
+      expect(names().filter(name => name === 'replay_finish')).toHaveLength(1);
+      expect(last('replay_close').params).toMatchObject({
+        race: 'Cat A',
+        method: 'button',
+        progress: 100,
+        finished: 'yes',
+      });
+      expect(typeof last('replay_close').params.open_seconds).toBe('number');
+      expect(typeof last('replay_close').params.play_seconds).toBe('number');
+    });
+
+    test('leaving the page with it open reports the visit once', async () => {
+      await open();
+      window.dispatchEvent(new Event('pagehide'));
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      const closes = tracked.filter(event => event.name === 'replay_close');
+      expect(closes).toHaveLength(1);
+      expect(closes[0].params).toMatchObject({ method: 'leave', finished: 'no' });
+    });
+
+    test('Escape is reported as how it was closed', async () => {
+      await open();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      expect(last('replay_close').params.method).toBe('escape');
+    });
   });
 
   test('Escape closes it, stops the clock and hands focus back', async () => {

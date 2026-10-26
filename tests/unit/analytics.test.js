@@ -85,16 +85,78 @@ describe('Analytics', () => {
     });
   });
 
+  test('a link into the replay counts as watching, not registering', () => {
+    document
+      .querySelector('#home')
+      .insertAdjacentHTML(
+        'beforeend',
+        '<a class="hero-register-button" href="photos.html?replay=Cat%20A">Watch the races</a>'
+      );
+    expect(eventFor(document.querySelector('a[href*="replay="]'))).toEqual([
+      'button_click',
+      { button_name: 'watch_replay', button_location: 'home' },
+    ]);
+  });
+
+  test("a click through to a photographer's site is counted", () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<p class="photos-credit">Photographed by <a href="https://example.com/">Jeff</a></p>'
+    );
+    expect(eventFor(document.querySelector('.photos-credit a'))).toEqual([
+      'link_click',
+      { link_name: 'photographer_site', link_location: 'page' },
+    ]);
+  });
+
+  test("a replay opened from a button reports the part of the page it's in", () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div class="gallery-races"><button data-replay="Cat C">Cat C</button></div>'
+    );
+    eventBus.emit('replay:opened', {
+      race: 'Cat C',
+      source: 'button',
+      opener: document.querySelector('.gallery-races button'),
+      following: false,
+    });
+
+    expect(window.gtag).toHaveBeenCalledWith('event', 'replay_open', {
+      race: 'Cat C',
+      source: 'race_deck',
+      following: 'no',
+    });
+  });
+
+  test('engagement from the bus and from the page is sent on, without empty values', () => {
+    eventBus.emit('analytics:track', {
+      name: 'replay_speed',
+      params: { race: 'Cat A', speed: 120, lap: undefined },
+    });
+    document.dispatchEvent(
+      new CustomEvent('analytics:track', {
+        detail: { name: 'photo_open', params: { race: 'Men B', method: 'grid', photographer: '' } },
+      })
+    );
+
+    expect(window.gtag.mock.calls).toEqual([
+      ['event', 'replay_speed', { race: 'Cat A', speed: 120 }],
+      ['event', 'photo_open', { race: 'Men B', method: 'grid' }],
+    ]);
+  });
+
   test('without gtag, clicks are ignored quietly', () => {
     delete window.gtag;
 
     expect(() => click('.results-button')).not.toThrow();
   });
 
-  test('destroy stops reporting clicks and replay opens', () => {
+  test('destroy stops reporting clicks, replay opens and engagement', () => {
     analytics.destroy();
     click('.results-button');
     eventBus.emit('replay:opened', { race: 'Cat A', source: 'button', following: false });
+    eventBus.emit('analytics:track', { name: 'replay_play', params: {} });
+    document.dispatchEvent(new CustomEvent('analytics:track', { detail: { name: 'photo_open' } }));
 
     expect(window.gtag).not.toHaveBeenCalled();
   });
