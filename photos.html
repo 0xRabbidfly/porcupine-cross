@@ -547,10 +547,6 @@
           <h1><span id="gallery-title">2026 Event Photos and Race Replay</span></h1>
           <!-- Filled from the year's photos.json, which credits each photo. -->
           <p class="photos-credit" id="gallery-credit" hidden></p>
-          <p class="photos-removal">
-            Riders are named as in the official results. To have your name or a photo of you
-            removed, email <a href="mailto:franny@jewett.ca">franny@jewett.ca</a>.
-          </p>
         </div>
 
         <!-- Photo Gallery -->
@@ -592,104 +588,231 @@
               >
                 <b>All</b>
               </button>
-              <button
-                type="button"
-                class="gallery-race-btn"
-                data-start="2026-10-18T09:00:00-04:00"
-                data-short="Men C"
-                data-name="Men C and Masters 55+"
-                aria-pressed="false"
-              >
-                <b>9:00</b> Men C
-                <span
-                  class="race-watch"
-                  data-replay="Cat C"
-                  title="Watch the Men Cat C race"
-                  aria-hidden="true"
+              <!-- Under each race tab, a Watch button per category opens that
+                   category's replay (and selects the race). -->
+              <div class="race-col">
+                <button
+                  type="button"
+                  class="gallery-race-btn"
+                  data-start="2026-10-18T09:00:00-04:00"
+                  data-short="Men C"
+                  data-name="Men C and Masters 55+"
+                  aria-pressed="false"
                 >
-                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                class="gallery-race-btn"
-                data-start="2026-10-18T10:00:00-04:00"
-                data-short="Youth"
-                data-name="U17, U15 and U13"
-                aria-pressed="false"
-              >
-                <b>10:00</b> Youth
-              </button>
-              <button
-                type="button"
-                class="gallery-race-btn"
-                data-start="2026-10-18T11:00:00-04:00"
-                data-short="Men B"
-                data-name="Men B and Masters 35+"
-                aria-pressed="false"
-              >
-                <b>11:00</b> Men B
-                <span
-                  class="race-watch"
-                  data-replay="Cat B"
-                  title="Watch the Men Cat B race"
-                  aria-hidden="true"
+                  <b>9:00</b> Men C
+                </button>
+                <div class="race-cats">
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Cat C"
+                    aria-label="Watch the Men Cat C replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Cat C</span
+                    ><span class="race-cat-short" aria-hidden="true">Cat C</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Master Men 55+"
+                    aria-label="Watch the Master Men 55+ replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Masters 55+</span
+                    ><span class="race-cat-short" aria-hidden="true">M55+</span>
+                  </button>
+                </div>
+              </div>
+              <div class="race-col">
+                <button
+                  type="button"
+                  class="gallery-race-btn"
+                  data-start="2026-10-18T10:00:00-04:00"
+                  data-short="Youth"
+                  data-name="U17, U15 and U13"
+                  aria-pressed="false"
                 >
-                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                class="gallery-race-btn"
-                data-start="2026-10-18T12:30:00-04:00"
-                data-short="Kids"
-                data-name="Kids Try-a-Race"
-                aria-pressed="false"
-              >
-                <b>12:30</b> Kids
-              </button>
-              <button
-                type="button"
-                class="gallery-race-btn"
-                data-start="2026-10-18T13:15:00-04:00"
-                data-short="Women"
-                data-name="Women A, Women B and Masters"
-                aria-pressed="false"
-              >
-                <b>1:15</b> Women
-                <span
-                  class="race-watch"
-                  data-replay="Cat A Women"
-                  title="Watch the Women Cat A race"
-                  aria-hidden="true"
+                  <b>10:00</b> Youth
+                </button>
+                <div class="race-cats">
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="U17 Boys"
+                    aria-label="Watch the U17 Boys replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">U17 Boys</span
+                    ><span class="race-cat-short" aria-hidden="true">U17 B</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="U17 Girls"
+                    aria-label="Watch the U17 Girls replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">U17 Girls</span
+                    ><span class="race-cat-short" aria-hidden="true">U17 G</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="U15 Boys"
+                    aria-label="Watch the U15 Boys replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">U15 Boys</span
+                    ><span class="race-cat-short" aria-hidden="true">U15 B</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="U13 Boys"
+                    aria-label="Watch the U13 Boys replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">U13 Boys</span
+                    ><span class="race-cat-short" aria-hidden="true">U13 B</span>
+                  </button>
+                </div>
+              </div>
+              <div class="race-col">
+                <button
+                  type="button"
+                  class="gallery-race-btn"
+                  data-start="2026-10-18T11:00:00-04:00"
+                  data-short="Men B"
+                  data-name="Men B and Masters 35+"
+                  aria-pressed="false"
                 >
-                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
-                </span>
-              </button>
-              <button
-                type="button"
-                class="gallery-race-btn"
-                data-start="2026-10-18T14:20:00-04:00"
-                data-short="Men A"
-                data-name="Men A and Single Speed"
-                aria-pressed="false"
-              >
-                <b>2:20</b> Men A
-                <!-- Each Watch badge opens its race's replay (and selects the
-                     race); the replay's own picker reaches the other categories.
-                     Hidden from assistive tech: the results bar has the same
-                     button. -->
-                <span
-                  class="race-watch"
-                  data-replay="Cat A"
-                  title="Watch the Cat A race"
-                  aria-hidden="true"
+                  <b>11:00</b> Men B
+                </button>
+                <div class="race-cats">
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Cat B"
+                    aria-label="Watch the Men Cat B replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Cat B</span
+                    ><span class="race-cat-short" aria-hidden="true">Cat B</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Master Men 35+"
+                    aria-label="Watch the Master Men 35+ replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Masters 35+</span
+                    ><span class="race-cat-short" aria-hidden="true">M35+</span>
+                  </button>
+                </div>
+              </div>
+              <div class="race-col">
+                <button
+                  type="button"
+                  class="gallery-race-btn"
+                  data-start="2026-10-18T12:30:00-04:00"
+                  data-short="Kids"
+                  data-name="Kids Try-a-Race"
+                  aria-pressed="false"
                 >
-                  <i class="fas fa-play"></i><span class="race-watch-text">Watch</span>
-                </span>
-              </button>
+                  <b>12:30</b> Kids
+                </button>
+              </div>
+              <div class="race-col">
+                <button
+                  type="button"
+                  class="gallery-race-btn"
+                  data-start="2026-10-18T13:15:00-04:00"
+                  data-short="Women"
+                  data-name="Women A, Women B and Masters"
+                  aria-pressed="false"
+                >
+                  <b>1:15</b> Women
+                </button>
+                <div class="race-cats">
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Cat A Women"
+                    aria-label="Watch the Women Cat A replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Cat A</span
+                    ><span class="race-cat-short" aria-hidden="true">Cat A</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Cat B Women"
+                    aria-label="Watch the Women Cat B replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Cat B</span
+                    ><span class="race-cat-short" aria-hidden="true">Cat B</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Master Women 35+"
+                    aria-label="Watch the Master Women 35+ replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Masters 35+</span
+                    ><span class="race-cat-short" aria-hidden="true">M35+</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Master Women 55+"
+                    aria-label="Watch the Master Women 55+ replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Masters 55+</span
+                    ><span class="race-cat-short" aria-hidden="true">M55+</span>
+                  </button>
+                </div>
+              </div>
+              <div class="race-col">
+                <button
+                  type="button"
+                  class="gallery-race-btn"
+                  data-start="2026-10-18T14:20:00-04:00"
+                  data-short="Men A"
+                  data-name="Men A and Single Speed"
+                  aria-pressed="false"
+                >
+                  <b>2:20</b> Men A
+                </button>
+                <div class="race-cats">
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Cat A"
+                    aria-label="Watch the Men Cat A replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Cat A</span
+                    ><span class="race-cat-short" aria-hidden="true">Cat A</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="race-cat"
+                    data-replay="Single Speed"
+                    aria-label="Watch the Single Speed replay"
+                  >
+                    <i class="fas fa-play" aria-hidden="true"></i
+                    ><span class="race-cat-long">Single Speed</span
+                    ><span class="race-cat-short" aria-hidden="true">SS</span>
+                  </button>
+                </div>
+              </div>
             </div>
-
             <div
               class="day-timeline-track"
               role="slider"
@@ -727,12 +850,13 @@
             <!-- Bib finder: a year whose photos carry bib tags shows it. A rider
                  is tagged where the number is read, or where the kit matches a
                  photo where it was; the second kind is marked "Likely you".
-                 Names show as first name and initial, only for number reads. -->
+                 Names show as first name and initial, only for number reads, and
+                 never for a youth rider. -->
             <form
               class="bib-finder"
               role="search"
               data-year="2026"
-              data-untagged="The youth and kids races are not tagged."
+              data-untagged="The kids' try-a-race is not tagged."
               hidden
             >
               <label for="bib-input">Find your photos</label>
@@ -785,7 +909,7 @@
                race's, or every race's under All, with riders' full names. -->
           <details
             class="race-results"
-            data-replays="Cat C,Master Men 55+,Cat B,Master Men 35+,Cat A Women,Cat B Women,Master Women 35+,Master Women 55+,Cat A,Single Speed"
+            data-replays="Cat C,Master Men 55+,U17 Boys,U17 Girls,U15 Boys,U13 Boys,Cat B,Master Men 35+,Cat A Women,Cat B Women,Master Women 35+,Master Women 55+,Cat A,Single Speed"
             hidden
           >
             <summary>
@@ -826,6 +950,12 @@
         <div class="back-to-home">
           <a href="index.html"> <i class="fas fa-arrow-left"></i> Back to Home </a>
         </div>
+
+        <p class="photos-removal">
+          Riders are named as in the official results; youth riders are never named. To have your
+          name or a photo of you removed, email
+          <a href="mailto:franny@jewett.ca">franny@jewett.ca</a>.
+        </p>
       </div>
     </main>
 
@@ -1721,6 +1851,9 @@
               const inRace = this.photosInRace(button.dataset.start).length;
               count.textContent = this.allPhotos.length ? String(inRace) : '';
               button.hidden = Boolean(button.dataset.start) && this.allPhotos.length > 0 && !inRace;
+              // A race's column holds its tab and its category Watch buttons.
+              const column = button.closest('.race-col');
+              if (column) column.hidden = button.hidden;
             });
         }
 
@@ -2572,10 +2705,15 @@
             this.show(this.indexAt(event.clientX));
           });
 
+          // The preview card sits above the strip, so a mouse heading up off
+          // the strip crosses it first: that counts as leaving. (A mouse picks
+          // on release and never needs the card; a finger does.)
           this.track.addEventListener('pointermove', event => {
             if (!this.photos.length) return;
-            if (this.dragging || (event.pointerType === 'mouse' && !onPeek(event))) {
-              this.show(this.indexAt(event.clientX));
+            if (this.dragging) this.show(this.indexAt(event.clientX));
+            else if (event.pointerType === 'mouse') {
+              if (onPeek(event)) this.hidePeek();
+              else this.show(this.indexAt(event.clientX));
             }
           });
 
@@ -2587,14 +2725,22 @@
             if (wasDragging && event.pointerType === 'mouse') this.open();
           });
 
+          // A finger that turns the drag into a scroll has left the strip.
           this.track.addEventListener('pointercancel', () => {
             this.dragging = false;
+            this.hidePeek();
           });
 
+          // Moving off the strip puts the preview away, even with the strip
+          // focused from a click; the keys bring it back.
           this.track.addEventListener('pointerleave', event => {
-            if (event.pointerType === 'mouse' && document.activeElement !== this.track) {
-              this.hidePeek();
-            }
+            if (event.pointerType === 'mouse' && !this.dragging) this.hidePeek();
+          });
+
+          // A finger has no hover to leave, so touching anywhere else on the
+          // page puts the preview away.
+          document.addEventListener('pointerdown', event => {
+            if (!this.track.contains(event.target)) this.hidePeek();
           });
 
           // Pressing the preview would move focus off the track, and the
@@ -2663,6 +2809,13 @@
 
         document.querySelectorAll('.gallery-race-btn').forEach(button => {
           button.addEventListener('click', () => gallery.setRace(button.dataset.start));
+        });
+
+        // A category's Watch button opens its replay (RaceReplay listens for
+        // [data-replay]) and selects its race underneath.
+        document.querySelectorAll('.race-cat').forEach(button => {
+          const tab = button.closest('.race-col').querySelector('.gallery-race-btn');
+          button.addEventListener('click', () => gallery.setRace(tab.dataset.start));
         });
       });
     </script>

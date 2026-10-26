@@ -279,7 +279,34 @@ describe('photos gallery race filter', () => {
     await settle();
 
     expect(chip(dom.window, '12:30').hidden).toBe(true);
+    expect(chip(dom.window, '12:30').closest('.race-col').hidden).toBe(true);
     expect(chip(dom.window, '11:00').hidden).toBe(false);
+  });
+
+  test('under each race, every category has its own Watch button, which selects the race', async () => {
+    const win = boot();
+    await settle();
+
+    const watch = time =>
+      Array.from(chip(win, time).closest('.race-col').querySelectorAll('.race-cat')).map(
+        button => button.dataset.replay
+      );
+    expect(watch('10:00')).toEqual(['U17 Boys', 'U17 Girls', 'U15 Boys', 'U13 Boys']);
+    expect(watch('12:30')).toEqual([]);
+    expect(watch('13:15')).toEqual([
+      'Cat A Women',
+      'Cat B Women',
+      'Master Women 35+',
+      'Master Women 55+',
+    ]);
+
+    win.document.querySelector('.race-cat[data-replay="Master Men 35+"]').click();
+    expect(chip(win, '11:00').getAttribute('aria-pressed')).toBe('true');
+    expect(
+      win.document
+        .querySelector('.race-cat[data-replay="Master Men 35+"]')
+        .getAttribute('aria-label')
+    ).toBe('Watch the Master Men 35+ replay');
   });
 
   test('the lightbox steps through the selected race only', async () => {
@@ -560,6 +587,42 @@ describe('photos gallery race filter', () => {
       expect(win.document.querySelector('.day-timeline-peek').hidden).toBe(false);
     });
 
+    test('moving the mouse off the strip puts the preview away, even with the strip focused', async () => {
+      const win = boot();
+      await settle();
+
+      track(win).focus();
+      key(win, 'ArrowRight');
+      const peek = win.document.querySelector('.day-timeline-peek');
+      expect(peek.hidden).toBe(false);
+
+      const leave = new win.MouseEvent('pointerleave');
+      Object.defineProperty(leave, 'pointerType', { value: 'mouse' });
+      track(win).dispatchEvent(leave);
+      expect(peek.hidden).toBe(true);
+
+      // Heading up off the strip, the mouse crosses the preview card first.
+      key(win, 'ArrowRight');
+      const over = new win.MouseEvent('pointermove', { bubbles: true });
+      Object.defineProperty(over, 'pointerType', { value: 'mouse' });
+      peek.dispatchEvent(over);
+      expect(peek.hidden).toBe(true);
+    });
+
+    test('touching anywhere off the strip puts the preview away', async () => {
+      const win = boot();
+      await settle();
+
+      track(win).focus();
+      key(win, 'ArrowRight');
+      const peek = win.document.querySelector('.day-timeline-peek');
+      peek.dispatchEvent(new win.MouseEvent('pointerdown', { bubbles: true }));
+      expect(peek.hidden).toBe(false);
+
+      win.document.body.dispatchEvent(new win.MouseEvent('pointerdown', { bubbles: true }));
+      expect(peek.hidden).toBe(true);
+    });
+
     test('Enter opens the photo and moves to its race if another is selected', async () => {
       const win = boot();
       await settle();
@@ -722,7 +785,7 @@ describe('photos gallery bib finder', () => {
 
     const grid = win.document.getElementById('photo-grid');
     expect(grid.textContent).toContain('No photos found for bib 57');
-    expect(grid.textContent).toContain('The youth and kids races are not tagged.');
+    expect(grid.textContent).toContain("The kids' try-a-race is not tagged.");
     expect(count(win)).toBe('No photos of bib 57');
 
     grid.querySelector('.gallery-retry').click();

@@ -1967,15 +1967,27 @@ footer {
   display: none;
 }
 
-/* A race with a replay wears a gold Watch badge in its tab's corner. */
-.gallery-race-btn:has(.race-watch) {
-  position: relative;
+/* A race's column: its tab, then a gold Watch button for each category with
+   a replay, small enough to sit under the tab without crowding it. */
+.race-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.race-watch {
-  position: absolute;
-  top: 5px;
-  right: 6px;
+.race-col[hidden] {
+  display: none;
+}
+
+.race-cats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 2px 0;
+}
+
+.race-cat {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1983,20 +1995,37 @@ footer {
   font-family: var(--pc-data);
   font-size: 0.72rem;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.1;
+  white-space: nowrap;
   color: var(--pc-ink);
   background: var(--pc-gilt);
+  border: 0;
   border-radius: 999px;
   box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.8);
   cursor: pointer;
 }
 
-.race-watch i {
-  font-size: 0.6rem;
+.race-cat i {
+  font-size: 0.56rem;
 }
 
-.race-watch:hover {
+.race-cat-short {
+  display: none;
+}
+
+.race-cat:hover {
   background: var(--pc-stock);
+}
+
+/* style.css rings every focused button in red; these show focus in stock. */
+.race-cat:focus {
+  outline: none;
+  box-shadow: 0 2px 6px -2px rgba(0, 0, 0, 0.8);
+}
+
+.race-cat:focus-visible {
+  outline: 2px solid var(--pc-stock);
+  outline-offset: 1px;
 }
 
 .gallery-race-btn b {
@@ -2014,6 +2043,11 @@ footer {
 
 .gallery-race-btn .race-count:empty {
   display: none;
+}
+
+/* All stays tab height beside the columns of Watch buttons. */
+.gallery-race-btn.race-all {
+  align-self: start;
 }
 
 .gallery-race-btn.race-all b {
@@ -2428,8 +2462,10 @@ footer {
   display: none;
 }
 
+/* At the foot of the page, under the way back home. */
 .photos-removal {
-  margin: 6px auto 0;
+  margin: 18px auto 0;
+  padding: 0 16px;
   max-width: 60ch;
   font-family: var(--pc-body);
   font-size: 0.82rem;
@@ -3123,21 +3159,32 @@ footer {
     margin-inline: -6px;
   }
 
-  /* The Watch badge shrinks to a gold play button sitting on the deck's top
-     edge over the tab, clear of the start time. */
-  .race-watch {
-    top: -15px;
-    right: 50%;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    justify-content: center;
-    transform: translateX(50%);
-    border: 2px solid var(--pc-felt);
+  /* A column is a sixth of a phone: the categories stack, one short name
+     each. */
+  .race-cats {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+    padding: 3px 1px 0;
   }
 
-  .race-watch-text {
+  .race-cat {
+    justify-content: center;
+    gap: 3px;
+    padding: 3px 2px;
+    font-size: 0.66rem;
+  }
+
+  .race-cat i {
+    font-size: 0.5rem;
+  }
+
+  .race-cat-long {
     display: none;
+  }
+
+  .race-cat-short {
+    display: inline;
   }
 
   .gallery-race-btn {
