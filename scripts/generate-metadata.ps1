@@ -7,12 +7,12 @@
 # said event-2025, which would have pointed the whole 2026 gallery at the 2025
 # folder.
 #
-# Usage, from the repo root:
+# Usage, from the repo root. This is the 2026 gallery as published: a
+# photographer left out of -Photographers leaves their photos uncredited.
 #   pwsh scripts/generate-metadata.ps1 -Year 2026 -EventDate 2026-10-18 `
-#       -HighResPath "D:\Prologue CX 2026\high-res" `
-#       -ThumbnailPath "D:\Prologue CX 2026\thumbnails" `
-#       -Photographers @{ 'R6II' = 'Jamie Gonzalez'; 'IMG_' = 'Marija Gonzalez Najera' } `
-#       -PhotographerLinks @{ 'Jeff Faulds' = 'https://fauldsphotography.com/...' }
+#       -Photographers @{ 'R6II' = 'Jamie Gonzalez'; 'IMG_' = 'Marija Gonzalez Najera';
+#                         'Prologue-CX-2026-' = 'Jeff Faulds' } `
+#       -PhotographerLinks @{ 'Jeff Faulds' = 'https://fauldsphotography.com/index.php/prologue-cx-2026/' }
 #
 # Defaults write into photos/event-<Year>/ in the repo, which is also where the
 # files need to sit before they go up to the server.
