@@ -2444,15 +2444,17 @@
         return [...entries, ...directory, end];
       }
 
-      // The rider's photo card: a 1080x1920 story image on the felt, with the
-      // bib pinned at the top, their result, three of their photos as prints
-      // and the photographers' credit. Resolves to a JPEG blob.
+      // The rider's photo card: a 1080x1920 story image on the blue of the
+      // banner's spades, under the Prologue banner on its red, as in the rider
+      // emails, with the bib pinned below it, their result, three of their
+      // photos as prints and the photographers' credit. Resolves to a JPEG blob.
       async function drawRiderCard({ year, bib, headline, detail, credits, sources }) {
         const W = 1080;
         const H = 1920;
         const ink = '#111823';
         const stock = '#f7f2e7';
         const gilt = '#c8a24a';
+        const red = '#ed1c24';
         const canvas = document.createElement('canvas');
         canvas.width = W;
         canvas.height = H;
@@ -2467,34 +2469,47 @@
             ].map(font => document.fonts.load(font).catch(() => null))
           );
         }
-        const images = await Promise.all(
-          sources.map(
-            src =>
-              new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-                img.src = src;
-              })
-          )
-        );
+        const load = src =>
+          new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+          });
+        // Without the banner the card still draws, with the name in type.
+        const [banner, images] = await Promise.all([
+          load('images/prologue-banner.png').catch(() => null),
+          Promise.all(sources.map(load)),
+        ]);
 
-        ctx.fillStyle = '#14392c';
+        ctx.fillStyle = '#2e3192';
         ctx.fillRect(0, 0, W, H);
+
+        // The banner's edges are this red, so it melts into a full-width band.
+        const band = 270;
+        ctx.fillStyle = red;
+        ctx.fillRect(0, 0, W, band);
+        ctx.fillStyle = gilt;
+        ctx.fillRect(0, band, W, 6);
+        ctx.textAlign = 'center';
+        if (banner) {
+          const bannerW = 860;
+          const bannerH = (banner.height / banner.width) * bannerW;
+          ctx.drawImage(banner, (W - bannerW) / 2, (band - bannerH) / 2, bannerW, bannerH);
+        } else {
+          ctx.fillStyle = '#fff';
+          ctx.font = 'italic 400 72px "Bodoni Moda", Georgia, serif';
+          ctx.fillText('Prologue Cross', W / 2, band / 2 + 24);
+        }
         ctx.strokeStyle = gilt;
         ctx.lineWidth = 3;
-        ctx.strokeRect(34, 34, W - 68, H - 68);
-
-        ctx.textAlign = 'center';
-        ctx.fillStyle = stock;
-        ctx.font = 'italic 400 60px "Bodoni Moda", Georgia, serif';
-        ctx.fillText(`Prologue Cross ${year}`, W / 2, 150);
+        ctx.strokeRect(34, band + 34, W - 68, H - band - 68);
 
         // The bib: white, heavy digits, a pin hole in each corner.
         const bw = 400;
-        const bh = 230;
+        const bh = 220;
         const bx = (W - bw) / 2;
-        const by = 200;
+        const by = 340;
         ctx.fillStyle = '#fff';
         ctx.fillRect(bx, by, bw, bh);
         ctx.fillStyle = 'rgba(17, 24, 35, 0.45)';
@@ -2516,10 +2531,10 @@
 
         ctx.fillStyle = stock;
         ctx.font = '600 52px "Barlow Condensed", "Arial Narrow", sans-serif';
-        if (headline) ctx.fillText(headline, W / 2, 520);
+        if (headline) ctx.fillText(headline, W / 2, 640);
         ctx.fillStyle = gilt;
         ctx.font = '600 44px "Barlow Condensed", "Arial Narrow", sans-serif';
-        if (detail) ctx.fillText(detail, W / 2, 580);
+        if (detail) ctx.fillText(detail, W / 2, 698);
 
         // Each photo is a print: a stock border round a cover-cropped frame.
         const print = (img, x, y, w, h) => {
@@ -2530,12 +2545,12 @@
           const sh = h / scale;
           ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, w, h);
         };
-        const top = 650;
+        const top = 760;
         const bottom = 1720;
         if (images.length === 1) {
           print(images[0], 70, top, W - 140, bottom - top);
         } else {
-          const big = images.length === 2 ? 520 : 660;
+          const big = images.length === 2 ? 470 : 600;
           print(images[0], 70, top, W - 140, big);
           const rest = images.slice(1);
           const gap = 30;
@@ -2553,7 +2568,7 @@
         }
         ctx.fillStyle = gilt;
         ctx.font = '600 34px "Barlow Condensed", "Arial Narrow", sans-serif';
-        ctx.fillText('prologuecross.ca/photos', W / 2, 1852);
+        ctx.fillText(`Prologue Cross ${year} · prologuecross.ca/photos`, W / 2, 1846);
 
         return new Promise((resolve, reject) =>
           canvas.toBlob(
